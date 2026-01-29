@@ -22,7 +22,6 @@ const statusColors: Record<TaskStatus, string> = {
   in_progress: "bg-yellow-500",
   review: "bg-purple-500",
   done: "bg-green-500",
-  blocked: "bg-red-500",
 };
 
 const statusBgColors: Record<TaskStatus, string> = {
@@ -31,7 +30,6 @@ const statusBgColors: Record<TaskStatus, string> = {
   in_progress: "bg-yellow-200 hover:bg-yellow-300",
   review: "bg-purple-200 hover:bg-purple-300",
   done: "bg-green-200 hover:bg-green-300",
-  blocked: "bg-red-200 hover:bg-red-300",
 };
 
 const priorityLabels = {

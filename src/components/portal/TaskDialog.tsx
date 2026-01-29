@@ -50,7 +50,7 @@ import { DependencySelector } from "./DependencySelector";
 const taskSchema = z.object({
   title: z.string().min(1, "Title is required").max(200),
   description: z.string().max(5000).optional(),
-  status: z.enum(["backlog", "todo", "in_progress", "review", "done", "blocked"]),
+  status: z.enum(["backlog", "todo", "in_progress", "review", "done"]),
   priority: z.enum(["low", "medium", "high", "urgent"]),
   owner_id: z.string().uuid().nullable(),
   start_date: z.date().nullable(),
@@ -216,7 +216,6 @@ export function TaskDialog({
                         <SelectItem value="in_progress">In Progress</SelectItem>
                         <SelectItem value="review">Review</SelectItem>
                         <SelectItem value="done">Done</SelectItem>
-                        <SelectItem value="blocked">Blocked</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />

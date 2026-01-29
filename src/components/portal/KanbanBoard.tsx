@@ -33,7 +33,6 @@ const columns: { id: TaskStatus; title: string; color: string }[] = [
   { id: "in_progress", title: "In Progress", color: "bg-yellow-200" },
   { id: "review", title: "Review", color: "bg-purple-200" },
   { id: "done", title: "Done", color: "bg-green-200" },
-  { id: "blocked", title: "Blocked", color: "bg-red-200" },
 ];
 
 interface KanbanBoardProps {
@@ -70,7 +69,6 @@ export function KanbanBoard({
       in_progress: [],
       review: [],
       done: [],
-      blocked: [],
     };
 
     tasks.forEach((task) => {

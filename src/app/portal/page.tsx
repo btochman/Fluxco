@@ -6,9 +6,10 @@ import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Clock, AlertCircle, Calendar, ChevronRight } from "lucide-react";
+import { Clock, Calendar, ChevronRight, Plus } from "lucide-react";
 import { toast } from "sonner";
 import { format, differenceInDays, startOfDay, addDays, parseISO, isValid } from "date-fns";
+import { CreateTaskDialog } from "@/components/portal/CreateTaskDialog";
 
 interface Project {
   id: string;
@@ -34,6 +35,8 @@ export default function PortalDashboard() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [showCreateTask, setShowCreateTask] = useState(false);
+  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
 
   useEffect(() => {
     loadData();
@@ -73,15 +76,26 @@ export default function PortalDashboard() {
     const total = projectTasks.length;
     const done = projectTasks.filter((t) => t.status === "done").length;
     const inProgress = projectTasks.filter((t) => t.status === "in_progress").length;
-    const blocked = projectTasks.filter((t) => t.status === "blocked").length;
-    return { total, done, inProgress, blocked };
+    const todo = projectTasks.filter((t) => t.status === "todo" || t.status === "backlog").length;
+    return { total, done, inProgress, todo };
   };
 
   const totalStats = {
     total: tasks.length,
     done: tasks.filter((t) => t.status === "done").length,
     inProgress: tasks.filter((t) => t.status === "in_progress").length,
-    blocked: tasks.filter((t) => t.status === "blocked").length,
+    todo: tasks.filter((t) => t.status === "todo" || t.status === "backlog").length,
+  };
+
+  const handleCreateTask = (projectId: string) => {
+    setSelectedProjectId(projectId);
+    setShowCreateTask(true);
+  };
+
+  const handleTaskCreated = () => {
+    loadData();
+    setShowCreateTask(false);
+    setSelectedProjectId(null);
   };
 
   // Calculate Gantt chart data
@@ -132,26 +146,28 @@ export default function PortalDashboard() {
           </p>
         </div>
 
-        <Link href="/portal/timeline">
-          <Button variant="outline" className="gap-2">
-            <Calendar className="h-4 w-4" />
-            Full Timeline
-          </Button>
-        </Link>
+        <div className="flex gap-2">
+          {projects.length > 0 && (
+            <Button onClick={() => handleCreateTask(projects[0].id)} className="gap-2">
+              <Plus className="h-4 w-4" />
+              Add Task
+            </Button>
+          )}
+          <Link href="/portal/timeline">
+            <Button variant="outline" className="gap-2">
+              <Calendar className="h-4 w-4" />
+              Timeline
+            </Button>
+          </Link>
+        </div>
       </div>
 
       {/* Summary Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-3 gap-4">
         <Card>
           <CardContent className="pt-6">
             <div className="text-2xl font-bold">{totalStats.total}</div>
             <p className="text-xs text-muted-foreground">Total Tasks</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-6">
-            <div className="text-2xl font-bold text-green-600">{totalStats.done}</div>
-            <p className="text-xs text-muted-foreground">Completed</p>
           </CardContent>
         </Card>
         <Card>
@@ -162,8 +178,8 @@ export default function PortalDashboard() {
         </Card>
         <Card>
           <CardContent className="pt-6">
-            <div className="text-2xl font-bold text-red-600">{totalStats.blocked}</div>
-            <p className="text-xs text-muted-foreground">Blocked</p>
+            <div className="text-2xl font-bold text-green-600">{totalStats.done}</div>
+            <p className="text-xs text-muted-foreground">Completed</p>
           </CardContent>
         </Card>
       </div>
@@ -362,10 +378,9 @@ export default function PortalDashboard() {
                           {stats.inProgress} active
                         </div>
                       )}
-                      {stats.blocked > 0 && (
-                        <div className="flex items-center gap-1 text-red-600">
-                          <AlertCircle className="h-3 w-3" />
-                          {stats.blocked} blocked
+                      {stats.todo > 0 && (
+                        <div className="flex items-center gap-1 text-muted-foreground">
+                          {stats.todo} to do
                         </div>
                       )}
                     </div>
@@ -375,8 +390,21 @@ export default function PortalDashboard() {
             </Link>
           );
         })}
-
       </div>
+
+      {/* Create Task Dialog */}
+      {selectedProjectId && (
+        <CreateTaskDialog
+          projectId={selectedProjectId}
+          projects={projects}
+          open={showCreateTask}
+          onOpenChange={(open) => {
+            setShowCreateTask(open);
+            if (!open) setSelectedProjectId(null);
+          }}
+          onSuccess={handleTaskCreated}
+        />
+      )}
     </div>
   );
 }

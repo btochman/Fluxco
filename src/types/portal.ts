@@ -1,6 +1,6 @@
 // Portal types - local type definitions that work with the database schema
 
-export type TaskStatus = "backlog" | "todo" | "in_progress" | "review" | "done" | "blocked";
+export type TaskStatus = "backlog" | "todo" | "in_progress" | "review" | "done";
 export type TaskPriority = "low" | "medium" | "high" | "urgent";
 export type ProjectStatus = "active" | "paused" | "completed" | "archived";
 
