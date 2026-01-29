@@ -3,8 +3,8 @@ import EmployeeDashboard from "@/components/employee/EmployeeDashboard";
 import Footer from "@/components/Footer";
 
 export const metadata = {
-  title: "Employee Portal | FluxCo",
-  description: "FluxCo employee dashboard for managing transformer projects, quotes, and orders.",
+  title: "Fluxer Portal | FluxCo",
+  description: "FluxCo Fluxer dashboard for managing transformer projects, quotes, and orders.",
   robots: {
     index: false,
     follow: false,

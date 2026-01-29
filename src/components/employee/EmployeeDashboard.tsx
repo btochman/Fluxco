@@ -96,7 +96,7 @@ function LoginForm({ onLogin }: { onLogin: (employee: Employee) => void }) {
               />
             </svg>
           </div>
-          <CardTitle className="text-2xl font-display">Employee Portal</CardTitle>
+          <CardTitle className="text-2xl font-display">Fluxer Portal</CardTitle>
           <CardDescription>Sign in to access the FluxCo project management dashboard</CardDescription>
         </CardHeader>
         <CardContent>

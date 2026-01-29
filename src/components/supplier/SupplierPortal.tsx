@@ -109,11 +109,19 @@ interface Contract {
 
 const SupplierPortal = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [authMode, setAuthMode] = useState<"login" | "signup">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [supplier, setSupplier] = useState<DBSupplier | null>(null);
+
+  // Signup form state
+  const [signupCompanyName, setSignupCompanyName] = useState("");
+  const [signupContactName, setSignupContactName] = useState("");
+  const [signupPhone, setSignupPhone] = useState("");
+  const [signupCity, setSignupCity] = useState("");
+  const [signupCountry, setSignupCountry] = useState("USA");
   const [rfqs, setRfqs] = useState<DBRFQ[]>([]);
   const [bids, setBids] = useState<DBBid[]>([]);
   const [contracts, setContracts] = useState<DBContract[]>([]);
@@ -196,6 +204,66 @@ const SupplierPortal = () => {
     setIsLoggedIn(false);
     setEmail("");
     setPassword("");
+  };
+
+  const handleSignUp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoginError("");
+    setIsLoading(true);
+
+    // Validate fields
+    if (!email || !password || !signupCompanyName || !signupContactName) {
+      setLoginError("Please fill in all required fields");
+      setIsLoading(false);
+      return;
+    }
+
+    if (password.length < 6) {
+      setLoginError("Password must be at least 6 characters");
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      // Check if email already exists
+      const { data: existing } = await supabase
+        .from('suppliers')
+        .select('id')
+        .eq('email', email.toLowerCase())
+        .single();
+
+      if (existing) {
+        setLoginError("An account with this email already exists");
+        setIsLoading(false);
+        return;
+      }
+
+      // Create new supplier
+      const { data, error } = await supabase
+        .from('suppliers')
+        .insert({
+          email: email.toLowerCase(),
+          password_hash: password, // In production, hash this!
+          company_name: signupCompanyName,
+          contact_name: signupContactName,
+          phone: signupPhone || null,
+          city: signupCity || null,
+          country: signupCountry || 'USA',
+          status: 'pending',
+        })
+        .select()
+        .single();
+
+      if (error) {
+        setLoginError("Failed to create account. Please try again.");
+      } else if (data) {
+        setSupplier(data);
+        setIsLoggedIn(true);
+      }
+    } catch {
+      setLoginError("An error occurred. Please try again.");
+    }
+    setIsLoading(false);
   };
 
   const handleSubmitBid = async (e: React.FormEvent) => {
@@ -349,7 +417,7 @@ const SupplierPortal = () => {
   const openRFQs = rfqs.filter((rfq) => rfq.status === "open");
   const hasAlreadyBid = (rfqId: string) => bids.some((bid) => bid.rfq_id === rfqId);
 
-  // ==================== Login View ====================
+  // ==================== Login/Signup View ====================
 
   if (!isLoggedIn) {
     return (
@@ -364,50 +432,138 @@ const SupplierPortal = () => {
               </div>
               <CardTitle className="text-2xl">Supplier Portal</CardTitle>
               <CardDescription>
-                Sign in to view RFQs, submit bids, and manage your contracts with FluxCo.
+                {authMode === "login"
+                  ? "Sign in to view RFQs, submit bids, and manage your contracts."
+                  : "Create an account to join our supplier network."}
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleLogin} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="supplier@company.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="bg-background border-border"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="password">Password</Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    placeholder="Enter your password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="bg-background border-border"
-                  />
-                </div>
-                {loginError && (
-                  <p className="text-sm text-red-500">{loginError}</p>
-                )}
-                <Button type="submit" className="w-full" variant="hero" disabled={isLoading}>
-                  {isLoading ? "Signing in..." : "Sign In"}
-                </Button>
-              </form>
+              <Tabs value={authMode} onValueChange={(v) => { setAuthMode(v as "login" | "signup"); setLoginError(""); }}>
+                <TabsList className="grid w-full grid-cols-2 mb-4">
+                  <TabsTrigger value="login">Sign In</TabsTrigger>
+                  <TabsTrigger value="signup">Sign Up</TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="login">
+                  <form onSubmit={handleLogin} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="login-email">Email</Label>
+                      <Input
+                        id="login-email"
+                        type="email"
+                        placeholder="supplier@company.com"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="bg-background border-border"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="login-password">Password</Label>
+                      <Input
+                        id="login-password"
+                        type="password"
+                        placeholder="Enter your password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        className="bg-background border-border"
+                      />
+                    </div>
+                    {loginError && (
+                      <p className="text-sm text-red-500">{loginError}</p>
+                    )}
+                    <Button type="submit" className="w-full" variant="hero" disabled={isLoading}>
+                      {isLoading ? "Signing in..." : "Sign In"}
+                    </Button>
+                  </form>
+                </TabsContent>
+
+                <TabsContent value="signup">
+                  <form onSubmit={handleSignUp} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="signup-company">Company Name *</Label>
+                      <Input
+                        id="signup-company"
+                        type="text"
+                        placeholder="Your Company Inc."
+                        value={signupCompanyName}
+                        onChange={(e) => setSignupCompanyName(e.target.value)}
+                        className="bg-background border-border"
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="signup-contact">Contact Name *</Label>
+                      <Input
+                        id="signup-contact"
+                        type="text"
+                        placeholder="John Smith"
+                        value={signupContactName}
+                        onChange={(e) => setSignupContactName(e.target.value)}
+                        className="bg-background border-border"
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="signup-email">Email *</Label>
+                      <Input
+                        id="signup-email"
+                        type="email"
+                        placeholder="supplier@company.com"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="bg-background border-border"
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="signup-password">Password *</Label>
+                      <Input
+                        id="signup-password"
+                        type="password"
+                        placeholder="Min 6 characters"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        className="bg-background border-border"
+                        required
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="signup-city">City</Label>
+                        <Input
+                          id="signup-city"
+                          type="text"
+                          placeholder="Houston"
+                          value={signupCity}
+                          onChange={(e) => setSignupCity(e.target.value)}
+                          className="bg-background border-border"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="signup-phone">Phone</Label>
+                        <Input
+                          id="signup-phone"
+                          type="tel"
+                          placeholder="(555) 123-4567"
+                          value={signupPhone}
+                          onChange={(e) => setSignupPhone(e.target.value)}
+                          className="bg-background border-border"
+                        />
+                      </div>
+                    </div>
+                    {loginError && (
+                      <p className="text-sm text-red-500">{loginError}</p>
+                    )}
+                    <Button type="submit" className="w-full" variant="hero" disabled={isLoading}>
+                      {isLoading ? "Creating Account..." : "Create Account"}
+                    </Button>
+                    <p className="text-xs text-muted-foreground text-center">
+                      New accounts are pending approval. You&apos;ll receive confirmation once verified.
+                    </p>
+                  </form>
+                </TabsContent>
+              </Tabs>
             </CardContent>
-            <CardFooter className="flex flex-col gap-2 text-center">
-              <p className="text-sm text-muted-foreground">
-                Not a registered supplier?{" "}
-                <a href="#contact" className="text-primary hover:underline">
-                  Contact us
-                </a>{" "}
-                to join our network.
-              </p>
-            </CardFooter>
           </Card>
         </div>
       </section>
