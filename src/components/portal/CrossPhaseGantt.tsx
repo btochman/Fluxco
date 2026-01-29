@@ -170,9 +170,9 @@ export function CrossPhaseGantt({
     return (
       <div className="h-full flex items-center justify-center text-muted-foreground">
         <div className="text-center">
-          <p className="text-lg font-medium">No tasks with dates</p>
+          <p className="text-lg font-medium">No tasks found</p>
           <p className="text-sm mt-1">
-            Add start and due dates to tasks to see them in the timeline
+            Create tasks to see them in the timeline
           </p>
         </div>
       </div>

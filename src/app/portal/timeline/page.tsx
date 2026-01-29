@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useAllTasks, useProjects } from "@/hooks/useTasks";
 import { CrossPhaseGantt } from "@/components/portal/CrossPhaseGantt";
@@ -20,7 +20,7 @@ export default function TimelinePage() {
   const [currentMemberId, setCurrentMemberId] = useState<string | undefined>();
 
   // Get current user's team member id
-  useState(() => {
+  useEffect(() => {
     const fetchMember = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (user?.email) {
@@ -35,7 +35,7 @@ export default function TimelinePage() {
       }
     };
     fetchMember();
-  });
+  }, []);
 
   const handleTaskClick = (task: TaskWithProject) => {
     setSelectedTask(task);
