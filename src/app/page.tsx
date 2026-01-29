@@ -1,6 +1,5 @@
 import Navbar from '@/components/Navbar';
 import HeroSection from '@/components/HeroSection';
-import SupplyChainSection from '@/components/SupplyChainSection';
 import AboutSection from '@/components/AboutSection';
 import ProductsSection from '@/components/ProductsSection';
 import InventoryPreview from '@/components/InventoryPreview';
@@ -13,8 +12,8 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-background">
       <Navbar />
+      <div className="fixed bottom-4 right-4 z-50 text-2xl" title="Made in USA">🇺🇸</div>
       <HeroSection />
-      <SupplyChainSection />
       <AboutSection />
       <ProductsSection />
       <InventoryPreview />
