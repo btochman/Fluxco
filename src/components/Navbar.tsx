@@ -25,25 +25,25 @@ const Navbar = () => {
       <div className="container mx-auto px-6">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <a href="#" className="flex items-center gap-3 group">
+          <Link href="/" className="flex items-center gap-3 group">
             <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center group-hover:shadow-[0_0_20px_hsl(205_100%_50%/0.5)] transition-all duration-300">
               <Zap className="w-6 h-6 text-primary-foreground" />
             </div>
             <span className="font-display text-2xl tracking-wide text-foreground">
               FLUXCO
             </span>
-          </a>
+          </Link>
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-8 ml-auto">
             {navLinks.map((link) => (
               link.isAnchor ? (
-                <a
+                <Link
                   key={link.name}
                   href={isHomePage ? link.href : `/${link.href}`}
                   className="text-muted-foreground hover:text-primary transition-colors duration-300 text-sm uppercase tracking-wider"
                 >
                   {link.name}
-                </a>
+                </Link>
               ) : (
                 <Link
                   key={link.name}
@@ -78,14 +78,14 @@ const Navbar = () => {
             <div className="flex flex-col gap-4">
               {navLinks.map((link) => (
                 link.isAnchor ? (
-                  <a
+                  <Link
                     key={link.name}
                     href={isHomePage ? link.href : `/${link.href}`}
                     className="text-muted-foreground hover:text-primary transition-colors duration-300 text-sm uppercase tracking-wider py-2"
                     onClick={() => setIsOpen(false)}
                   >
                     {link.name}
-                  </a>
+                  </Link>
                 ) : (
                   <Link
                     key={link.name}
