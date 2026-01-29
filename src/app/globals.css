@@ -24,6 +24,18 @@
   --radius: 0.25rem;
   --color-glow: hsl(200 70% 50%);
   --color-steel: hsl(215 20% 50%);
+  --color-copper: hsl(25 70% 55%);
+
+  /* SVG drawing colors (for direct use in SVG) */
+  --primary: 205 65% 45%;
+  --steel: 215 20% 50%;
+  --glow: 200 70% 50%;
+  --copper: 25 70% 55%;
+  --foreground: 210 20% 95%;
+  --background: 215 25% 8%;
+  --muted-foreground: 215 15% 55%;
+  --border: 215 15% 25%;
+  --secondary: 215 15% 18%;
 }
 
 :root {
