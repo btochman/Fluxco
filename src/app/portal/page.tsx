@@ -6,7 +6,7 @@ import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Clock, AlertCircle, Calendar } from "lucide-react";
+import { Clock, AlertCircle, Calendar } from "lucide-react";
 import { toast } from "sonner";
 
 interface Project {
@@ -204,13 +204,6 @@ export default function PortalDashboard() {
           );
         })}
 
-        {/* Add Phase Card */}
-        <Card className="border-dashed hover:border-primary/50 transition-colors cursor-pointer flex items-center justify-center min-h-[180px]">
-          <CardContent className="flex flex-col items-center gap-2 text-muted-foreground">
-            <Plus className="h-8 w-8" />
-            <span>Add Phase</span>
-          </CardContent>
-        </Card>
       </div>
     </div>
   );
