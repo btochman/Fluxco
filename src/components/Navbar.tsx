@@ -55,6 +55,13 @@ const Navbar = () => {
               )
             ))}
 
+            {/* Portal Button */}
+            <Button asChild variant="outline" size="lg">
+              <Link href="/portal">
+                Portal
+              </Link>
+            </Button>
+
             {/* Design Tool Button */}
             <Button asChild variant="hero" size="lg">
               <Link href="/design">
@@ -98,7 +105,13 @@ const Navbar = () => {
                 )
               ))}
 
-              <Button asChild variant="hero" size="lg" className="mt-4">
+              <Button asChild variant="outline" size="lg" className="mt-4">
+                <Link href="/portal" onClick={() => setIsOpen(false)}>
+                  Portal
+                </Link>
+              </Button>
+
+              <Button asChild variant="hero" size="lg">
                 <Link href="/design" onClick={() => setIsOpen(false)}>
                   Design Tool
                 </Link>
