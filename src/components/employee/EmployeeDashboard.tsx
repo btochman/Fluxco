@@ -104,40 +104,27 @@ function LoginForm({ onLogin }: { onLogin: (employee: Employee) => void }) {
     }
 
     try {
-      // Check if email already exists
-      const { data: existing } = await supabase
-        .from('employee_users')
-        .select('id')
-        .eq('email', email.toLowerCase())
-        .single();
-
-      if (existing) {
-        setError("An account with this email already exists");
-        setIsLoading(false);
-        return;
-      }
-
-      // Create new employee
-      const { data, error: insertError } = await supabase
-        .from('employee_users')
-        .insert({
+      const response = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'employee',
           email: email.toLowerCase(),
-          password_hash: password, // In production, hash this!
-          name: name,
-          role: 'engineer', // Default role
-        })
-        .select()
-        .single();
+          password,
+          name,
+        }),
+      });
 
-      if (insertError) {
-        console.error("Fluxer signup error:", insertError);
-        setError(insertError.message || "Failed to create account. Please try again.");
-      } else if (data) {
+      const result = await response.json();
+
+      if (!response.ok) {
+        setError(result.error || "Failed to create account. Please try again.");
+      } else if (result.user) {
         onLogin({
-          id: data.id,
-          email: data.email,
-          name: data.name,
-          role: data.role as Employee["role"],
+          id: result.user.id,
+          email: result.user.email,
+          name: result.user.name,
+          role: result.user.role as Employee["role"],
         });
       }
     } catch {

@@ -225,40 +225,27 @@ const SupplierPortal = () => {
     }
 
     try {
-      // Check if email already exists
-      const { data: existing } = await supabase
-        .from('suppliers')
-        .select('id')
-        .eq('email', email.toLowerCase())
-        .single();
-
-      if (existing) {
-        setLoginError("An account with this email already exists");
-        setIsLoading(false);
-        return;
-      }
-
-      // Create new supplier
-      const { data, error } = await supabase
-        .from('suppliers')
-        .insert({
+      const response = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'supplier',
           email: email.toLowerCase(),
-          password_hash: password, // In production, hash this!
-          company_name: signupCompanyName,
-          contact_name: signupContactName,
+          password,
+          companyName: signupCompanyName,
+          contactName: signupContactName,
           phone: signupPhone || null,
           city: signupCity || null,
           country: signupCountry || 'USA',
-          is_verified: false,
-        })
-        .select()
-        .single();
+        }),
+      });
 
-      if (error) {
-        console.error("Supplier signup error:", error);
-        setLoginError(error.message || "Failed to create account. Please try again.");
-      } else if (data) {
-        setSupplier(data);
+      const result = await response.json();
+
+      if (!response.ok) {
+        setLoginError(result.error || "Failed to create account. Please try again.");
+      } else if (result.user) {
+        setSupplier(result.user);
         setIsLoggedIn(true);
       }
     } catch {
