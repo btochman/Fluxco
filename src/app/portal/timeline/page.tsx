@@ -7,6 +7,7 @@ import { CrossPhaseGantt } from "@/components/portal/CrossPhaseGantt";
 import { TaskDialog } from "@/components/portal/TaskDialog";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { ArrowLeft, Users, CheckCircle2, Calendar } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
@@ -74,9 +75,10 @@ export default function TimelinePage() {
   }
 
   return (
-    <div className="h-full flex flex-col gap-4">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <TooltipProvider>
+      <div className="h-full flex flex-col gap-4">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
           <Link href="/portal">
             <Button variant="ghost" size="icon">
@@ -124,18 +126,19 @@ export default function TimelinePage() {
         />
       </div>
 
-      {/* Task Dialog */}
-      {selectedTask && (
-        <TaskDialog
-          task={selectedTask}
-          projectId={selectedTask.project_id}
-          open={!!selectedTask}
-          onOpenChange={(open) => {
-            if (!open) handleDialogClose();
-          }}
-          onSave={handleTaskSave}
-        />
-      )}
-    </div>
+        {/* Task Dialog */}
+        {selectedTask && (
+          <TaskDialog
+            task={selectedTask}
+            projectId={selectedTask.project_id}
+            open={!!selectedTask}
+            onOpenChange={(open) => {
+              if (!open) handleDialogClose();
+            }}
+            onSave={handleTaskSave}
+          />
+        )}
+      </div>
+    </TooltipProvider>
   );
 }
