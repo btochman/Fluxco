@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { supabase, EmployeeUser, Project as DBProject, QuoteRequest, MarketplaceListing as DBMarketplaceListing, Order as DBOrder } from "@/lib/supabase";
 
 // TypeScript Types
 interface Employee {
@@ -17,300 +18,20 @@ interface Employee {
   role: "admin" | "engineer" | "sales" | "operations";
 }
 
-interface Project {
-  id: string;
-  name: string;
-  customer: string;
-  type: "padmount" | "substation" | "dry-type" | "custom";
-  kva: number;
-  voltage: string;
-  status: "design" | "review" | "approved" | "manufacturing" | "testing" | "shipped";
-  assignedTo: string;
-  dueDate: string;
-  createdAt: string;
-}
 
-interface Quote {
-  id: string;
-  customer: string;
-  email: string;
-  type: string;
-  kva: number;
-  voltage: string;
-  status: "pending" | "reviewed" | "quoted" | "accepted" | "declined";
-  estimatedValue: number;
-  submittedAt: string;
-  notes?: string;
-}
-
-interface MarketplaceListing {
-  id: string;
-  seller: string;
-  sellerEmail: string;
-  type: string;
-  kva: number;
-  voltage: string;
-  condition: "new" | "used-excellent" | "used-good" | "used-fair" | "refurbished";
-  askingPrice: number;
-  status: "pending-review" | "approved" | "rejected" | "sold";
-  submittedAt: string;
-  location: string;
-}
-
-interface Order {
-  id: string;
-  projectId: string;
-  customer: string;
-  type: string;
-  kva: number;
-  status: "pending" | "in-production" | "quality-check" | "ready-to-ship" | "shipped" | "delivered";
-  orderDate: string;
-  estimatedDelivery: string;
-  trackingNumber?: string;
-}
-
-// Mock Data
-const mockProjects: Project[] = [
-  {
-    id: "PRJ-001",
-    name: "Austin Data Center - Unit A",
-    customer: "TechCorp Industries",
-    type: "padmount",
-    kva: 2500,
-    voltage: "13.8kV / 480V",
-    status: "manufacturing",
-    assignedTo: "John Martinez",
-    dueDate: "2026-03-15",
-    createdAt: "2026-01-10",
-  },
-  {
-    id: "PRJ-002",
-    name: "Houston Solar Farm Substation",
-    customer: "SunPower Texas",
-    type: "substation",
-    kva: 10000,
-    voltage: "69kV / 13.8kV",
-    status: "design",
-    assignedTo: "Sarah Chen",
-    dueDate: "2026-04-20",
-    createdAt: "2026-01-25",
-  },
-  {
-    id: "PRJ-003",
-    name: "Dallas Office Complex",
-    customer: "Metro Properties LLC",
-    type: "dry-type",
-    kva: 750,
-    voltage: "480V / 208V",
-    status: "approved",
-    assignedTo: "Mike Johnson",
-    dueDate: "2026-02-28",
-    createdAt: "2026-01-05",
-  },
-  {
-    id: "PRJ-004",
-    name: "San Antonio Manufacturing Plant",
-    customer: "Industrial Solutions Inc",
-    type: "padmount",
-    kva: 5000,
-    voltage: "34.5kV / 480V",
-    status: "review",
-    assignedTo: "Emily Rodriguez",
-    dueDate: "2026-05-01",
-    createdAt: "2026-01-20",
-  },
-];
-
-const mockQuotes: Quote[] = [
-  {
-    id: "QT-001",
-    customer: "Green Energy Corp",
-    email: "procurement@greenenergy.com",
-    type: "Padmount Transformer",
-    kva: 3000,
-    voltage: "25kV / 480V",
-    status: "pending",
-    estimatedValue: 125000,
-    submittedAt: "2026-01-27",
-  },
-  {
-    id: "QT-002",
-    customer: "City of Fort Worth",
-    email: "utilities@fortworthtx.gov",
-    type: "Substation Transformer",
-    kva: 15000,
-    voltage: "138kV / 13.8kV",
-    status: "reviewed",
-    estimatedValue: 450000,
-    submittedAt: "2026-01-25",
-    notes: "Government project - requires bid documentation",
-  },
-  {
-    id: "QT-003",
-    customer: "Retail Development Group",
-    email: "projects@retaildev.com",
-    type: "Dry-Type Transformer",
-    kva: 500,
-    voltage: "480V / 208V",
-    status: "quoted",
-    estimatedValue: 28000,
-    submittedAt: "2026-01-22",
-  },
-  {
-    id: "QT-004",
-    customer: "AgriTech Farms",
-    email: "operations@agritechfarms.com",
-    type: "Padmount Transformer",
-    kva: 1500,
-    voltage: "13.8kV / 480V",
-    status: "pending",
-    estimatedValue: 75000,
-    submittedAt: "2026-01-28",
-  },
-];
-
-const mockListings: MarketplaceListing[] = [
-  {
-    id: "MKT-001",
-    seller: "Industrial Surplus Co",
-    sellerEmail: "sales@industrialsurplus.com",
-    type: "Padmount Transformer",
-    kva: 2000,
-    voltage: "13.8kV / 480V",
-    condition: "used-excellent",
-    askingPrice: 45000,
-    status: "pending-review",
-    submittedAt: "2026-01-26",
-    location: "Houston, TX",
-  },
-  {
-    id: "MKT-002",
-    seller: "PowerGrid Decommission",
-    sellerEmail: "inventory@powergrid.com",
-    type: "Substation Transformer",
-    kva: 7500,
-    voltage: "69kV / 13.8kV",
-    condition: "refurbished",
-    askingPrice: 180000,
-    status: "approved",
-    submittedAt: "2026-01-20",
-    location: "Dallas, TX",
-  },
-  {
-    id: "MKT-003",
-    seller: "Factory Liquidators",
-    sellerEmail: "contact@factoryliq.com",
-    type: "Dry-Type Transformer",
-    kva: 300,
-    voltage: "480V / 208V",
-    condition: "used-good",
-    askingPrice: 8500,
-    status: "pending-review",
-    submittedAt: "2026-01-27",
-    location: "Austin, TX",
-  },
-];
-
-const mockOrders: Order[] = [
-  {
-    id: "ORD-001",
-    projectId: "PRJ-001",
-    customer: "TechCorp Industries",
-    type: "Padmount 2500kVA",
-    kva: 2500,
-    status: "in-production",
-    orderDate: "2026-01-15",
-    estimatedDelivery: "2026-03-10",
-  },
-  {
-    id: "ORD-002",
-    projectId: "PRJ-003",
-    customer: "Metro Properties LLC",
-    type: "Dry-Type 750kVA",
-    kva: 750,
-    status: "quality-check",
-    orderDate: "2026-01-08",
-    estimatedDelivery: "2026-02-25",
-  },
-  {
-    id: "ORD-003",
-    projectId: "PRJ-005",
-    customer: "Lone Star Energy",
-    type: "Padmount 1000kVA",
-    kva: 1000,
-    status: "shipped",
-    orderDate: "2025-12-20",
-    estimatedDelivery: "2026-01-30",
-    trackingNumber: "1Z999AA10123456784",
-  },
-  {
-    id: "ORD-004",
-    projectId: "PRJ-006",
-    customer: "Gulf Coast Utilities",
-    type: "Substation 5000kVA",
-    kva: 5000,
-    status: "delivered",
-    orderDate: "2025-12-01",
-    estimatedDelivery: "2026-01-15",
-    trackingNumber: "1Z999AA10123456785",
-  },
-];
 
 // Status Badge Variants
-const getProjectStatusBadge = (status: Project["status"]) => {
-  const variants: Record<Project["status"], { label: string; className: string }> = {
+const getProjectStatusBadge = (status: DBProject["status"]) => {
+  const variants: Record<DBProject["status"], { label: string; className: string }> = {
     design: { label: "Design", className: "bg-blue-500/20 text-blue-400 border-blue-500/30" },
     review: { label: "In Review", className: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30" },
     approved: { label: "Approved", className: "bg-green-500/20 text-green-400 border-green-500/30" },
     manufacturing: { label: "Manufacturing", className: "bg-purple-500/20 text-purple-400 border-purple-500/30" },
     testing: { label: "Testing", className: "bg-orange-500/20 text-orange-400 border-orange-500/30" },
     shipped: { label: "Shipped", className: "bg-cyan-500/20 text-cyan-400 border-cyan-500/30" },
+    completed: { label: "Completed", className: "bg-green-500/20 text-green-400 border-green-500/30" },
   };
   return variants[status];
-};
-
-const getQuoteStatusBadge = (status: Quote["status"]) => {
-  const variants: Record<Quote["status"], { label: string; className: string }> = {
-    pending: { label: "Pending", className: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30" },
-    reviewed: { label: "Reviewed", className: "bg-blue-500/20 text-blue-400 border-blue-500/30" },
-    quoted: { label: "Quoted", className: "bg-purple-500/20 text-purple-400 border-purple-500/30" },
-    accepted: { label: "Accepted", className: "bg-green-500/20 text-green-400 border-green-500/30" },
-    declined: { label: "Declined", className: "bg-red-500/20 text-red-400 border-red-500/30" },
-  };
-  return variants[status];
-};
-
-const getListingStatusBadge = (status: MarketplaceListing["status"]) => {
-  const variants: Record<MarketplaceListing["status"], { label: string; className: string }> = {
-    "pending-review": { label: "Pending Review", className: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30" },
-    approved: { label: "Approved", className: "bg-green-500/20 text-green-400 border-green-500/30" },
-    rejected: { label: "Rejected", className: "bg-red-500/20 text-red-400 border-red-500/30" },
-    sold: { label: "Sold", className: "bg-cyan-500/20 text-cyan-400 border-cyan-500/30" },
-  };
-  return variants[status];
-};
-
-const getOrderStatusBadge = (status: Order["status"]) => {
-  const variants: Record<Order["status"], { label: string; className: string }> = {
-    pending: { label: "Pending", className: "bg-gray-500/20 text-gray-400 border-gray-500/30" },
-    "in-production": { label: "In Production", className: "bg-purple-500/20 text-purple-400 border-purple-500/30" },
-    "quality-check": { label: "Quality Check", className: "bg-orange-500/20 text-orange-400 border-orange-500/30" },
-    "ready-to-ship": { label: "Ready to Ship", className: "bg-blue-500/20 text-blue-400 border-blue-500/30" },
-    shipped: { label: "Shipped", className: "bg-cyan-500/20 text-cyan-400 border-cyan-500/30" },
-    delivered: { label: "Delivered", className: "bg-green-500/20 text-green-400 border-green-500/30" },
-  };
-  return variants[status];
-};
-
-const getConditionBadge = (condition: MarketplaceListing["condition"]) => {
-  const variants: Record<MarketplaceListing["condition"], { label: string; className: string }> = {
-    new: { label: "New", className: "bg-green-500/20 text-green-400 border-green-500/30" },
-    "used-excellent": { label: "Used - Excellent", className: "bg-blue-500/20 text-blue-400 border-blue-500/30" },
-    "used-good": { label: "Used - Good", className: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30" },
-    "used-fair": { label: "Used - Fair", className: "bg-orange-500/20 text-orange-400 border-orange-500/30" },
-    refurbished: { label: "Refurbished", className: "bg-purple-500/20 text-purple-400 border-purple-500/30" },
-  };
-  return variants[condition];
 };
 
 // Login Form Component
@@ -320,28 +41,38 @@ function LoginForm({ onLogin }: { onLogin: (employee: Employee) => void }) {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  // Mock employee users (would be replaced with Supabase auth)
-  const mockEmployees: Record<string, Employee> = {
-    "admin@fluxco.com": { id: "1", email: "admin@fluxco.com", name: "Admin User", role: "admin" },
-    "engineer@fluxco.com": { id: "2", email: "engineer@fluxco.com", name: "John Martinez", role: "engineer" },
-    "sales@fluxco.com": { id: "3", email: "sales@fluxco.com", name: "Sarah Chen", role: "sales" },
-    "ops@fluxco.com": { id: "4", email: "ops@fluxco.com", name: "Mike Johnson", role: "operations" },
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setIsLoading(true);
 
-    // Simulate API call delay
-    await new Promise((resolve) => setTimeout(resolve, 800));
+    try {
+      // Query Supabase for employee
+      const { data, error: queryError } = await supabase
+        .from('employee_users')
+        .select('id, email, name, role')
+        .eq('email', email.toLowerCase())
+        .eq('password_hash', password)
+        .single();
 
-    // Mock authentication (password is "fluxco123" for all users)
-    const employee = mockEmployees[email.toLowerCase()];
-    if (employee && password === "fluxco123") {
-      onLogin(employee);
-    } else {
-      setError("Invalid email or password");
+      if (queryError || !data) {
+        setError("Invalid email or password");
+      } else {
+        // Update last login
+        await supabase
+          .from('employee_users')
+          .update({ last_login: new Date().toISOString() })
+          .eq('id', data.id);
+
+        onLogin({
+          id: data.id,
+          email: data.email,
+          name: data.name,
+          role: data.role as Employee["role"],
+        });
+      }
+    } catch {
+      setError("An error occurred. Please try again.");
     }
     setIsLoading(false);
   };
@@ -433,12 +164,31 @@ function DashboardHeader({ employee, onLogout }: { employee: Employee; onLogout:
 
 // Stats Cards Component
 function StatsCards() {
-  const stats = [
-    { label: "Active Projects", value: mockProjects.filter((p) => p.status !== "shipped").length, color: "text-primary" },
-    { label: "Pending Quotes", value: mockQuotes.filter((q) => q.status === "pending").length, color: "text-yellow-400" },
-    { label: "Marketplace Listings", value: mockListings.filter((l) => l.status === "pending-review").length, color: "text-purple-400" },
-    { label: "Orders In Progress", value: mockOrders.filter((o) => !["delivered", "shipped"].includes(o.status)).length, color: "text-green-400" },
-  ];
+  const [stats, setStats] = useState([
+    { label: "Active Projects", value: 0, color: "text-primary" },
+    { label: "New Quotes", value: 0, color: "text-yellow-400" },
+    { label: "Pending Reviews", value: 0, color: "text-purple-400" },
+    { label: "Orders In Progress", value: 0, color: "text-green-400" },
+  ]);
+
+  useEffect(() => {
+    async function fetchStats() {
+      const [projects, quotes, listings, orders] = await Promise.all([
+        supabase.from('projects').select('id', { count: 'exact' }).neq('status', 'completed'),
+        supabase.from('quote_requests').select('id', { count: 'exact' }).eq('status', 'new'),
+        supabase.from('marketplace_listings').select('id', { count: 'exact' }).eq('status', 'pending_review'),
+        supabase.from('orders').select('id', { count: 'exact' }).not('status', 'in', '("delivered","shipped","cancelled")'),
+      ]);
+
+      setStats([
+        { label: "Active Projects", value: projects.count || 0, color: "text-primary" },
+        { label: "New Quotes", value: quotes.count || 0, color: "text-yellow-400" },
+        { label: "Pending Reviews", value: listings.count || 0, color: "text-purple-400" },
+        { label: "Orders In Progress", value: orders.count || 0, color: "text-green-400" },
+      ]);
+    }
+    fetchStats();
+  }, []);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -456,6 +206,28 @@ function StatsCards() {
 
 // Projects Tab Component
 function ProjectsTab() {
+  const [projects, setProjects] = useState<DBProject[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchProjects() {
+      const { data, error } = await supabase
+        .from('projects')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (!error && data) {
+        setProjects(data);
+      }
+      setLoading(false);
+    }
+    fetchProjects();
+  }, []);
+
+  if (loading) {
+    return <div className="text-center py-8 text-muted-foreground">Loading projects...</div>;
+  }
+
   return (
     <Card className="bg-card/50 backdrop-blur border-border">
       <CardHeader>
@@ -468,51 +240,58 @@ function ProjectsTab() {
         </div>
       </CardHeader>
       <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Project ID</TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Customer</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead>Specs</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Assigned To</TableHead>
-              <TableHead>Due Date</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {mockProjects.map((project) => {
-              const statusBadge = getProjectStatusBadge(project.status);
-              return (
-                <TableRow key={project.id}>
-                  <TableCell className="font-mono text-sm">{project.id}</TableCell>
-                  <TableCell className="font-medium">{project.name}</TableCell>
-                  <TableCell>{project.customer}</TableCell>
-                  <TableCell className="capitalize">{project.type}</TableCell>
-                  <TableCell>
-                    <span className="text-sm">
-                      {project.kva.toLocaleString()} kVA
-                      <br />
-                      <span className="text-muted-foreground">{project.voltage}</span>
-                    </span>
-                  </TableCell>
-                  <TableCell>
-                    <Badge className={statusBadge.className}>{statusBadge.label}</Badge>
-                  </TableCell>
-                  <TableCell>{project.assignedTo}</TableCell>
-                  <TableCell>{project.dueDate}</TableCell>
-                  <TableCell>
-                    <Button variant="ghost" size="sm">
-                      View
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
+        {projects.length === 0 ? (
+          <div className="text-center py-8 text-muted-foreground">No projects yet</div>
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Project #</TableHead>
+                <TableHead>Customer</TableHead>
+                <TableHead>Specs</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Priority</TableHead>
+                <TableHead>Target Delivery</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {projects.map((project) => {
+                const statusBadge = getProjectStatusBadge(project.status);
+                return (
+                  <TableRow key={project.id}>
+                    <TableCell className="font-mono text-sm">{project.project_number}</TableCell>
+                    <TableCell>
+                      <div>
+                        <span className="font-medium">{project.customer_name}</span>
+                        {project.customer_company && (
+                          <><br /><span className="text-sm text-muted-foreground">{project.customer_company}</span></>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <span className="text-sm">
+                        {project.rated_power_kva.toLocaleString()} kVA
+                        <br />
+                        <span className="text-muted-foreground">{project.primary_voltage}V / {project.secondary_voltage}V</span>
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <Badge className={statusBadge.className}>{statusBadge.label}</Badge>
+                    </TableCell>
+                    <TableCell className="capitalize">{project.priority}</TableCell>
+                    <TableCell>{project.target_delivery || '-'}</TableCell>
+                    <TableCell>
+                      <Button variant="ghost" size="sm">
+                        View
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        )}
       </CardContent>
     </Card>
   );
@@ -520,6 +299,39 @@ function ProjectsTab() {
 
 // Quotes Tab Component
 function QuotesTab() {
+  const [quotes, setQuotes] = useState<QuoteRequest[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchQuotes() {
+      const { data, error } = await supabase
+        .from('quote_requests')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (!error && data) {
+        setQuotes(data);
+      }
+      setLoading(false);
+    }
+    fetchQuotes();
+  }, []);
+
+  const getQuoteStatusBadgeFromDB = (status: QuoteRequest["status"]) => {
+    const variants: Record<QuoteRequest["status"], { label: string; className: string }> = {
+      new: { label: "New", className: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30" },
+      contacted: { label: "Contacted", className: "bg-blue-500/20 text-blue-400 border-blue-500/30" },
+      quoted: { label: "Quoted", className: "bg-purple-500/20 text-purple-400 border-purple-500/30" },
+      won: { label: "Won", className: "bg-green-500/20 text-green-400 border-green-500/30" },
+      lost: { label: "Lost", className: "bg-red-500/20 text-red-400 border-red-500/30" },
+    };
+    return variants[status];
+  };
+
+  if (loading) {
+    return <div className="text-center py-8 text-muted-foreground">Loading quotes...</div>;
+  }
+
   return (
     <Card className="bg-card/50 backdrop-blur border-border">
       <CardHeader>
@@ -534,62 +346,60 @@ function QuotesTab() {
         </div>
       </CardHeader>
       <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Quote ID</TableHead>
-              <TableHead>Customer</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead>Specs</TableHead>
-              <TableHead>Est. Value</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Submitted</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {mockQuotes.map((quote) => {
-              const statusBadge = getQuoteStatusBadge(quote.status);
-              return (
-                <TableRow key={quote.id}>
-                  <TableCell className="font-mono text-sm">{quote.id}</TableCell>
-                  <TableCell>
-                    <div>
-                      <span className="font-medium">{quote.customer}</span>
-                      <br />
-                      <span className="text-sm text-muted-foreground">{quote.email}</span>
-                    </div>
-                  </TableCell>
-                  <TableCell>{quote.type}</TableCell>
-                  <TableCell>
-                    <span className="text-sm">
-                      {quote.kva.toLocaleString()} kVA
-                      <br />
-                      <span className="text-muted-foreground">{quote.voltage}</span>
-                    </span>
-                  </TableCell>
-                  <TableCell className="text-green-400">${quote.estimatedValue.toLocaleString()}</TableCell>
-                  <TableCell>
-                    <Badge className={statusBadge.className}>{statusBadge.label}</Badge>
-                  </TableCell>
-                  <TableCell>{quote.submittedAt}</TableCell>
-                  <TableCell>
-                    <div className="flex gap-1">
-                      <Button variant="ghost" size="sm">
-                        Review
-                      </Button>
-                      {quote.status === "pending" && (
-                        <Button variant="default" size="sm">
-                          Create Quote
+        {quotes.length === 0 ? (
+          <div className="text-center py-8 text-muted-foreground">No quote requests yet</div>
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Customer</TableHead>
+                <TableHead>Company</TableHead>
+                <TableHead>Product Interest</TableHead>
+                <TableHead>Est. Value</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Submitted</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {quotes.map((quote) => {
+                const statusBadge = getQuoteStatusBadgeFromDB(quote.status);
+                return (
+                  <TableRow key={quote.id}>
+                    <TableCell>
+                      <div>
+                        <span className="font-medium">{quote.name}</span>
+                        <br />
+                        <span className="text-sm text-muted-foreground">{quote.email}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell>{quote.company || '-'}</TableCell>
+                    <TableCell>{quote.product_interest || '-'}</TableCell>
+                    <TableCell className="text-green-400">
+                      {quote.estimated_value ? `$${quote.estimated_value.toLocaleString()}` : '-'}
+                    </TableCell>
+                    <TableCell>
+                      <Badge className={statusBadge.className}>{statusBadge.label}</Badge>
+                    </TableCell>
+                    <TableCell>{new Date(quote.created_at).toLocaleDateString()}</TableCell>
+                    <TableCell>
+                      <div className="flex gap-1">
+                        <Button variant="ghost" size="sm">
+                          Review
                         </Button>
-                      )}
-                    </div>
-                  </TableCell>
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
+                        {quote.status === "new" && (
+                          <Button variant="default" size="sm">
+                            Create Quote
+                          </Button>
+                        )}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        )}
       </CardContent>
     </Card>
   );
@@ -597,6 +407,56 @@ function QuotesTab() {
 
 // Marketplace Tab Component
 function MarketplaceTab() {
+  const [listings, setListings] = useState<DBMarketplaceListing[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchListings() {
+      const { data, error } = await supabase
+        .from('marketplace_listings')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (!error && data) {
+        setListings(data);
+      }
+      setLoading(false);
+    }
+    fetchListings();
+  }, []);
+
+  const getListingStatusBadgeFromDB = (status: DBMarketplaceListing["status"]) => {
+    const variants: Record<DBMarketplaceListing["status"], { label: string; className: string }> = {
+      pending_review: { label: "Pending Review", className: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30" },
+      approved: { label: "Approved", className: "bg-blue-500/20 text-blue-400 border-blue-500/30" },
+      listed: { label: "Listed", className: "bg-green-500/20 text-green-400 border-green-500/30" },
+      sold: { label: "Sold", className: "bg-cyan-500/20 text-cyan-400 border-cyan-500/30" },
+      rejected: { label: "Rejected", className: "bg-red-500/20 text-red-400 border-red-500/30" },
+      expired: { label: "Expired", className: "bg-gray-500/20 text-gray-400 border-gray-500/30" },
+    };
+    return variants[status];
+  };
+
+  const handleApprove = async (id: string) => {
+    await supabase
+      .from('marketplace_listings')
+      .update({ status: 'approved', updated_at: new Date().toISOString() })
+      .eq('id', id);
+    setListings(listings.map(l => l.id === id ? { ...l, status: 'approved' as const } : l));
+  };
+
+  const handleReject = async (id: string) => {
+    await supabase
+      .from('marketplace_listings')
+      .update({ status: 'rejected', updated_at: new Date().toISOString() })
+      .eq('id', id);
+    setListings(listings.map(l => l.id === id ? { ...l, status: 'rejected' as const } : l));
+  };
+
+  if (loading) {
+    return <div className="text-center py-8 text-muted-foreground">Loading listings...</div>;
+  }
+
   return (
     <Card className="bg-card/50 backdrop-blur border-border">
       <CardHeader>
@@ -611,74 +471,75 @@ function MarketplaceTab() {
         </div>
       </CardHeader>
       <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Listing ID</TableHead>
-              <TableHead>Seller</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead>Specs</TableHead>
-              <TableHead>Condition</TableHead>
-              <TableHead>Asking Price</TableHead>
-              <TableHead>Location</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {mockListings.map((listing) => {
-              const statusBadge = getListingStatusBadge(listing.status);
-              const conditionBadge = getConditionBadge(listing.condition);
-              return (
-                <TableRow key={listing.id}>
-                  <TableCell className="font-mono text-sm">{listing.id}</TableCell>
-                  <TableCell>
-                    <div>
-                      <span className="font-medium">{listing.seller}</span>
-                      <br />
-                      <span className="text-sm text-muted-foreground">{listing.sellerEmail}</span>
-                    </div>
-                  </TableCell>
-                  <TableCell>{listing.type}</TableCell>
-                  <TableCell>
-                    <span className="text-sm">
-                      {listing.kva.toLocaleString()} kVA
-                      <br />
-                      <span className="text-muted-foreground">{listing.voltage}</span>
-                    </span>
-                  </TableCell>
-                  <TableCell>
-                    <Badge className={conditionBadge.className}>{conditionBadge.label}</Badge>
-                  </TableCell>
-                  <TableCell className="text-green-400">${listing.askingPrice.toLocaleString()}</TableCell>
-                  <TableCell>{listing.location}</TableCell>
-                  <TableCell>
-                    <Badge className={statusBadge.className}>{statusBadge.label}</Badge>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex gap-1">
-                      {listing.status === "pending-review" && (
-                        <>
-                          <Button variant="default" size="sm">
-                            Approve
+        {listings.length === 0 ? (
+          <div className="text-center py-8 text-muted-foreground">No marketplace listings yet</div>
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Seller</TableHead>
+                <TableHead>Specs</TableHead>
+                <TableHead>Efficiency</TableHead>
+                <TableHead>Asking Price</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Submitted</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {listings.map((listing) => {
+                const statusBadge = getListingStatusBadgeFromDB(listing.status);
+                return (
+                  <TableRow key={listing.id}>
+                    <TableCell>
+                      <div>
+                        <span className="font-medium">{listing.contact_name}</span>
+                        <br />
+                        <span className="text-sm text-muted-foreground">{listing.contact_email}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <span className="text-sm">
+                        {listing.rated_power_kva.toLocaleString()} kVA
+                        <br />
+                        <span className="text-muted-foreground">{listing.primary_voltage}V / {listing.secondary_voltage}V</span>
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      {listing.efficiency_percent ? `${listing.efficiency_percent}%` : '-'}
+                    </TableCell>
+                    <TableCell className="text-green-400">
+                      {listing.asking_price ? `$${listing.asking_price.toLocaleString()}` : '-'}
+                    </TableCell>
+                    <TableCell>
+                      <Badge className={statusBadge.className}>{statusBadge.label}</Badge>
+                    </TableCell>
+                    <TableCell>{new Date(listing.created_at).toLocaleDateString()}</TableCell>
+                    <TableCell>
+                      <div className="flex gap-1">
+                        {listing.status === "pending_review" && (
+                          <>
+                            <Button variant="default" size="sm" onClick={() => handleApprove(listing.id)}>
+                              Approve
+                            </Button>
+                            <Button variant="destructive" size="sm" onClick={() => handleReject(listing.id)}>
+                              Reject
+                            </Button>
+                          </>
+                        )}
+                        {listing.status !== "pending_review" && (
+                          <Button variant="ghost" size="sm">
+                            View
                           </Button>
-                          <Button variant="destructive" size="sm">
-                            Reject
-                          </Button>
-                        </>
-                      )}
-                      {listing.status !== "pending-review" && (
-                        <Button variant="ghost" size="sm">
-                          View
-                        </Button>
-                      )}
-                    </div>
-                  </TableCell>
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
+                        )}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        )}
       </CardContent>
     </Card>
   );
@@ -686,6 +547,41 @@ function MarketplaceTab() {
 
 // Orders Tab Component
 function OrdersTab() {
+  const [orders, setOrders] = useState<DBOrder[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchOrders() {
+      const { data, error } = await supabase
+        .from('orders')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (!error && data) {
+        setOrders(data);
+      }
+      setLoading(false);
+    }
+    fetchOrders();
+  }, []);
+
+  const getOrderStatusBadgeFromDB = (status: DBOrder["status"]) => {
+    const variants: Record<DBOrder["status"], { label: string; className: string }> = {
+      pending: { label: "Pending", className: "bg-gray-500/20 text-gray-400 border-gray-500/30" },
+      in_production: { label: "In Production", className: "bg-purple-500/20 text-purple-400 border-purple-500/30" },
+      quality_check: { label: "Quality Check", className: "bg-orange-500/20 text-orange-400 border-orange-500/30" },
+      ready_to_ship: { label: "Ready to Ship", className: "bg-blue-500/20 text-blue-400 border-blue-500/30" },
+      shipped: { label: "Shipped", className: "bg-cyan-500/20 text-cyan-400 border-cyan-500/30" },
+      delivered: { label: "Delivered", className: "bg-green-500/20 text-green-400 border-green-500/30" },
+      cancelled: { label: "Cancelled", className: "bg-red-500/20 text-red-400 border-red-500/30" },
+    };
+    return variants[status];
+  };
+
+  if (loading) {
+    return <div className="text-center py-8 text-muted-foreground">Loading orders...</div>;
+  }
+
   return (
     <Card className="bg-card/50 backdrop-blur border-border">
       <CardHeader>
@@ -700,63 +596,76 @@ function OrdersTab() {
         </div>
       </CardHeader>
       <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Order ID</TableHead>
-              <TableHead>Project ID</TableHead>
-              <TableHead>Customer</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Order Date</TableHead>
-              <TableHead>Est. Delivery</TableHead>
-              <TableHead>Tracking</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {mockOrders.map((order) => {
-              const statusBadge = getOrderStatusBadge(order.status);
-              return (
-                <TableRow key={order.id}>
-                  <TableCell className="font-mono text-sm">{order.id}</TableCell>
-                  <TableCell className="font-mono text-sm text-muted-foreground">{order.projectId}</TableCell>
-                  <TableCell className="font-medium">{order.customer}</TableCell>
-                  <TableCell>{order.type}</TableCell>
-                  <TableCell>
-                    <Badge className={statusBadge.className}>{statusBadge.label}</Badge>
-                  </TableCell>
-                  <TableCell>{order.orderDate}</TableCell>
-                  <TableCell>{order.estimatedDelivery}</TableCell>
-                  <TableCell>
-                    {order.trackingNumber ? (
-                      <span className="font-mono text-xs text-primary">{order.trackingNumber}</span>
-                    ) : (
-                      <span className="text-muted-foreground">-</span>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex gap-1">
-                      <Button variant="ghost" size="sm">
-                        Details
-                      </Button>
-                      {order.status === "ready-to-ship" && (
-                        <Button variant="default" size="sm">
-                          Ship
-                        </Button>
+        {orders.length === 0 ? (
+          <div className="text-center py-8 text-muted-foreground">No orders yet</div>
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Order #</TableHead>
+                <TableHead>Customer</TableHead>
+                <TableHead>Quantity</TableHead>
+                <TableHead>Total</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Order Date</TableHead>
+                <TableHead>Est. Ship Date</TableHead>
+                <TableHead>Tracking</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {orders.map((order) => {
+                const statusBadge = getOrderStatusBadgeFromDB(order.status);
+                return (
+                  <TableRow key={order.id}>
+                    <TableCell className="font-mono text-sm">{order.order_number}</TableCell>
+                    <TableCell>
+                      <div>
+                        <span className="font-medium">{order.customer_name}</span>
+                        {order.customer_company && (
+                          <><br /><span className="text-sm text-muted-foreground">{order.customer_company}</span></>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell>{order.quantity}</TableCell>
+                    <TableCell className="text-green-400">
+                      {order.total_price ? `$${order.total_price.toLocaleString()}` : '-'}
+                    </TableCell>
+                    <TableCell>
+                      <Badge className={statusBadge.className}>{statusBadge.label}</Badge>
+                    </TableCell>
+                    <TableCell>{order.order_date}</TableCell>
+                    <TableCell>{order.estimated_ship_date || '-'}</TableCell>
+                    <TableCell>
+                      {order.tracking_number ? (
+                        <span className="font-mono text-xs text-primary">{order.tracking_number}</span>
+                      ) : (
+                        <span className="text-muted-foreground">-</span>
                       )}
-                      {order.status === "quality-check" && (
-                        <Button variant="default" size="sm">
-                          Approve QC
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex gap-1">
+                        <Button variant="ghost" size="sm">
+                          Details
                         </Button>
-                      )}
-                    </div>
-                  </TableCell>
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
+                        {order.status === "ready_to_ship" && (
+                          <Button variant="default" size="sm">
+                            Ship
+                          </Button>
+                        )}
+                        {order.status === "quality_check" && (
+                          <Button variant="default" size="sm">
+                            Approve QC
+                          </Button>
+                        )}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        )}
       </CardContent>
     </Card>
   );

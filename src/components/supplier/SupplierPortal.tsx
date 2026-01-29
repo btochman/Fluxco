@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   FileText,
   DollarSign,
@@ -16,6 +16,7 @@ import {
   XCircle,
   AlertCircle,
 } from "lucide-react";
+import { supabase, Supplier as DBSupplier, RFQ as DBRFQ, Bid as DBBid, Contract as DBContract } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -103,141 +104,6 @@ interface Contract {
   status: "active" | "in_production" | "shipped" | "completed";
 }
 
-// ==================== Mock Data ====================
-
-const mockSupplier: Supplier = {
-  id: "sup-001",
-  companyName: "Texas Transformer Manufacturing",
-  email: "sales@texastrans.com",
-  contactName: "Robert Martinez",
-  phone: "+1 (512) 555-0123",
-  location: "Houston, TX",
-  certifications: ["ISO 9001", "IEEE C57", "DOE 2016"],
-};
-
-const mockRFQs: RFQ[] = [
-  {
-    id: "rfq-2024-001",
-    title: "500 kVA Distribution Transformers",
-    description:
-      "Pad-mounted distribution transformers for municipal utility expansion project.",
-    capacityKVA: 500,
-    primaryVoltage: "12,470V",
-    secondaryVoltage: "480V",
-    phase: "three",
-    cooling: "ONAN",
-    application: "Distribution",
-    quantity: 25,
-    deliveryDeadline: "2024-06-15",
-    bidDeadline: "2024-02-28",
-    status: "open",
-    specialRequirements: "DOE 2016 efficiency compliant. FEOC certification required.",
-  },
-  {
-    id: "rfq-2024-002",
-    title: "2.5 MVA Substation Transformer",
-    description:
-      "Large power transformer for industrial facility upgrade.",
-    capacityKVA: 2500,
-    primaryVoltage: "34,500V",
-    secondaryVoltage: "4,160V",
-    phase: "three",
-    cooling: "ONAF",
-    application: "Power",
-    quantity: 3,
-    deliveryDeadline: "2024-08-01",
-    bidDeadline: "2024-03-15",
-    status: "open",
-    specialRequirements: "Temperature rise testing required. Include factory witness test.",
-  },
-  {
-    id: "rfq-2024-003",
-    title: "75 kVA Pole-Mount Units",
-    description:
-      "Single-phase pole-mounted transformers for rural electrification.",
-    capacityKVA: 75,
-    primaryVoltage: "7,200V",
-    secondaryVoltage: "240/120V",
-    phase: "single",
-    cooling: "ONAN",
-    application: "Distribution",
-    quantity: 150,
-    deliveryDeadline: "2024-05-01",
-    bidDeadline: "2024-02-15",
-    status: "closed",
-  },
-  {
-    id: "rfq-2024-004",
-    title: "1000 kVA Mining Transformer",
-    description:
-      "Heavy-duty transformers for underground mining operations.",
-    capacityKVA: 1000,
-    primaryVoltage: "13,800V",
-    secondaryVoltage: "600V",
-    phase: "three",
-    cooling: "KNAN",
-    application: "Specialty",
-    quantity: 8,
-    deliveryDeadline: "2024-07-15",
-    bidDeadline: "2024-03-01",
-    status: "open",
-    specialRequirements: "Explosion-proof enclosure. Mining safety certification required.",
-  },
-];
-
-const mockBids: Bid[] = [
-  {
-    id: "bid-001",
-    rfqId: "rfq-2024-001",
-    rfqTitle: "500 kVA Distribution Transformers",
-    supplierId: "sup-001",
-    unitPrice: 18500,
-    totalPrice: 462500,
-    leadTimeDays: 90,
-    notes: "Includes 2-year warranty and installation support.",
-    submittedAt: "2024-02-10",
-    status: "under_review",
-  },
-  {
-    id: "bid-002",
-    rfqId: "rfq-2024-003",
-    rfqTitle: "75 kVA Pole-Mount Units",
-    supplierId: "sup-001",
-    unitPrice: 4200,
-    totalPrice: 630000,
-    leadTimeDays: 60,
-    notes: "Bulk discount applied. Can expedite for additional 5%.",
-    submittedAt: "2024-02-05",
-    status: "rejected",
-  },
-];
-
-const mockContracts: Contract[] = [
-  {
-    id: "con-001",
-    rfqId: "rfq-2023-045",
-    rfqTitle: "300 kVA Industrial Transformers",
-    supplierId: "sup-001",
-    unitPrice: 12800,
-    totalPrice: 256000,
-    quantity: 20,
-    deliveryDate: "2024-03-15",
-    awardedAt: "2023-12-01",
-    status: "in_production",
-  },
-  {
-    id: "con-002",
-    rfqId: "rfq-2023-032",
-    rfqTitle: "50 kVA Dry-Type Units",
-    supplierId: "sup-001",
-    unitPrice: 3500,
-    totalPrice: 175000,
-    quantity: 50,
-    deliveryDate: "2024-01-30",
-    awardedAt: "2023-10-15",
-    status: "shipped",
-  },
-];
 
 // ==================== Component ====================
 
@@ -246,10 +112,11 @@ const SupplierPortal = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
-  const [supplier] = useState<Supplier>(mockSupplier);
-  const [rfqs] = useState<RFQ[]>(mockRFQs);
-  const [bids, setBids] = useState<Bid[]>(mockBids);
-  const [contracts] = useState<Contract[]>(mockContracts);
+  const [isLoading, setIsLoading] = useState(false);
+  const [supplier, setSupplier] = useState<DBSupplier | null>(null);
+  const [rfqs, setRfqs] = useState<DBRFQ[]>([]);
+  const [bids, setBids] = useState<DBBid[]>([]);
+  const [contracts, setContracts] = useState<DBContract[]>([]);
   const [selectedRFQ, setSelectedRFQ] = useState<RFQ | null>(null);
   const [bidDialogOpen, setBidDialogOpen] = useState(false);
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
@@ -259,15 +126,70 @@ const SupplierPortal = () => {
   const [bidLeadTime, setBidLeadTime] = useState("");
   const [bidNotes, setBidNotes] = useState("");
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Mock authentication - in production would call Supabase auth
-    if (email && password) {
-      setIsLoggedIn(true);
-      setLoginError("");
-    } else {
-      setLoginError("Please enter both email and password");
+  // Fetch data when logged in
+  useEffect(() => {
+    if (!isLoggedIn || !supplier) return;
+
+    const supplierId = supplier.id;
+
+    async function fetchData() {
+      // Fetch open RFQs
+      const { data: rfqData } = await supabase
+        .from('rfqs')
+        .select('*')
+        .in('status', ['open', 'closed'])
+        .order('bid_deadline', { ascending: true });
+      if (rfqData) setRfqs(rfqData);
+
+      // Fetch supplier's bids
+      const { data: bidData } = await supabase
+        .from('bids')
+        .select('*')
+        .eq('supplier_id', supplierId)
+        .order('submitted_at', { ascending: false });
+      if (bidData) setBids(bidData);
+
+      // Fetch supplier's contracts
+      const { data: contractData } = await supabase
+        .from('contracts')
+        .select('*')
+        .eq('supplier_id', supplierId)
+        .order('created_at', { ascending: false });
+      if (contractData) setContracts(contractData);
     }
+    fetchData();
+  }, [isLoggedIn, supplier]);
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoginError("");
+    setIsLoading(true);
+
+    try {
+      // Query Supabase for supplier
+      const { data, error } = await supabase
+        .from('suppliers')
+        .select('*')
+        .eq('email', email.toLowerCase())
+        .eq('password_hash', password)
+        .single();
+
+      if (error || !data) {
+        setLoginError("Invalid email or password");
+      } else {
+        // Update last login
+        await supabase
+          .from('suppliers')
+          .update({ last_login: new Date().toISOString() })
+          .eq('id', data.id);
+
+        setSupplier(data);
+        setIsLoggedIn(true);
+      }
+    } catch {
+      setLoginError("An error occurred. Please try again.");
+    }
+    setIsLoading(false);
   };
 
   const handleLogout = () => {
@@ -276,24 +198,31 @@ const SupplierPortal = () => {
     setPassword("");
   };
 
-  const handleSubmitBid = (e: React.FormEvent) => {
+  const handleSubmitBid = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedRFQ || !bidPrice || !bidLeadTime) return;
+    if (!selectedRFQ || !bidPrice || !bidLeadTime || !supplier) return;
 
-    const newBid: Bid = {
-      id: `bid-${Date.now()}`,
-      rfqId: selectedRFQ.id,
-      rfqTitle: selectedRFQ.title,
-      supplierId: supplier.id,
-      unitPrice: parseFloat(bidPrice),
-      totalPrice: parseFloat(bidPrice) * selectedRFQ.quantity,
-      leadTimeDays: parseInt(bidLeadTime),
-      notes: bidNotes,
-      submittedAt: new Date().toISOString().split("T")[0],
-      status: "pending",
-    };
+    const unitPrice = parseFloat(bidPrice);
+    const quantity = selectedRFQ.quantity;
+    const totalPrice = unitPrice * quantity;
 
-    setBids([...bids, newBid]);
+    const { data, error } = await supabase
+      .from('bids')
+      .insert({
+        rfq_id: selectedRFQ.id,
+        supplier_id: supplier.id,
+        unit_price: unitPrice,
+        total_price: totalPrice,
+        lead_time_weeks: Math.ceil(parseInt(bidLeadTime) / 7),
+        notes: bidNotes || null,
+        status: 'pending',
+      })
+      .select()
+      .single();
+
+    if (!error && data) {
+      setBids([data, ...bids]);
+    }
     setBidDialogOpen(false);
     resetBidForm();
   };
@@ -418,7 +347,7 @@ const SupplierPortal = () => {
   };
 
   const openRFQs = rfqs.filter((rfq) => rfq.status === "open");
-  const hasAlreadyBid = (rfqId: string) => bids.some((bid) => bid.rfqId === rfqId);
+  const hasAlreadyBid = (rfqId: string) => bids.some((bid) => bid.rfq_id === rfqId);
 
   // ==================== Login View ====================
 
@@ -465,8 +394,8 @@ const SupplierPortal = () => {
                 {loginError && (
                   <p className="text-sm text-red-500">{loginError}</p>
                 )}
-                <Button type="submit" className="w-full" variant="hero">
-                  Sign In
+                <Button type="submit" className="w-full" variant="hero" disabled={isLoading}>
+                  {isLoading ? "Signing in..." : "Sign In"}
                 </Button>
               </form>
             </CardContent>
@@ -500,9 +429,9 @@ const SupplierPortal = () => {
               Supplier Portal
             </Badge>
             <h1 className="text-3xl sm:text-4xl font-bold text-foreground">
-              Welcome, {supplier.companyName}
+              Welcome, {supplier?.company_name}
             </h1>
-            <p className="text-muted-foreground mt-1">{supplier.location}</p>
+            <p className="text-muted-foreground mt-1">{supplier?.city}, {supplier?.country}</p>
           </div>
           <Button variant="outline" onClick={handleLogout} className="gap-2">
             <LogOut className="w-4 h-4" />
@@ -533,7 +462,7 @@ const SupplierPortal = () => {
           <Card className="bg-card/50 border-border">
             <CardContent className="pt-6 text-center">
               <div className="text-3xl font-bold text-foreground">
-                {formatCurrency(contracts.reduce((sum, c) => sum + c.totalPrice, 0))}
+                {formatCurrency(contracts.reduce((sum, c) => sum + c.total_value, 0))}
               </div>
               <div className="text-sm text-muted-foreground">Total Value</div>
             </CardContent>
@@ -559,101 +488,102 @@ const SupplierPortal = () => {
 
           {/* ==================== RFQs Tab ==================== */}
           <TabsContent value="rfqs">
-            <div className="grid gap-6 md:grid-cols-2">
-              {rfqs.map((rfq) => (
-                <Card key={rfq.id} className="bg-card/80 border-border hover:border-primary/50 transition-colors">
-                  <CardHeader>
-                    <div className="flex justify-between items-start gap-2">
-                      <div>
-                        <CardTitle className="text-lg">{rfq.title}</CardTitle>
-                        <CardDescription className="mt-1">{rfq.id}</CardDescription>
+            {rfqs.length === 0 ? (
+              <div className="text-center py-12 text-muted-foreground">
+                <FileText className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                <p>No RFQs available at this time.</p>
+              </div>
+            ) : (
+              <div className="grid gap-6 md:grid-cols-2">
+                {rfqs.map((rfq) => (
+                  <Card key={rfq.id} className="bg-card/80 border-border hover:border-primary/50 transition-colors">
+                    <CardHeader>
+                      <div className="flex justify-between items-start gap-2">
+                        <div>
+                          <CardTitle className="text-lg">{rfq.rfq_number}</CardTitle>
+                          <CardDescription className="mt-1">{rfq.rated_power_kva} kVA Transformer</CardDescription>
+                        </div>
+                        {getRFQStatusBadge(rfq.status as RFQ["status"])}
                       </div>
-                      {getRFQStatusBadge(rfq.status)}
-                    </div>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <p className="text-sm text-muted-foreground">{rfq.description}</p>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="grid grid-cols-2 gap-4 text-sm">
+                        <div className="flex items-center gap-2">
+                          <Zap className="w-4 h-4 text-primary" />
+                          <span className="text-muted-foreground">Capacity:</span>
+                          <span className="font-medium text-foreground">
+                            {rfq.rated_power_kva >= 1000
+                              ? `${(rfq.rated_power_kva / 1000).toFixed(1)} MVA`
+                              : `${rfq.rated_power_kva} kVA`}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-muted-foreground">Phase:</span>
+                          <span className="font-medium text-foreground capitalize">
+                            {rfq.phases === 3 ? "3-Phase" : "Single"}
+                          </span>
+                        </div>
+                        <div className="col-span-2">
+                          <span className="text-muted-foreground">Voltage:</span>
+                          <span className="ml-2 font-medium text-foreground">
+                            {rfq.primary_voltage}V / {rfq.secondary_voltage}V
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground">Quantity:</span>
+                          <span className="ml-2 font-medium text-foreground">{rfq.quantity} units</span>
+                        </div>
+                        {rfq.cooling_class && (
+                          <div>
+                            <span className="text-muted-foreground">Cooling:</span>
+                            <span className="ml-2 font-medium text-foreground">{rfq.cooling_class}</span>
+                          </div>
+                        )}
+                      </div>
 
-                    <div className="grid grid-cols-2 gap-4 text-sm">
-                      <div className="flex items-center gap-2">
-                        <Zap className="w-4 h-4 text-primary" />
-                        <span className="text-muted-foreground">Capacity:</span>
-                        <span className="font-medium text-foreground">
-                          {rfq.capacityKVA >= 1000
-                            ? `${(rfq.capacityKVA / 1000).toFixed(1)} MVA`
-                            : `${rfq.capacityKVA} kVA`}
-                        </span>
+                      <div className="pt-2 border-t border-border space-y-2">
+                        <div className="flex items-center gap-2 text-sm">
+                          <Calendar className="w-4 h-4 text-muted-foreground" />
+                          <span className="text-muted-foreground">Bid Deadline:</span>
+                          <span className="font-medium text-foreground">{formatDate(rfq.bid_deadline)}</span>
+                        </div>
+                        {rfq.delivery_deadline && (
+                          <div className="flex items-center gap-2 text-sm">
+                            <Clock className="w-4 h-4 text-muted-foreground" />
+                            <span className="text-muted-foreground">Delivery Needed:</span>
+                            <span className="font-medium text-foreground">{formatDate(rfq.delivery_deadline)}</span>
+                          </div>
+                        )}
                       </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-muted-foreground">Phase:</span>
-                        <span className="font-medium text-foreground capitalize">
-                          {rfq.phase === "three" ? "3-Phase" : "Single"}
-                        </span>
-                      </div>
-                      <div className="col-span-2">
-                        <span className="text-muted-foreground">Voltage:</span>
-                        <span className="ml-2 font-medium text-foreground">
-                          {rfq.primaryVoltage} / {rfq.secondaryVoltage}
-                        </span>
-                      </div>
-                      <div>
-                        <span className="text-muted-foreground">Quantity:</span>
-                        <span className="ml-2 font-medium text-foreground">{rfq.quantity} units</span>
-                      </div>
-                      <div>
-                        <span className="text-muted-foreground">Cooling:</span>
-                        <span className="ml-2 font-medium text-foreground">{rfq.cooling}</span>
-                      </div>
-                    </div>
 
-                    <div className="pt-2 border-t border-border space-y-2">
-                      <div className="flex items-center gap-2 text-sm">
-                        <Calendar className="w-4 h-4 text-muted-foreground" />
-                        <span className="text-muted-foreground">Bid Deadline:</span>
-                        <span className="font-medium text-foreground">{formatDate(rfq.bidDeadline)}</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-sm">
-                        <Clock className="w-4 h-4 text-muted-foreground" />
-                        <span className="text-muted-foreground">Delivery Needed:</span>
-                        <span className="font-medium text-foreground">{formatDate(rfq.deliveryDeadline)}</span>
-                      </div>
-                    </div>
-
-                    {rfq.specialRequirements && (
-                      <div className="flex items-start gap-2 p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-md">
-                        <AlertCircle className="w-4 h-4 text-yellow-500 mt-0.5 flex-shrink-0" />
-                        <p className="text-sm text-yellow-200">{rfq.specialRequirements}</p>
-                      </div>
-                    )}
-                  </CardContent>
-                  <CardFooter className="gap-2">
-                    <Button
-                      variant="outline"
-                      className="flex-1"
-                      onClick={() => openViewDialog(rfq)}
-                    >
-                      <Eye className="w-4 h-4 mr-2" />
-                      View Details
-                    </Button>
-                    {rfq.status === "open" && !hasAlreadyBid(rfq.id) && (
-                      <Button
-                        variant="hero"
-                        className="flex-1"
-                        onClick={() => openBidDialog(rfq)}
-                      >
-                        <Send className="w-4 h-4 mr-2" />
-                        Submit Bid
-                      </Button>
-                    )}
-                    {hasAlreadyBid(rfq.id) && (
-                      <Badge variant="outline" className="border-primary/50 text-primary">
-                        Bid Submitted
-                      </Badge>
-                    )}
-                  </CardFooter>
-                </Card>
-              ))}
-            </div>
+                      {rfq.special_requirements && (
+                        <div className="flex items-start gap-2 p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-md">
+                          <AlertCircle className="w-4 h-4 text-yellow-500 mt-0.5 flex-shrink-0" />
+                          <p className="text-sm text-yellow-200">{rfq.special_requirements}</p>
+                        </div>
+                      )}
+                    </CardContent>
+                    <CardFooter className="gap-2">
+                      {rfq.status === "open" && !hasAlreadyBid(rfq.id) && (
+                        <Button
+                          variant="hero"
+                          className="flex-1"
+                          onClick={() => openBidDialog(rfq as unknown as RFQ)}
+                        >
+                          <Send className="w-4 h-4 mr-2" />
+                          Submit Bid
+                        </Button>
+                      )}
+                      {hasAlreadyBid(rfq.id) && (
+                        <Badge variant="outline" className="border-primary/50 text-primary">
+                          Bid Submitted
+                        </Badge>
+                      )}
+                    </CardFooter>
+                  </Card>
+                ))}
+              </div>
+            )}
           </TabsContent>
 
           {/* ==================== Bids Tab ==================== */}
@@ -690,24 +620,21 @@ const SupplierPortal = () => {
                       {bids.map((bid) => (
                         <TableRow key={bid.id} className="border-border hover:bg-secondary/50">
                           <TableCell>
-                            <div>
-                              <p className="font-medium text-foreground">{bid.rfqTitle}</p>
-                              <p className="text-sm text-muted-foreground">{bid.rfqId}</p>
-                            </div>
+                            <p className="text-sm text-muted-foreground">{bid.rfq_id}</p>
                           </TableCell>
                           <TableCell className="font-medium text-foreground">
-                            {formatCurrency(bid.unitPrice)}
+                            {formatCurrency(bid.unit_price)}
                           </TableCell>
                           <TableCell className="font-medium text-primary">
-                            {formatCurrency(bid.totalPrice)}
+                            {formatCurrency(bid.total_price)}
                           </TableCell>
                           <TableCell className="text-foreground">
-                            {bid.leadTimeDays} days
+                            {bid.lead_time_weeks} weeks
                           </TableCell>
                           <TableCell className="text-muted-foreground">
-                            {formatDate(bid.submittedAt)}
+                            {formatDate(bid.submitted_at)}
                           </TableCell>
-                          <TableCell>{getBidStatusBadge(bid.status)}</TableCell>
+                          <TableCell>{getBidStatusBadge(bid.status as Bid["status"])}</TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
@@ -739,7 +666,7 @@ const SupplierPortal = () => {
                   <Table>
                     <TableHeader>
                       <TableRow className="border-border hover:bg-transparent">
-                        <TableHead className="text-muted-foreground">Contract</TableHead>
+                        <TableHead className="text-muted-foreground">Contract #</TableHead>
                         <TableHead className="text-muted-foreground">Quantity</TableHead>
                         <TableHead className="text-muted-foreground">Unit Price</TableHead>
                         <TableHead className="text-muted-foreground">Total Value</TableHead>
@@ -751,24 +678,21 @@ const SupplierPortal = () => {
                       {contracts.map((contract) => (
                         <TableRow key={contract.id} className="border-border hover:bg-secondary/50">
                           <TableCell>
-                            <div>
-                              <p className="font-medium text-foreground">{contract.rfqTitle}</p>
-                              <p className="text-sm text-muted-foreground">{contract.id}</p>
-                            </div>
+                            <p className="font-medium text-foreground">{contract.contract_number}</p>
                           </TableCell>
                           <TableCell className="text-foreground">
                             {contract.quantity} units
                           </TableCell>
                           <TableCell className="font-medium text-foreground">
-                            {formatCurrency(contract.unitPrice)}
+                            {formatCurrency(contract.unit_price)}
                           </TableCell>
                           <TableCell className="font-medium text-green-500">
-                            {formatCurrency(contract.totalPrice)}
+                            {formatCurrency(contract.total_value)}
                           </TableCell>
                           <TableCell className="text-foreground">
-                            {formatDate(contract.deliveryDate)}
+                            {contract.delivery_date ? formatDate(contract.delivery_date) : '-'}
                           </TableCell>
-                          <TableCell>{getContractStatusBadge(contract.status)}</TableCell>
+                          <TableCell>{getContractStatusBadge(contract.status as Contract["status"])}</TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
@@ -854,96 +778,6 @@ const SupplierPortal = () => {
           </DialogContent>
         </Dialog>
 
-        {/* ==================== View RFQ Details Dialog ==================== */}
-        <Dialog open={viewDialogOpen} onOpenChange={setViewDialogOpen}>
-          <DialogContent className="sm:max-w-[600px] bg-card border-border">
-            <DialogHeader>
-              <DialogTitle>{selectedRFQ?.title}</DialogTitle>
-              <DialogDescription>{selectedRFQ?.id}</DialogDescription>
-            </DialogHeader>
-            {selectedRFQ && (
-              <div className="space-y-6">
-                <p className="text-muted-foreground">{selectedRFQ.description}</p>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-1">
-                    <p className="text-sm text-muted-foreground">Capacity</p>
-                    <p className="font-medium text-foreground">
-                      {selectedRFQ.capacityKVA >= 1000
-                        ? `${(selectedRFQ.capacityKVA / 1000).toFixed(1)} MVA`
-                        : `${selectedRFQ.capacityKVA} kVA`}
-                    </p>
-                  </div>
-                  <div className="space-y-1">
-                    <p className="text-sm text-muted-foreground">Phase</p>
-                    <p className="font-medium text-foreground capitalize">
-                      {selectedRFQ.phase === "three" ? "Three-Phase" : "Single-Phase"}
-                    </p>
-                  </div>
-                  <div className="space-y-1">
-                    <p className="text-sm text-muted-foreground">Primary Voltage</p>
-                    <p className="font-medium text-foreground">{selectedRFQ.primaryVoltage}</p>
-                  </div>
-                  <div className="space-y-1">
-                    <p className="text-sm text-muted-foreground">Secondary Voltage</p>
-                    <p className="font-medium text-foreground">{selectedRFQ.secondaryVoltage}</p>
-                  </div>
-                  <div className="space-y-1">
-                    <p className="text-sm text-muted-foreground">Cooling Type</p>
-                    <p className="font-medium text-foreground">{selectedRFQ.cooling}</p>
-                  </div>
-                  <div className="space-y-1">
-                    <p className="text-sm text-muted-foreground">Application</p>
-                    <p className="font-medium text-foreground">{selectedRFQ.application}</p>
-                  </div>
-                  <div className="space-y-1">
-                    <p className="text-sm text-muted-foreground">Quantity</p>
-                    <p className="font-medium text-foreground">{selectedRFQ.quantity} units</p>
-                  </div>
-                  <div className="space-y-1">
-                    <p className="text-sm text-muted-foreground">Status</p>
-                    {getRFQStatusBadge(selectedRFQ.status)}
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4 pt-4 border-t border-border">
-                  <div className="space-y-1">
-                    <p className="text-sm text-muted-foreground">Bid Deadline</p>
-                    <p className="font-medium text-foreground">{formatDate(selectedRFQ.bidDeadline)}</p>
-                  </div>
-                  <div className="space-y-1">
-                    <p className="text-sm text-muted-foreground">Delivery Deadline</p>
-                    <p className="font-medium text-foreground">{formatDate(selectedRFQ.deliveryDeadline)}</p>
-                  </div>
-                </div>
-
-                {selectedRFQ.specialRequirements && (
-                  <div className="p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-md">
-                    <p className="text-sm font-medium text-yellow-500 mb-1">Special Requirements</p>
-                    <p className="text-sm text-yellow-200">{selectedRFQ.specialRequirements}</p>
-                  </div>
-                )}
-              </div>
-            )}
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setViewDialogOpen(false)}>
-                Close
-              </Button>
-              {selectedRFQ?.status === "open" && !hasAlreadyBid(selectedRFQ.id) && (
-                <Button
-                  variant="hero"
-                  onClick={() => {
-                    setViewDialogOpen(false);
-                    openBidDialog(selectedRFQ);
-                  }}
-                >
-                  <Send className="w-4 h-4 mr-2" />
-                  Submit Bid
-                </Button>
-              )}
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
       </div>
     </section>
   );
