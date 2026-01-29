@@ -239,4 +239,73 @@ export function useReorderTasks(projectId: string) {
   });
 }
 
+// Fetch ALL tasks across ALL projects (for cross-phase views)
+export interface TaskWithProject extends TaskWithDependencies {
+  project?: {
+    id: string;
+    name: string;
+    color: string;
+    position: number;
+  } | null;
+}
+
+export function useAllTasks() {
+  return useQuery({
+    queryKey: ["all-tasks"],
+    queryFn: async () => {
+      const { data, error } = await (supabase as any)
+        .from("portal_tasks")
+        .select(`
+          *,
+          owner:team_members!portal_tasks_owner_id_fkey (
+            id,
+            name,
+            avatar_url
+          ),
+          blocked_by:portal_task_dependencies!portal_task_dependencies_task_id_fkey (
+            blocked_by_id
+          ),
+          blocks:portal_task_dependencies!portal_task_dependencies_blocked_by_id_fkey (
+            task_id
+          ),
+          project:portal_projects!portal_tasks_project_id_fkey (
+            id,
+            name,
+            color,
+            position
+          )
+        `)
+        .order("position", { ascending: true });
+
+      if (error) throw error;
+      return data as TaskWithProject[];
+    },
+    staleTime: 30 * 1000,
+  });
+}
+
+// Fetch all projects
+export function useProjects() {
+  return useQuery({
+    queryKey: ["projects"],
+    queryFn: async () => {
+      const { data, error } = await (supabase as any)
+        .from("portal_projects")
+        .select("*")
+        .order("position", { ascending: true });
+
+      if (error) throw error;
+      return data as Array<{
+        id: string;
+        name: string;
+        description: string | null;
+        color: string;
+        status: string;
+        position: number;
+      }>;
+    },
+    staleTime: 30 * 1000,
+  });
+}
+
 export type { TaskStatus, TaskPriority };

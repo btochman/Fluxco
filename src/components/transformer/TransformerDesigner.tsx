@@ -1,16 +1,10 @@
 "use client";
 import { useState } from 'react';
 import Link from 'next/link';
-import { Zap, FileDown, ShoppingCart, Send } from 'lucide-react';
+import { Zap, FileDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { toast } from 'sonner';
-import { supabase } from '@/integrations/supabase/client';
 import { DesignRequirementsForm } from '@/components/transformer/inputs/DesignRequirementsForm';
 import { CalculationSteps } from '@/components/transformer/calculations/CalculationSteps';
 import { DesignSummary } from '@/components/transformer/output/DesignSummary';
@@ -48,15 +42,6 @@ export function TransformerDesigner() {
   const [isCalculating, setIsCalculating] = useState(false);
   const [activeTab, setActiveTab] = useState('summary');
   const [activeDrawingTab, setActiveDrawingTab] = useState('assembly-front');
-  const [isPostingToMarketplace, setIsPostingToMarketplace] = useState(false);
-  const [marketplaceDialogOpen, setMarketplaceDialogOpen] = useState(false);
-  const [marketplaceForm, setMarketplaceForm] = useState({
-    contactName: '',
-    contactEmail: '',
-    contactPhone: '',
-    askingPrice: '',
-    notes: '',
-  });
 
   const handleCalculate = () => {
     setIsCalculating(true);
@@ -72,94 +57,6 @@ export function TransformerDesigner() {
       setDesign(result.design);
     }
     setIsCalculating(false);
-  };
-
-  const handlePostToMarketplace = async () => {
-    if (!design || !marketplaceForm.contactName || !marketplaceForm.contactEmail) {
-      toast.error('Please fill in required fields');
-      return;
-    }
-
-    setIsPostingToMarketplace(true);
-
-    try {
-      // Calculate cost estimate for the listing
-      const costBreakdown = calculateCostEstimate(design, requirements, { oilType: 'mineral' });
-
-      // Prepare marketplace listing data
-      const listingData = {
-        // Design specs
-        rated_power_kva: requirements.ratedPower,
-        primary_voltage: requirements.primaryVoltage,
-        secondary_voltage: requirements.secondaryVoltage,
-        frequency: requirements.frequency,
-        phases: requirements.phases,
-        impedance_percent: requirements.targetImpedance,
-        vector_group: requirements.vectorGroup.name,
-        cooling_class: requirements.coolingClass.name,
-        conductor_type: requirements.conductorType.name,
-        steel_grade: requirements.steelGrade.name,
-        // Calculated values
-        estimated_cost: costBreakdown.totalCost,
-        no_load_loss_w: design.losses.noLoadLoss,
-        load_loss_w: design.losses.loadLoss,
-        efficiency_percent: design.losses.efficiency.find(e => e.loadPercent === 100)?.efficiency || 0,
-        total_weight_kg: design.core.coreWeight + design.hvWinding.conductorWeight + design.lvWinding.conductorWeight,
-        // Contact info
-        contact_name: marketplaceForm.contactName.trim(),
-        contact_email: marketplaceForm.contactEmail.trim(),
-        contact_phone: marketplaceForm.contactPhone.trim() || null,
-        asking_price: marketplaceForm.askingPrice ? parseFloat(marketplaceForm.askingPrice) : null,
-        notes: marketplaceForm.notes.trim() || null,
-        status: 'pending_review',
-        created_at: new Date().toISOString(),
-      };
-
-      // Save to marketplace_listings table
-      const { error: dbError } = await supabase
-        .from('marketplace_listings')
-        .insert(listingData);
-
-      if (dbError) {
-        console.error('Database error:', dbError);
-        // Continue anyway to send email notification
-      }
-
-      // Send email notification to brian@fluxco.com
-      await supabase.functions.invoke('send-marketplace-listing', {
-        body: {
-          to: 'brian@fluxco.com',
-          listing: listingData,
-          designSummary: {
-            power: `${requirements.ratedPower} kVA`,
-            voltage: `${requirements.primaryVoltage}V / ${requirements.secondaryVoltage}V`,
-            vectorGroup: requirements.vectorGroup.name,
-            efficiency: `${(design.losses.efficiency.find(e => e.loadPercent === 100)?.efficiency || 0).toFixed(2)}%`,
-            estimatedCost: `$${costBreakdown.totalCost.toLocaleString()}`,
-          },
-        },
-      }).catch((emailError: unknown) => {
-        console.warn('Email notification failed:', emailError);
-      });
-
-      toast.success('Listing submitted for review!', {
-        description: 'We will review your listing and contact you shortly.',
-      });
-
-      setMarketplaceDialogOpen(false);
-      setMarketplaceForm({
-        contactName: '',
-        contactEmail: '',
-        contactPhone: '',
-        askingPrice: '',
-        notes: '',
-      });
-    } catch (error) {
-      console.error('Error posting to marketplace:', error);
-      toast.error('Failed to submit listing. Please try again.');
-    } finally {
-      setIsPostingToMarketplace(false);
-    }
   };
 
   const handleExportPDF = async () => {
@@ -430,95 +327,10 @@ export function TransformerDesigner() {
           <>
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-semibold">Design Results</h2>
-              <div className="flex gap-2">
-                <Button onClick={handleExportPDF} variant="outline">
-                  <FileDown className="h-4 w-4 mr-2" />
-                  Export PDF
-                </Button>
-                <Dialog open={marketplaceDialogOpen} onOpenChange={setMarketplaceDialogOpen}>
-                  <DialogTrigger asChild>
-                    <Button variant="default">
-                      <ShoppingCart className="h-4 w-4 mr-2" />
-                      Post to Marketplace
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="sm:max-w-[500px]">
-                    <DialogHeader>
-                      <DialogTitle>Post Design to Marketplace</DialogTitle>
-                      <DialogDescription>
-                        Submit your {requirements.ratedPower} kVA transformer design to the FluxCo marketplace.
-                        Our team will review and list it for potential buyers.
-                      </DialogDescription>
-                    </DialogHeader>
-                    <div className="grid gap-4 py-4">
-                      <div className="grid gap-2">
-                        <Label htmlFor="contactName">Your Name *</Label>
-                        <Input
-                          id="contactName"
-                          value={marketplaceForm.contactName}
-                          onChange={(e) => setMarketplaceForm(prev => ({ ...prev, contactName: e.target.value }))}
-                          placeholder="John Smith"
-                        />
-                      </div>
-                      <div className="grid gap-2">
-                        <Label htmlFor="contactEmail">Email *</Label>
-                        <Input
-                          id="contactEmail"
-                          type="email"
-                          value={marketplaceForm.contactEmail}
-                          onChange={(e) => setMarketplaceForm(prev => ({ ...prev, contactEmail: e.target.value }))}
-                          placeholder="john@example.com"
-                        />
-                      </div>
-                      <div className="grid gap-2">
-                        <Label htmlFor="contactPhone">Phone</Label>
-                        <Input
-                          id="contactPhone"
-                          type="tel"
-                          value={marketplaceForm.contactPhone}
-                          onChange={(e) => setMarketplaceForm(prev => ({ ...prev, contactPhone: e.target.value }))}
-                          placeholder="(555) 123-4567"
-                        />
-                      </div>
-                      <div className="grid gap-2">
-                        <Label htmlFor="askingPrice">Asking Price (USD)</Label>
-                        <Input
-                          id="askingPrice"
-                          type="number"
-                          value={marketplaceForm.askingPrice}
-                          onChange={(e) => setMarketplaceForm(prev => ({ ...prev, askingPrice: e.target.value }))}
-                          placeholder="Leave blank for 'Contact for Price'"
-                        />
-                      </div>
-                      <div className="grid gap-2">
-                        <Label htmlFor="notes">Additional Notes</Label>
-                        <Textarea
-                          id="notes"
-                          value={marketplaceForm.notes}
-                          onChange={(e) => setMarketplaceForm(prev => ({ ...prev, notes: e.target.value }))}
-                          placeholder="Any special features, delivery terms, or other information..."
-                          rows={3}
-                        />
-                      </div>
-                    </div>
-                    <DialogFooter>
-                      <Button variant="outline" onClick={() => setMarketplaceDialogOpen(false)}>
-                        Cancel
-                      </Button>
-                      <Button onClick={handlePostToMarketplace} disabled={isPostingToMarketplace}>
-                        {isPostingToMarketplace ? (
-                          <>Submitting...</>
-                        ) : (
-                          <>
-                            <Send className="h-4 w-4 mr-2" />
-                            Submit Listing
-                          </>
-                        )}
-                      </Button>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
-              </div>
+              <Button onClick={handleExportPDF} variant="outline">
+                <FileDown className="h-4 w-4 mr-2" />
+                Export PDF
+              </Button>
             </div>
 
             <Tabs value={activeTab} onValueChange={setActiveTab}>

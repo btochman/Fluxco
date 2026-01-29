@@ -26,7 +26,7 @@ const ContactSection = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.name || !formData.company || !formData.email) {
       toast({
         title: "Error",
@@ -39,7 +39,7 @@ const ContactSection = () => {
     // Honeypot check - if filled, silently "succeed" without doing anything
     if (formData.website) {
       toast({
-        title: "Request Submitted",
+        title: "Message Sent",
         description: "Thank you! We'll get back to you within 24 hours.",
       });
       return;
@@ -48,32 +48,16 @@ const ContactSection = () => {
     setIsSubmitting(true);
 
     try {
-      // First, save to database (this is the critical step)
-      const { error: dbError } = await supabase
-        .from("quote_requests")
-        .insert({
-          name: formData.name.trim(),
-          email: formData.email.trim(),
-          company: formData.company.trim() || null,
-          phone: formData.phone.trim() || null,
-          product_interest: formData.productInterest || null,
-          project_details: formData.projectDetails.trim() || null,
-        });
-
-      if (dbError) throw dbError;
-
-      // Then try to send email notification (non-blocking)
-      supabase.functions.invoke("send-contact-email", {
+      // Send email notification
+      await supabase.functions.invoke("send-contact-email", {
         body: {
           to: "brian@fluxco.com",
           ...formData,
         },
-      }).catch((emailError: unknown) => {
-        console.warn("Email notification failed (submission still saved):", emailError);
       });
 
       toast({
-        title: "Request Submitted",
+        title: "Message Sent",
         description: "Thank you! We'll get back to you within 24 hours.",
       });
 
@@ -90,7 +74,7 @@ const ContactSection = () => {
       console.error("Error submitting form:", error);
       toast({
         title: "Error",
-        description: "Failed to submit request. Please try again.",
+        description: "Failed to send message. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -119,7 +103,7 @@ const ContactSection = () => {
           {/* Right Content - Form */}
           <div className="bg-card border border-border rounded-2xl p-8 lg:p-10">
             <h3 className="font-display text-2xl text-foreground mb-6">
-              REQUEST A QUOTE
+              GET IN TOUCH
             </h3>
             <form className="space-y-6" onSubmit={handleSubmit}>
               <div className="grid sm:grid-cols-2 gap-6">
@@ -182,7 +166,7 @@ const ContactSection = () => {
                 <label className="block text-sm text-muted-foreground mb-2">
                   Product Interest
                 </label>
-                <select 
+                <select
                   name="productInterest"
                   value={formData.productInterest}
                   onChange={handleInputChange}
@@ -197,7 +181,7 @@ const ContactSection = () => {
               </div>
               <div>
                 <label className="block text-sm text-muted-foreground mb-2">
-                  Project Details
+                  Message
                 </label>
                 <textarea
                   name="projectDetails"
@@ -222,7 +206,7 @@ const ContactSection = () => {
                 />
               </div>
               <Button variant="hero" size="xl" className="w-full" type="submit" disabled={isSubmitting}>
-                {isSubmitting ? "Submitting..." : "Submit Request"}
+                {isSubmitting ? "Sending..." : "Send Message"}
                 <ArrowRight className="w-5 h-5" />
               </Button>
             </form>

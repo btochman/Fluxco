@@ -6,8 +6,7 @@ import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, FolderKanban, Users, CheckCircle2, Clock, AlertCircle } from "lucide-react";
+import { Plus, Clock, AlertCircle, Calendar } from "lucide-react";
 import { toast } from "sonner";
 
 interface Project {
@@ -29,18 +28,9 @@ interface Task {
   due_date: string | null;
 }
 
-interface TeamMember {
-  id: string;
-  name: string;
-  email: string;
-  user_id: string | null;
-}
-
 export default function PortalDashboard() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [currentMember, setCurrentMember] = useState<TeamMember | null>(null);
-  const [viewMode, setViewMode] = useState<"company" | "my-tasks">("company");
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -49,35 +39,7 @@ export default function PortalDashboard() {
 
   const loadData = async () => {
     try {
-      // Get current user
-      const { data: { user } } = await supabase.auth.getUser();
-
-      if (user) {
-        // Get or create team member record (cast to any since types haven't been regenerated)
-        let { data: member } = await (supabase as any)
-          .from("team_members")
-          .select("*")
-          .eq("email", user.email)
-          .single();
-
-        if (!member && user.email) {
-          // Create team member if doesn't exist
-          const { data: newMember } = await (supabase as any)
-            .from("team_members")
-            .insert({
-              user_id: user.id,
-              email: user.email,
-              name: user.email.split("@")[0],
-            })
-            .select()
-            .single();
-          member = newMember;
-        }
-
-        setCurrentMember(member);
-      }
-
-      // Load projects (cast to any since types haven't been regenerated)
+      // Load projects
       const { data: projectsData, error: projectsError } = await (supabase as any)
         .from("portal_projects")
         .select("*")
@@ -102,11 +64,7 @@ export default function PortalDashboard() {
   };
 
   const getTasksByProject = (projectId: string) => {
-    let filtered = tasks.filter((t) => t.project_id === projectId);
-    if (viewMode === "my-tasks" && currentMember) {
-      filtered = filtered.filter((t) => t.owner_id === currentMember.id);
-    }
-    return filtered;
+    return tasks.filter((t) => t.project_id === projectId);
   };
 
   const getTaskStats = (projectTasks: Task[]) => {
@@ -117,15 +75,11 @@ export default function PortalDashboard() {
     return { total, done, inProgress, blocked };
   };
 
-  const allTasks = viewMode === "my-tasks" && currentMember
-    ? tasks.filter((t) => t.owner_id === currentMember.id)
-    : tasks;
-
   const totalStats = {
-    total: allTasks.length,
-    done: allTasks.filter((t) => t.status === "done").length,
-    inProgress: allTasks.filter((t) => t.status === "in_progress").length,
-    blocked: allTasks.filter((t) => t.status === "blocked").length,
+    total: tasks.length,
+    done: tasks.filter((t) => t.status === "done").length,
+    inProgress: tasks.filter((t) => t.status === "in_progress").length,
+    blocked: tasks.filter((t) => t.status === "blocked").length,
   };
 
   if (isLoading) {
@@ -141,26 +95,18 @@ export default function PortalDashboard() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold">Project Dashboard</h1>
+          <h1 className="text-2xl font-bold">FluxCo Task Tracker</h1>
           <p className="text-muted-foreground">
-            Track deliverables across all company phases
+            Manage tasks across all company phases
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
-          <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as "company" | "my-tasks")}>
-            <TabsList>
-              <TabsTrigger value="company" className="gap-2">
-                <Users className="h-4 w-4" />
-                Company
-              </TabsTrigger>
-              <TabsTrigger value="my-tasks" className="gap-2">
-                <CheckCircle2 className="h-4 w-4" />
-                My Tasks
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
-        </div>
+        <Link href="/portal/timeline">
+          <Button variant="outline" className="gap-2">
+            <Calendar className="h-4 w-4" />
+            Timeline
+          </Button>
+        </Link>
       </div>
 
       {/* Summary Stats */}
@@ -258,7 +204,7 @@ export default function PortalDashboard() {
           );
         })}
 
-        {/* Add Project Card */}
+        {/* Add Phase Card */}
         <Card className="border-dashed hover:border-primary/50 transition-colors cursor-pointer flex items-center justify-center min-h-[180px]">
           <CardContent className="flex flex-col items-center gap-2 text-muted-foreground">
             <Plus className="h-8 w-8" />

@@ -4,7 +4,6 @@ import AboutSection from '@/components/AboutSection';
 import ProductsSection from '@/components/ProductsSection';
 import InventoryPreview from '@/components/InventoryPreview';
 import TechnologySection from '@/components/TechnologySection';
-import SpecSheetBuilder from '@/components/SpecSheetBuilder';
 import ContactSection from '@/components/ContactSection';
 import Footer from '@/components/Footer';
 
@@ -18,7 +17,6 @@ export default function Home() {
       <ProductsSection />
       <InventoryPreview />
       <TechnologySection />
-      <SpecSheetBuilder />
       <ContactSection />
       <Footer />
     </main>

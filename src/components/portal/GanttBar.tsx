@@ -44,9 +44,10 @@ const priorityLabels = {
 interface GanttBarProps {
   task: GanttTask;
   onClick: () => void;
+  color?: string; // Optional phase/project color
 }
 
-export function GanttBar({ task, onClick }: GanttBarProps) {
+export function GanttBar({ task, onClick, color }: GanttBarProps) {
   const isBlocked =
     task.blocked_by &&
     task.blocked_by.length > 0 &&
@@ -72,7 +73,7 @@ export function GanttBar({ task, onClick }: GanttBarProps) {
             "absolute h-7 rounded-md cursor-pointer transition-all",
             "flex items-center px-2 gap-1 overflow-hidden",
             "border shadow-sm",
-            statusBgColors[task.status],
+            !color && statusBgColors[task.status],
             isOverdue && "ring-2 ring-red-400 ring-offset-1",
             isBlocked && "opacity-70"
           )}
@@ -80,6 +81,10 @@ export function GanttBar({ task, onClick }: GanttBarProps) {
             left: task.barLeft,
             width: Math.max(task.barWidth, 24),
             top: task.row * ROW_HEIGHT + 6,
+            ...(color && {
+              backgroundColor: `${color}30`,
+              borderColor: `${color}60`,
+            }),
           }}
           onClick={onClick}
         >

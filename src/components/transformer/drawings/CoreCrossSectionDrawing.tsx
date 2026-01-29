@@ -66,8 +66,8 @@ export function CoreCrossSectionDrawing({ core }: CoreCrossSectionDrawingProps) 
           y={yStart}
           width={halfWidth * 2}
           height={stepHeight}
-          fill={`hsl(var(--steel) / ${0.3 + (i % 2) * 0.1})`}
-          stroke="hsl(var(--steel))"
+          fill={i % 2 === 0 ? '#e0e0e0' : '#cccccc'}
+          stroke="#000000"
           strokeWidth="1"
         />
       );
@@ -82,13 +82,16 @@ export function CoreCrossSectionDrawing({ core }: CoreCrossSectionDrawingProps) 
   return (
     <div className="w-full">
       <svg viewBox={`0 0 ${width} ${height}`} className="w-full max-h-[400px]">
+        {/* Background */}
+        <rect width={width} height={height} fill="#ffffff" />
+
         {/* Background grid */}
         <defs>
           <pattern id="coreGrid" width="20" height="20" patternUnits="userSpaceOnUse">
             <path
               d="M 20 0 L 0 0 0 20"
               fill="none"
-              stroke="hsl(var(--primary) / 0.08)"
+              stroke="#e0e0e0"
               strokeWidth="0.5"
             />
           </pattern>
@@ -99,7 +102,7 @@ export function CoreCrossSectionDrawing({ core }: CoreCrossSectionDrawingProps) 
         <text
           x={centerX}
           y="25"
-          fill="hsl(var(--primary))"
+          fill="#000000"
           fontSize="14"
           textAnchor="middle"
           fontWeight="bold"
@@ -113,7 +116,7 @@ export function CoreCrossSectionDrawing({ core }: CoreCrossSectionDrawingProps) 
           cy={centerY}
           r={displayRadius}
           fill="none"
-          stroke="hsl(var(--primary) / 0.3)"
+          stroke="#999999"
           strokeWidth="1"
           strokeDasharray="5 5"
         />
@@ -127,7 +130,7 @@ export function CoreCrossSectionDrawing({ core }: CoreCrossSectionDrawingProps) 
           y1={centerY - displayRadius - 20}
           x2={centerX}
           y2={centerY + displayRadius + 20}
-          stroke="hsl(var(--primary) / 0.3)"
+          stroke="#999999"
           strokeWidth="0.5"
           strokeDasharray="10 5"
         />
@@ -136,13 +139,13 @@ export function CoreCrossSectionDrawing({ core }: CoreCrossSectionDrawingProps) 
           y1={centerY}
           x2={centerX + displayRadius + 20}
           y2={centerY}
-          stroke="hsl(var(--primary) / 0.3)"
+          stroke="#999999"
           strokeWidth="0.5"
           strokeDasharray="10 5"
         />
 
         {/* Diameter dimension */}
-        <g stroke="hsl(var(--primary))" strokeWidth="1">
+        <g stroke="#000000" strokeWidth="1">
           <line
             x1={centerX - displayRadius}
             y1={centerY + displayRadius + 40}
@@ -164,22 +167,22 @@ export function CoreCrossSectionDrawing({ core }: CoreCrossSectionDrawingProps) 
           {/* Arrows */}
           <polygon
             points={`${centerX - displayRadius},${centerY + displayRadius + 40} ${centerX - displayRadius + 8},${centerY + displayRadius + 37} ${centerX - displayRadius + 8},${centerY + displayRadius + 43}`}
-            fill="hsl(var(--primary))"
+            fill="#000000"
           />
           <polygon
             points={`${centerX + displayRadius},${centerY + displayRadius + 40} ${centerX + displayRadius - 8},${centerY + displayRadius + 37} ${centerX + displayRadius - 8},${centerY + displayRadius + 43}`}
-            fill="hsl(var(--primary))"
+            fill="#000000"
           />
         </g>
         <text
           x={centerX}
           y={centerY + displayRadius + 55}
-          fill="hsl(var(--primary))"
+          fill="#000000"
           fontSize="12"
           textAnchor="middle"
           fontWeight="bold"
         >
-          Ø {core.coreDiameter} mm
+          {core.coreDiameter} mm
         </text>
 
         {/* Data box */}
@@ -188,24 +191,24 @@ export function CoreCrossSectionDrawing({ core }: CoreCrossSectionDrawingProps) 
           y={height - 90}
           width="150"
           height="80"
-          fill="hsl(var(--background))"
-          stroke="hsl(var(--border))"
+          fill="#ffffff"
+          stroke="#000000"
           strokeWidth="1"
           rx="4"
         />
-        <text x="20" y={height - 70} fill="hsl(var(--primary))" fontSize="10" fontWeight="bold">
+        <text x="20" y={height - 70} fill="#000000" fontSize="10" fontWeight="bold">
           CORE DATA
         </text>
-        <text x="20" y={height - 55} fill="hsl(var(--muted-foreground))" fontSize="9">
+        <text x="20" y={height - 55} fill="#000000" fontSize="9">
           Steel: {core.steelGrade.name.split(' ')[0]}
         </text>
-        <text x="20" y={height - 42} fill="hsl(var(--muted-foreground))" fontSize="9">
+        <text x="20" y={height - 42} fill="#000000" fontSize="9">
           Flux: {core.fluxDensity} T
         </text>
-        <text x="20" y={height - 29} fill="hsl(var(--muted-foreground))" fontSize="9">
+        <text x="20" y={height - 29} fill="#000000" fontSize="9">
           Net Area: {core.netCrossSection.toFixed(1)} cm²
         </text>
-        <text x="20" y={height - 16} fill="hsl(var(--muted-foreground))" fontSize="9">
+        <text x="20" y={height - 16} fill="#000000" fontSize="9">
           Weight: {core.coreWeight} kg
         </text>
 
@@ -213,7 +216,7 @@ export function CoreCrossSectionDrawing({ core }: CoreCrossSectionDrawingProps) 
         <text
           x={width - 10}
           y={height - 10}
-          fill="hsl(var(--muted-foreground))"
+          fill="#000000"
           fontSize="8"
           textAnchor="end"
         >

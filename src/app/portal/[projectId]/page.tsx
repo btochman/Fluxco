@@ -6,13 +6,13 @@ import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, LayoutGrid, GanttChart as GanttIcon, Plus, Users, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, LayoutGrid, GanttChart as GanttIcon, Plus } from "lucide-react";
 import { toast } from "sonner";
 import { KanbanBoard } from "@/components/portal/KanbanBoard";
 import { GanttChart } from "@/components/portal/GanttChart";
 import { TaskDialog } from "@/components/portal/TaskDialog";
 import { useTasks, useCreateTask, useUpdateTask, useDeleteTask, type TaskWithDependencies } from "@/hooks/useTasks";
-import type { Project, TeamMember, TaskStatus } from "@/types/portal";
+import type { Project, TaskStatus } from "@/types/portal";
 
 interface PageProps {
   params: Promise<{ projectId: string }>;
@@ -22,9 +22,6 @@ export default function ProjectDetailPage({ params }: PageProps) {
   const { projectId } = use(params);
   const router = useRouter();
   const [project, setProject] = useState<Project | null>(null);
-  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
-  const [currentMember, setCurrentMember] = useState<TeamMember | null>(null);
-  const [viewMode, setViewMode] = useState<"company" | "my-tasks">("company");
   const [viewType, setViewType] = useState<"kanban" | "gantt">("kanban");
   const [isLoading, setIsLoading] = useState(true);
   const [selectedTask, setSelectedTask] = useState<TaskWithDependencies | null>(null);
@@ -32,7 +29,7 @@ export default function ProjectDetailPage({ params }: PageProps) {
   const [newTaskStatus, setNewTaskStatus] = useState<TaskStatus>("backlog");
 
   // Use the tasks hook
-  const { data: tasks = [], isLoading: tasksLoading, refetch: refetchTasks } = useTasks(projectId);
+  const { data: tasks = [], isLoading: tasksLoading } = useTasks(projectId);
   const createTask = useCreateTask(projectId);
   const updateTask = useUpdateTask(projectId);
   const deleteTask = useDeleteTask(projectId);
@@ -43,10 +40,7 @@ export default function ProjectDetailPage({ params }: PageProps) {
 
   const loadProjectData = async () => {
     try {
-      // Get current user
-      const { data: { user } } = await supabase.auth.getUser();
-
-      // Load project (cast to any since types haven't been regenerated yet)
+      // Load project
       const { data: projectData, error: projectError } = await (supabase as any)
         .from("portal_projects")
         .select("*")
@@ -55,18 +49,6 @@ export default function ProjectDetailPage({ params }: PageProps) {
 
       if (projectError) throw projectError;
       setProject(projectData);
-
-      // Load team members
-      const { data: membersData } = await (supabase as any)
-        .from("team_members")
-        .select("*");
-      setTeamMembers(membersData || []);
-
-      // Find current member
-      if (user?.email && membersData) {
-        const member = membersData.find((m: TeamMember) => m.email === user.email);
-        setCurrentMember(member || null);
-      }
     } catch (error) {
       console.error("Error loading project:", error);
       toast.error("Failed to load project");
@@ -127,10 +109,6 @@ export default function ProjectDetailPage({ params }: PageProps) {
     }
   };
 
-  const filteredTasks = viewMode === "my-tasks" && currentMember
-    ? tasks.filter((t) => t.owner_id === currentMember.id)
-    : tasks;
-
   if (isLoading || tasksLoading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -170,20 +148,6 @@ export default function ProjectDetailPage({ params }: PageProps) {
         </div>
 
         <div className="flex items-center gap-3 flex-wrap">
-          {/* View Mode Toggle */}
-          <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as "company" | "my-tasks")}>
-            <TabsList>
-              <TabsTrigger value="company" className="gap-2">
-                <Users className="h-4 w-4" />
-                <span className="hidden sm:inline">Company</span>
-              </TabsTrigger>
-              <TabsTrigger value="my-tasks" className="gap-2">
-                <CheckCircle2 className="h-4 w-4" />
-                <span className="hidden sm:inline">My Tasks</span>
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
-
           {/* View Type Toggle */}
           <Tabs value={viewType} onValueChange={(v) => setViewType(v as "kanban" | "gantt")}>
             <TabsList>
@@ -216,7 +180,7 @@ export default function ProjectDetailPage({ params }: PageProps) {
       {/* Content */}
       {viewType === "kanban" ? (
         <KanbanBoard
-          tasks={filteredTasks}
+          tasks={tasks}
           onTaskClick={(task) => {
             setSelectedTask(task);
             setIsTaskDialogOpen(true);
@@ -226,7 +190,7 @@ export default function ProjectDetailPage({ params }: PageProps) {
         />
       ) : (
         <GanttChart
-          tasks={filteredTasks}
+          tasks={tasks}
           onTaskClick={(task) => {
             setSelectedTask(task);
             setIsTaskDialogOpen(true);

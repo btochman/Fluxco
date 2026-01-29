@@ -50,22 +50,25 @@ export function TopViewDrawing({
   return (
     <div className="w-full">
       <svg viewBox={`0 0 ${width} ${height}`} className="w-full">
+        {/* Background */}
+        <rect width={width} height={height} fill="#ffffff" />
+
         {/* Background grid */}
         <defs>
           <pattern id="topGrid" width="20" height="20" patternUnits="userSpaceOnUse">
-            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="hsl(var(--primary) / 0.08)" strokeWidth="0.5" />
+            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#e0e0e0" strokeWidth="0.5" />
           </pattern>
           <marker id="dimArrowS" markerWidth="6" markerHeight="6" refX="0" refY="3" orient="auto">
-            <path d="M6,0 L0,3 L6,6" fill="none" stroke="hsl(var(--muted-foreground))" strokeWidth="0.5" />
+            <path d="M6,0 L0,3 L6,6" fill="none" stroke="#000000" strokeWidth="0.5" />
           </marker>
           <marker id="dimArrowE" markerWidth="6" markerHeight="6" refX="6" refY="3" orient="auto">
-            <path d="M0,0 L6,3 L0,6" fill="none" stroke="hsl(var(--muted-foreground))" strokeWidth="0.5" />
+            <path d="M0,0 L6,3 L0,6" fill="none" stroke="#000000" strokeWidth="0.5" />
           </marker>
         </defs>
         <rect width={width} height={height} fill="url(#topGrid)" />
 
         {/* Title */}
-        <text x={width / 2} y="20" fill="hsl(var(--primary))" fontSize="12" textAnchor="middle" fontWeight="bold">
+        <text x={width / 2} y="20" fill="#000000" fontSize="12" textAnchor="middle" fontWeight="bold">
           TOP VIEW - PLAN
         </text>
 
@@ -75,8 +78,8 @@ export function TopViewDrawing({
           y={tankTop}
           width={tankL}
           height={tankW}
-          fill="hsl(var(--steel) / 0.1)"
-          stroke="hsl(var(--steel))"
+          fill="#f5f5f5"
+          stroke="#000000"
           strokeWidth="2"
         />
 
@@ -87,7 +90,7 @@ export function TopViewDrawing({
           width={tankL - 10}
           height={tankW - 10}
           fill="none"
-          stroke="hsl(var(--steel) / 0.4)"
+          stroke="#666666"
           strokeWidth="1"
           strokeDasharray="10,5"
         />
@@ -103,8 +106,8 @@ export function TopViewDrawing({
                 cx={limbX}
                 cy={limbY}
                 r={coreDia / 2}
-                fill="hsl(var(--steel) / 0.4)"
-                stroke="hsl(var(--steel))"
+                fill="#cccccc"
+                stroke="#000000"
                 strokeWidth="1.5"
               />
               {/* LV Winding */}
@@ -113,7 +116,7 @@ export function TopViewDrawing({
                 cy={limbY}
                 r={lvOuterR}
                 fill="none"
-                stroke="hsl(var(--glow))"
+                stroke="#000000"
                 strokeWidth="3"
               />
               {/* HV Winding */}
@@ -122,14 +125,14 @@ export function TopViewDrawing({
                 cy={limbY}
                 r={hvOuterR}
                 fill="none"
-                stroke="hsl(var(--primary))"
+                stroke="#000000"
                 strokeWidth="3"
               />
               {/* Phase label */}
               <text
                 x={limbX}
                 y={limbY + 3}
-                fill="hsl(var(--foreground))"
+                fill="#000000"
                 fontSize="10"
                 textAnchor="middle"
                 fontWeight="bold"
@@ -149,8 +152,8 @@ export function TopViewDrawing({
               y={tankTop + tankW / 2 - coreDia / 2 - 3}
               width={(numLimbs - 1) * limbSpacing + coreDia}
               height={6}
-              fill="hsl(var(--steel) / 0.3)"
-              stroke="hsl(var(--steel))"
+              fill="#e8e8e8"
+              stroke="#000000"
               strokeWidth="1"
               strokeDasharray="3,2"
             />
@@ -160,8 +163,8 @@ export function TopViewDrawing({
               y={tankTop + tankW / 2 + coreDia / 2 - 3}
               width={(numLimbs - 1) * limbSpacing + coreDia}
               height={6}
-              fill="hsl(var(--steel) / 0.3)"
-              stroke="hsl(var(--steel))"
+              fill="#e8e8e8"
+              stroke="#000000"
               strokeWidth="1"
               strokeDasharray="3,2"
             />
@@ -177,12 +180,12 @@ export function TopViewDrawing({
                 cx={bushingX}
                 cy={tankTop + 15}
                 r={8}
-                fill="hsl(25, 60%, 90%)"
-                stroke="hsl(25, 40%, 60%)"
+                fill="#f5f5f5"
+                stroke="#000000"
                 strokeWidth="1.5"
               />
-              <circle cx={bushingX} cy={tankTop + 15} r={3} fill="hsl(var(--copper))" />
-              <text x={bushingX} y={tankTop + 4} fill="hsl(var(--primary))" fontSize="7" textAnchor="middle">
+              <circle cx={bushingX} cy={tankTop + 15} r={3} fill="#cccccc" stroke="#000000" />
+              <text x={bushingX} y={tankTop + 4} fill="#000000" fontSize="7" textAnchor="middle">
                 H{i + 1}
               </text>
             </g>
@@ -198,12 +201,12 @@ export function TopViewDrawing({
                 cx={bushingX}
                 cy={tankTop + 15}
                 r={6}
-                fill="hsl(25, 60%, 90%)"
-                stroke="hsl(25, 40%, 60%)"
+                fill="#f5f5f5"
+                stroke="#000000"
                 strokeWidth="1.5"
               />
-              <circle cx={bushingX} cy={tankTop + 15} r={2} fill="hsl(var(--copper))" />
-              <text x={bushingX} y={tankTop + 4} fill="hsl(var(--glow))" fontSize="7" textAnchor="middle">
+              <circle cx={bushingX} cy={tankTop + 15} r={2} fill="#cccccc" stroke="#000000" />
+              <text x={bushingX} y={tankTop + 4} fill="#000000" fontSize="7" textAnchor="middle">
                 {i === numLimbs ? 'X0' : `X${i + 1}`}
               </text>
             </g>
@@ -221,8 +224,8 @@ export function TopViewDrawing({
                 y={tankTop + spacing * (i + 1) - 15}
                 width={15}
                 height={30}
-                fill="hsl(var(--steel) / 0.3)"
-                stroke="hsl(var(--steel))"
+                fill="#e8e8e8"
+                stroke="#000000"
                 strokeWidth="1"
               />
               {/* Right radiator */}
@@ -231,8 +234,8 @@ export function TopViewDrawing({
                 y={tankTop + spacing * (i + 1) - 15}
                 width={15}
                 height={30}
-                fill="hsl(var(--steel) / 0.3)"
-                stroke="hsl(var(--steel))"
+                fill="#e8e8e8"
+                stroke="#000000"
                 strokeWidth="1"
               />
             </g>
@@ -246,14 +249,14 @@ export function TopViewDrawing({
           width={tankL * 0.5}
           height={15}
           fill="none"
-          stroke="hsl(var(--steel))"
+          stroke="#000000"
           strokeWidth="1"
           strokeDasharray="5,3"
         />
         <text
           x={tankLeft + tankL * 0.5}
           y={tankTop - 15}
-          fill="hsl(var(--muted-foreground))"
+          fill="#000000"
           fontSize="7"
           textAnchor="middle"
         >
@@ -266,14 +269,14 @@ export function TopViewDrawing({
           y={tankTop + tankW / 2 - 15}
           width={20}
           height={30}
-          fill="hsl(var(--steel) / 0.3)"
-          stroke="hsl(var(--steel))"
+          fill="#e8e8e8"
+          stroke="#000000"
           strokeWidth="1"
         />
         <text
           x={tankLeft + tankL - 15}
           y={tankTop + tankW / 2 + 3}
-          fill="hsl(var(--muted-foreground))"
+          fill="#000000"
           fontSize="6"
           textAnchor="middle"
         >
@@ -287,14 +290,14 @@ export function TopViewDrawing({
             cx={tankLeft + tankL * xp}
             cy={tankTop + tankW * yp}
             r={5}
-            fill="hsl(var(--steel))"
-            stroke="hsl(var(--steel))"
+            fill="#666666"
+            stroke="#000000"
             strokeWidth="1"
           />
         ))}
 
         {/* Dimension: Tank Length */}
-        <g stroke="hsl(var(--muted-foreground))" strokeWidth="0.5" fill="hsl(var(--muted-foreground))" fontSize="9">
+        <g stroke="#000000" strokeWidth="0.5" fill="#000000" fontSize="9">
           <line x1={tankLeft} y1={tankTop + tankW + 25} x2={tankLeft + tankL} y2={tankTop + tankW + 25} markerStart="url(#dimArrowS)" markerEnd="url(#dimArrowE)" />
           <line x1={tankLeft} y1={tankTop + tankW + 15} x2={tankLeft} y2={tankTop + tankW + 35} />
           <line x1={tankLeft + tankL} y1={tankTop + tankW + 15} x2={tankLeft + tankL} y2={tankTop + tankW + 35} />
@@ -304,7 +307,7 @@ export function TopViewDrawing({
         </g>
 
         {/* Dimension: Tank Width */}
-        <g stroke="hsl(var(--muted-foreground))" strokeWidth="0.5" fill="hsl(var(--muted-foreground))" fontSize="9">
+        <g stroke="#000000" strokeWidth="0.5" fill="#000000" fontSize="9">
           <line x1={tankLeft - 30} y1={tankTop} x2={tankLeft - 30} y2={tankTop + tankW} markerStart="url(#dimArrowS)" markerEnd="url(#dimArrowE)" />
           <line x1={tankLeft - 40} y1={tankTop} x2={tankLeft - 20} y2={tankTop} />
           <line x1={tankLeft - 40} y1={tankTop + tankW} x2={tankLeft - 20} y2={tankTop + tankW} />
@@ -315,7 +318,7 @@ export function TopViewDrawing({
 
         {/* Dimension: Window Width (limb spacing) */}
         {numLimbs > 1 && (
-          <g stroke="hsl(var(--primary))" strokeWidth="0.5" fill="hsl(var(--primary))" fontSize="8">
+          <g stroke="#000000" strokeWidth="0.5" fill="#000000" fontSize="8">
             <line
               x1={tankLeft + tankL / 2 - ((numLimbs - 1) / 2) * limbSpacing}
               y1={tankTop + tankW / 2 + hvOuterR + 15}
@@ -335,14 +338,14 @@ export function TopViewDrawing({
         )}
 
         {/* Legend */}
-        <rect x="10" y={height - 75} width="130" height="65" fill="hsl(var(--background))" stroke="hsl(var(--border))" rx="3" />
-        <text x="20" y={height - 60} fill="hsl(var(--foreground))" fontSize="9" fontWeight="bold">LEGEND</text>
-        <circle cx="25" cy={height - 45} r="5" fill="hsl(var(--steel) / 0.4)" stroke="hsl(var(--steel))" />
-        <text x="35" y={height - 42} fill="hsl(var(--muted-foreground))" fontSize="7">Core Limb</text>
-        <circle cx="25" cy={height - 32} r="5" fill="none" stroke="hsl(var(--glow))" strokeWidth="2" />
-        <text x="35" y={height - 29} fill="hsl(var(--muted-foreground))" fontSize="7">LV Winding</text>
-        <circle cx="25" cy={height - 19} r="5" fill="none" stroke="hsl(var(--primary))" strokeWidth="2" />
-        <text x="35" y={height - 16} fill="hsl(var(--muted-foreground))" fontSize="7">HV Winding</text>
+        <rect x="10" y={height - 75} width="130" height="65" fill="#ffffff" stroke="#000000" rx="3" />
+        <text x="20" y={height - 60} fill="#000000" fontSize="9" fontWeight="bold">LEGEND</text>
+        <circle cx="25" cy={height - 45} r="5" fill="#cccccc" stroke="#000000" />
+        <text x="35" y={height - 42} fill="#000000" fontSize="7">Core Limb</text>
+        <circle cx="25" cy={height - 32} r="5" fill="none" stroke="#000000" strokeWidth="2" />
+        <text x="35" y={height - 29} fill="#000000" fontSize="7">LV Winding</text>
+        <circle cx="25" cy={height - 19} r="5" fill="none" stroke="#000000" strokeWidth="2" />
+        <text x="35" y={height - 16} fill="#000000" fontSize="7">HV Winding</text>
       </svg>
     </div>
   );

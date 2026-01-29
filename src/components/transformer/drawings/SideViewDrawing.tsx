@@ -51,22 +51,25 @@ export function SideViewDrawing({
   return (
     <div className="w-full">
       <svg viewBox={`0 0 ${width} ${height}`} className="w-full">
+        {/* Background */}
+        <rect width={width} height={height} fill="#ffffff" />
+
         {/* Background grid */}
         <defs>
           <pattern id="sideGrid" width="20" height="20" patternUnits="userSpaceOnUse">
-            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="hsl(var(--primary) / 0.08)" strokeWidth="0.5" />
+            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#e0e0e0" strokeWidth="0.5" />
           </pattern>
           <marker id="arrowStart" markerWidth="6" markerHeight="6" refX="0" refY="3" orient="auto">
-            <path d="M6,0 L0,3 L6,6" fill="none" stroke="hsl(var(--muted-foreground))" strokeWidth="0.5" />
+            <path d="M6,0 L0,3 L6,6" fill="none" stroke="#000000" strokeWidth="0.5" />
           </marker>
           <marker id="arrowEnd" markerWidth="6" markerHeight="6" refX="6" refY="3" orient="auto">
-            <path d="M0,0 L6,3 L0,6" fill="none" stroke="hsl(var(--muted-foreground))" strokeWidth="0.5" />
+            <path d="M0,0 L6,3 L0,6" fill="none" stroke="#000000" strokeWidth="0.5" />
           </marker>
         </defs>
         <rect width={width} height={height} fill="url(#sideGrid)" />
 
         {/* Title */}
-        <text x={width / 2} y="20" fill="hsl(var(--primary))" fontSize="12" textAnchor="middle" fontWeight="bold">
+        <text x={width / 2} y="20" fill="#000000" fontSize="12" textAnchor="middle" fontWeight="bold">
           SIDE VIEW - ELEVATION
         </text>
 
@@ -76,8 +79,8 @@ export function SideViewDrawing({
           y={conservatorTop}
           width={conservatorLength}
           height={conservatorHeight}
-          fill="hsl(var(--steel) / 0.2)"
-          stroke="hsl(var(--steel))"
+          fill="#f5f5f5"
+          stroke="#000000"
           strokeWidth="1.5"
           rx="2"
         />
@@ -87,7 +90,7 @@ export function SideViewDrawing({
           y1={conservatorTop + conservatorHeight}
           x2={width / 2}
           y2={tankTop}
-          stroke="hsl(var(--steel))"
+          stroke="#000000"
           strokeWidth="3"
         />
 
@@ -97,8 +100,8 @@ export function SideViewDrawing({
           y={tankTop}
           width={tankL}
           height={tankH}
-          fill="hsl(var(--steel) / 0.15)"
-          stroke="hsl(var(--steel))"
+          fill="#f5f5f5"
+          stroke="#000000"
           strokeWidth="2"
         />
 
@@ -110,7 +113,7 @@ export function SideViewDrawing({
             y1={tankTop + tankH * pos}
             x2={tankLeft + tankL}
             y2={tankTop + tankH * pos}
-            stroke="hsl(var(--steel) / 0.4)"
+            stroke="#666666"
             strokeWidth="1"
             strokeDasharray="4,2"
           />
@@ -123,14 +126,14 @@ export function SideViewDrawing({
           width={coreDepth}
           height={tankH * 0.7}
           fill="none"
-          stroke="hsl(var(--steel))"
+          stroke="#000000"
           strokeWidth="1"
           strokeDasharray="5,3"
         />
         <text
           x={tankLeft + tankL / 2}
           y={tankTop + tankH * 0.5}
-          fill="hsl(var(--muted-foreground))"
+          fill="#000000"
           fontSize="8"
           textAnchor="middle"
         >
@@ -144,8 +147,8 @@ export function SideViewDrawing({
             y={tankTop - hvBushingHeight}
             width={10}
             height={hvBushingHeight}
-            fill="hsl(25, 60%, 90%)"
-            stroke="hsl(25, 40%, 60%)"
+            fill="#f5f5f5"
+            stroke="#000000"
             strokeWidth="1"
             rx="2"
           />
@@ -153,10 +156,10 @@ export function SideViewDrawing({
             cx={tankLeft + tankL * 0.25}
             cy={tankTop - hvBushingHeight - 5}
             r={5}
-            fill="hsl(var(--copper))"
-            stroke="hsl(30, 60%, 35%)"
+            fill="#f5f5f5"
+            stroke="#000000"
           />
-          <text x={tankLeft + tankL * 0.25} y={tankTop - hvBushingHeight - 15} fill="hsl(var(--primary))" fontSize="8" textAnchor="middle">
+          <text x={tankLeft + tankL * 0.25} y={tankTop - hvBushingHeight - 15} fill="#000000" fontSize="8" textAnchor="middle">
             HV
           </text>
         </g>
@@ -168,8 +171,8 @@ export function SideViewDrawing({
             y={tankTop - lvBushingHeight}
             width={10}
             height={lvBushingHeight}
-            fill="hsl(25, 60%, 90%)"
-            stroke="hsl(25, 40%, 60%)"
+            fill="#f5f5f5"
+            stroke="#000000"
             strokeWidth="1"
             rx="2"
           />
@@ -177,10 +180,10 @@ export function SideViewDrawing({
             cx={tankLeft + tankL * 0.75}
             cy={tankTop - lvBushingHeight - 5}
             r={4}
-            fill="hsl(var(--copper))"
-            stroke="hsl(30, 60%, 35%)"
+            fill="#f5f5f5"
+            stroke="#000000"
           />
-          <text x={tankLeft + tankL * 0.75} y={tankTop - lvBushingHeight - 12} fill="hsl(var(--glow))" fontSize="8" textAnchor="middle">
+          <text x={tankLeft + tankL * 0.75} y={tankTop - lvBushingHeight - 12} fill="#000000" fontSize="8" textAnchor="middle">
             LV
           </text>
         </g>
@@ -191,14 +194,14 @@ export function SideViewDrawing({
           y={tankTop + tankH * 0.2}
           width={radiatorDepth}
           height={tankH * 0.6}
-          fill="hsl(var(--steel) / 0.3)"
-          stroke="hsl(var(--steel))"
+          fill="#e8e8e8"
+          stroke="#000000"
           strokeWidth="1"
         />
         <text
           x={tankLeft - radiatorDepth / 2 - 5}
           y={tankTop + tankH * 0.5}
-          fill="hsl(var(--muted-foreground))"
+          fill="#000000"
           fontSize="7"
           textAnchor="middle"
           transform={`rotate(-90, ${tankLeft - radiatorDepth / 2 - 5}, ${tankTop + tankH * 0.5})`}
@@ -214,8 +217,8 @@ export function SideViewDrawing({
               y={tankTop + tankH}
               width={20}
               height={8}
-              fill="hsl(var(--steel) / 0.4)"
-              stroke="hsl(var(--steel))"
+              fill="#cccccc"
+              stroke="#000000"
               strokeWidth="1"
             />
             <circle
@@ -223,7 +226,7 @@ export function SideViewDrawing({
               cy={tankTop + tankH + 12}
               r={6}
               fill="none"
-              stroke="hsl(var(--steel))"
+              stroke="#000000"
               strokeWidth="2"
             />
           </g>
@@ -237,8 +240,8 @@ export function SideViewDrawing({
               y={tankTop - 3}
               width={8}
               height={6}
-              fill="hsl(var(--steel))"
-              stroke="hsl(var(--steel))"
+              fill="#666666"
+              stroke="#000000"
               strokeWidth="1"
             />
             <circle
@@ -246,14 +249,14 @@ export function SideViewDrawing({
               cy={tankTop - 6}
               r={3}
               fill="none"
-              stroke="hsl(var(--steel))"
+              stroke="#000000"
               strokeWidth="1.5"
             />
           </g>
         ))}
 
         {/* Dimension: Tank Length */}
-        <g stroke="hsl(var(--muted-foreground))" strokeWidth="0.5" fill="hsl(var(--muted-foreground))" fontSize="9">
+        <g stroke="#000000" strokeWidth="0.5" fill="#000000" fontSize="9">
           <line x1={tankLeft} y1={tankTop + tankH + 35} x2={tankLeft + tankL} y2={tankTop + tankH + 35} markerStart="url(#arrowStart)" markerEnd="url(#arrowEnd)" />
           <line x1={tankLeft} y1={tankTop + tankH + 25} x2={tankLeft} y2={tankTop + tankH + 45} />
           <line x1={tankLeft + tankL} y1={tankTop + tankH + 25} x2={tankLeft + tankL} y2={tankTop + tankH + 45} />
@@ -263,7 +266,7 @@ export function SideViewDrawing({
         </g>
 
         {/* Dimension: Tank Height */}
-        <g stroke="hsl(var(--muted-foreground))" strokeWidth="0.5" fill="hsl(var(--muted-foreground))" fontSize="9">
+        <g stroke="#000000" strokeWidth="0.5" fill="#000000" fontSize="9">
           <line x1={tankLeft + tankL + 25} y1={tankTop} x2={tankLeft + tankL + 25} y2={tankTop + tankH} markerStart="url(#arrowStart)" markerEnd="url(#arrowEnd)" />
           <line x1={tankLeft + tankL + 15} y1={tankTop} x2={tankLeft + tankL + 35} y2={tankTop} />
           <line x1={tankLeft + tankL + 15} y1={tankTop + tankH} x2={tankLeft + tankL + 35} y2={tankTop + tankH} />
@@ -273,7 +276,7 @@ export function SideViewDrawing({
         </g>
 
         {/* Dimension: Overall Height */}
-        <g stroke="hsl(var(--primary))" strokeWidth="0.5" fill="hsl(var(--primary))" fontSize="9">
+        <g stroke="#000000" strokeWidth="0.5" fill="#000000" fontSize="9">
           <line x1={tankLeft - 40} y1={tankTop - hvBushingHeight - 10} x2={tankLeft - 40} y2={tankTop + tankH + 18} markerStart="url(#arrowStart)" markerEnd="url(#arrowEnd)" />
           <line x1={tankLeft - 50} y1={tankTop - hvBushingHeight - 10} x2={tankLeft - 30} y2={tankTop - hvBushingHeight - 10} />
           <line x1={tankLeft - 50} y1={tankTop + tankH + 18} x2={tankLeft - 30} y2={tankTop + tankH + 18} />
@@ -286,7 +289,7 @@ export function SideViewDrawing({
         </g>
 
         {/* Dimension: HV Bushing Height */}
-        <g stroke="hsl(var(--muted-foreground))" strokeWidth="0.5" fill="hsl(var(--muted-foreground))" fontSize="7">
+        <g stroke="#000000" strokeWidth="0.5" fill="#000000" fontSize="7">
           <line x1={tankLeft + tankL * 0.25 + 15} y1={tankTop - hvBushingHeight} x2={tankLeft + tankL * 0.25 + 15} y2={tankTop} />
           <text x={tankLeft + tankL * 0.25 + 18} y={tankTop - hvBushingHeight / 2} fontSize="7">
             {Math.round(hvBushingHeight / scale)} mm
@@ -294,11 +297,11 @@ export function SideViewDrawing({
         </g>
 
         {/* Legend */}
-        <rect x="10" y={height - 60} width="120" height="50" fill="hsl(var(--background))" stroke="hsl(var(--border))" rx="3" />
-        <text x="20" y={height - 45} fill="hsl(var(--foreground))" fontSize="9" fontWeight="bold">SIDE VIEW</text>
-        <line x1="20" y1={height - 32} x2="40" y2={height - 32} stroke="hsl(var(--steel))" strokeWidth="1" strokeDasharray="5,3" />
-        <text x="45" y={height - 28} fill="hsl(var(--muted-foreground))" fontSize="7">Hidden (Core)</text>
-        <text x="20" y={height - 18} fill="hsl(var(--muted-foreground))" fontSize="7">Scale: NTS</text>
+        <rect x="10" y={height - 60} width="120" height="50" fill="#ffffff" stroke="#000000" rx="3" />
+        <text x="20" y={height - 45} fill="#000000" fontSize="9" fontWeight="bold">SIDE VIEW</text>
+        <line x1="20" y1={height - 32} x2="40" y2={height - 32} stroke="#000000" strokeWidth="1" strokeDasharray="5,3" />
+        <text x="45" y={height - 28} fill="#000000" fontSize="7">Hidden (Core)</text>
+        <text x="20" y={height - 18} fill="#000000" fontSize="7">Scale: NTS</text>
       </svg>
     </div>
   );

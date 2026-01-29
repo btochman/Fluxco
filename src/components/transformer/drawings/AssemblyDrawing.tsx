@@ -57,25 +57,28 @@ export function AssemblyDrawing({
   return (
     <div className="w-full">
       <svg viewBox={`0 0 ${width} ${height}`} className="w-full max-h-[500px]">
+        {/* Background */}
+        <rect width={width} height={height} fill="#ffffff" />
+
         {/* Background grid */}
         <defs>
           <pattern id="assemblyGrid" width="20" height="20" patternUnits="userSpaceOnUse">
             <path
               d="M 20 0 L 0 0 0 20"
               fill="none"
-              stroke="hsl(var(--primary) / 0.08)"
+              stroke="#e0e0e0"
               strokeWidth="0.5"
             />
           </pattern>
           {/* Radiator fin pattern */}
           <pattern id="radiatorFins" width="4" height="10" patternUnits="userSpaceOnUse">
-            <rect x="0" y="0" width="2" height="10" fill="hsl(var(--steel) / 0.4)" />
+            <rect x="0" y="0" width="2" height="10" fill="#cccccc" />
           </pattern>
           {/* Insulator pattern */}
           <linearGradient id="porcelainGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="hsl(25, 60%, 85%)" />
-            <stop offset="50%" stopColor="hsl(25, 60%, 95%)" />
-            <stop offset="100%" stopColor="hsl(25, 60%, 85%)" />
+            <stop offset="0%" stopColor="#e8e8e8" />
+            <stop offset="50%" stopColor="#f5f5f5" />
+            <stop offset="100%" stopColor="#e8e8e8" />
           </linearGradient>
         </defs>
         <rect width={width} height={height} fill="url(#assemblyGrid)" />
@@ -84,7 +87,7 @@ export function AssemblyDrawing({
         <text
           x={centerX}
           y="25"
-          fill="hsl(var(--primary))"
+          fill="#000000"
           fontSize="14"
           textAnchor="middle"
           fontWeight="bold"
@@ -99,8 +102,8 @@ export function AssemblyDrawing({
             y={tankTop - conservatorHeight - 30}
             width={conservatorWidth}
             height={conservatorHeight}
-            fill="hsl(var(--steel) / 0.2)"
-            stroke="hsl(var(--steel))"
+            fill="#f5f5f5"
+            stroke="#000000"
             strokeWidth="2"
             rx="3"
           />
@@ -111,7 +114,7 @@ export function AssemblyDrawing({
             width={20}
             height={15}
             fill="none"
-            stroke="hsl(var(--glow))"
+            stroke="#000000"
             strokeWidth="1"
           />
           <line
@@ -119,7 +122,7 @@ export function AssemblyDrawing({
             y1={tankTop - conservatorHeight - 15}
             x2={centerX - conservatorWidth / 2 + 25}
             y2={tankTop - conservatorHeight - 15}
-            stroke="hsl(var(--glow))"
+            stroke="#000000"
             strokeWidth="2"
           />
           {/* Conservator pipe */}
@@ -128,13 +131,13 @@ export function AssemblyDrawing({
             y1={tankTop - conservatorHeight - 5}
             x2={centerX}
             y2={tankTop}
-            stroke="hsl(var(--steel))"
+            stroke="#000000"
             strokeWidth="3"
           />
           <text
             x={centerX + conservatorWidth / 2 + 5}
             y={tankTop - conservatorHeight - 10}
-            fill="hsl(var(--muted-foreground))"
+            fill="#000000"
             fontSize="8"
           >
             CONSERVATOR
@@ -147,8 +150,8 @@ export function AssemblyDrawing({
           y={tankTop}
           width={tankW}
           height={tankH}
-          fill="hsl(var(--steel) / 0.15)"
-          stroke="hsl(var(--steel))"
+          fill="#f5f5f5"
+          stroke="#000000"
           strokeWidth="2"
           rx="3"
         />
@@ -161,7 +164,7 @@ export function AssemblyDrawing({
             y1={tankTop}
             x2={tankLeft + tankW * pos}
             y2={tankTop + tankH}
-            stroke="hsl(var(--steel) / 0.5)"
+            stroke="#666666"
             strokeWidth="1"
           />
         ))}
@@ -182,8 +185,8 @@ export function AssemblyDrawing({
                   y={limbTop}
                   width={limbW}
                   height={limbH}
-                  fill="hsl(var(--steel) / 0.4)"
-                  stroke="hsl(var(--steel))"
+                  fill="#cccccc"
+                  stroke="#000000"
                   strokeWidth="1"
                 />
                 {/* LV Winding */}
@@ -192,8 +195,8 @@ export function AssemblyDrawing({
                   y={limbTop + 10}
                   width={8}
                   height={limbH - 20}
-                  fill="hsl(var(--glow) / 0.3)"
-                  stroke="hsl(var(--glow))"
+                  fill="#e8e8e8"
+                  stroke="#000000"
                   strokeWidth="1"
                 />
                 <rect
@@ -201,8 +204,8 @@ export function AssemblyDrawing({
                   y={limbTop + 10}
                   width={8}
                   height={limbH - 20}
-                  fill="hsl(var(--glow) / 0.3)"
-                  stroke="hsl(var(--glow))"
+                  fill="#e8e8e8"
+                  stroke="#000000"
                   strokeWidth="1"
                 />
                 {/* HV Winding */}
@@ -211,8 +214,8 @@ export function AssemblyDrawing({
                   y={limbTop + 10}
                   width={8}
                   height={limbH - 20}
-                  fill="hsl(var(--primary) / 0.3)"
-                  stroke="hsl(var(--primary))"
+                  fill="#f5f5f5"
+                  stroke="#000000"
                   strokeWidth="1"
                 />
                 <rect
@@ -220,8 +223,8 @@ export function AssemblyDrawing({
                   y={limbTop + 10}
                   width={8}
                   height={limbH - 20}
-                  fill="hsl(var(--primary) / 0.3)"
-                  stroke="hsl(var(--primary))"
+                  fill="#f5f5f5"
+                  stroke="#000000"
                   strokeWidth="1"
                 />
               </g>
@@ -233,8 +236,8 @@ export function AssemblyDrawing({
             y={tankTop + tankH * 0.15}
             width={tankW * 0.7}
             height={core.coreDiameter * scale * 0.15}
-            fill="hsl(var(--steel) / 0.4)"
-            stroke="hsl(var(--steel))"
+            fill="#cccccc"
+            stroke="#000000"
             strokeWidth="1"
           />
           {/* Bottom yoke */}
@@ -243,8 +246,8 @@ export function AssemblyDrawing({
             y={tankTop + tankH * 0.8}
             width={tankW * 0.7}
             height={core.coreDiameter * scale * 0.15}
-            fill="hsl(var(--steel) / 0.4)"
-            stroke="hsl(var(--steel))"
+            fill="#cccccc"
+            stroke="#000000"
             strokeWidth="1"
           />
         </g>
@@ -258,7 +261,7 @@ export function AssemblyDrawing({
               width={radiatorWidth}
               height={radiatorHeight}
               fill="url(#radiatorFins)"
-              stroke="hsl(var(--steel))"
+              stroke="#000000"
               strokeWidth="1"
             />
             {/* Inlet/outlet pipes */}
@@ -267,7 +270,7 @@ export function AssemblyDrawing({
               y1={radiatorTop + 15}
               x2={tankLeft - 5 - i * 8}
               y2={radiatorTop + 15}
-              stroke="hsl(var(--steel))"
+              stroke="#000000"
               strokeWidth="2"
             />
             <line
@@ -275,7 +278,7 @@ export function AssemblyDrawing({
               y1={radiatorTop + radiatorHeight - 15}
               x2={tankLeft - 5 - i * 8}
               y2={radiatorTop + radiatorHeight - 15}
-              stroke="hsl(var(--steel))"
+              stroke="#000000"
               strokeWidth="2"
             />
           </g>
@@ -290,7 +293,7 @@ export function AssemblyDrawing({
               width={radiatorWidth}
               height={radiatorHeight}
               fill="url(#radiatorFins)"
-              stroke="hsl(var(--steel))"
+              stroke="#000000"
               strokeWidth="1"
             />
             {/* Inlet/outlet pipes */}
@@ -299,7 +302,7 @@ export function AssemblyDrawing({
               y1={radiatorTop + 15}
               x2={tankLeft + tankW + 5 + i * 8}
               y2={radiatorTop + 15}
-              stroke="hsl(var(--steel))"
+              stroke="#000000"
               strokeWidth="2"
             />
             <line
@@ -307,7 +310,7 @@ export function AssemblyDrawing({
               y1={radiatorTop + radiatorHeight - 15}
               x2={tankLeft + tankW + 5 + i * 8}
               y2={radiatorTop + radiatorHeight - 15}
-              stroke="hsl(var(--steel))"
+              stroke="#000000"
               strokeWidth="2"
             />
           </g>
@@ -325,7 +328,7 @@ export function AssemblyDrawing({
                 width={bushingWidth}
                 height={hvBushingHeight}
                 fill="url(#porcelainGradient)"
-                stroke="hsl(25, 40%, 60%)"
+                stroke="#000000"
                 strokeWidth="1.5"
                 rx="2"
               />
@@ -338,7 +341,7 @@ export function AssemblyDrawing({
                   rx={bushingWidth / 2 + 4}
                   ry={3}
                   fill="url(#porcelainGradient)"
-                  stroke="hsl(25, 40%, 60%)"
+                  stroke="#000000"
                   strokeWidth="1"
                 />
               ))}
@@ -347,15 +350,15 @@ export function AssemblyDrawing({
                 cx={bushingX}
                 cy={tankTop - hvBushingHeight - 8}
                 r={6}
-                fill="hsl(var(--copper))"
-                stroke="hsl(30, 60%, 35%)"
+                fill="#f5f5f5"
+                stroke="#000000"
                 strokeWidth="1"
               />
               {/* Phase label */}
               <text
                 x={bushingX}
                 y={tankTop - hvBushingHeight - 20}
-                fill="hsl(var(--primary))"
+                fill="#000000"
                 fontSize="10"
                 textAnchor="middle"
                 fontWeight="bold"
@@ -379,7 +382,7 @@ export function AssemblyDrawing({
                 width={bushingWidth}
                 height={lvBushingHeight}
                 fill="url(#porcelainGradient)"
-                stroke="hsl(25, 40%, 60%)"
+                stroke="#000000"
                 strokeWidth="1.5"
                 rx="2"
               />
@@ -392,7 +395,7 @@ export function AssemblyDrawing({
                   rx={bushingWidth / 2 + 3}
                   ry={2}
                   fill="url(#porcelainGradient)"
-                  stroke="hsl(25, 40%, 60%)"
+                  stroke="#000000"
                   strokeWidth="1"
                 />
               ))}
@@ -401,15 +404,15 @@ export function AssemblyDrawing({
                 cx={bushingX}
                 cy={tankTop - lvBushingHeight - 6}
                 r={5}
-                fill="hsl(var(--copper))"
-                stroke="hsl(30, 60%, 35%)"
+                fill="#f5f5f5"
+                stroke="#000000"
                 strokeWidth="1"
               />
               {/* Phase label */}
               <text
                 x={bushingX}
                 y={tankTop - lvBushingHeight - 16}
-                fill="hsl(var(--glow))"
+                fill="#000000"
                 fontSize="10"
                 textAnchor="middle"
                 fontWeight="bold"
@@ -427,15 +430,15 @@ export function AssemblyDrawing({
             y={tankTop + 20}
             width={30}
             height={50}
-            fill="hsl(var(--steel) / 0.3)"
-            stroke="hsl(var(--steel))"
+            fill="#f5f5f5"
+            stroke="#000000"
             strokeWidth="1.5"
             rx="2"
           />
           <text
             x={tankLeft + tankW + 20}
             y={tankTop + 50}
-            fill="hsl(var(--muted-foreground))"
+            fill="#000000"
             fontSize="7"
             textAnchor="middle"
           >
@@ -447,7 +450,7 @@ export function AssemblyDrawing({
             cy={tankTop + 35}
             r={8}
             fill="none"
-            stroke="hsl(var(--steel))"
+            stroke="#000000"
             strokeWidth="2"
           />
         </g>
@@ -459,14 +462,14 @@ export function AssemblyDrawing({
             y={tankTop + tankH - 20}
             width={15}
             height={15}
-            fill="hsl(var(--copper) / 0.5)"
-            stroke="hsl(var(--copper))"
+            fill="#e8e8e8"
+            stroke="#000000"
             strokeWidth="1"
           />
           <text
             x={tankLeft + 17}
             y={tankTop + tankH - 5}
-            fill="hsl(var(--muted-foreground))"
+            fill="#000000"
             fontSize="7"
             textAnchor="middle"
           >
@@ -481,8 +484,8 @@ export function AssemblyDrawing({
             y={tankTop + tankH}
             width={20}
             height={10}
-            fill="hsl(var(--steel) / 0.4)"
-            stroke="hsl(var(--steel))"
+            fill="#cccccc"
+            stroke="#000000"
             strokeWidth="1"
           />
           <circle
@@ -490,7 +493,7 @@ export function AssemblyDrawing({
             cy={tankTop + tankH + 15}
             r={6}
             fill="none"
-            stroke="hsl(var(--steel))"
+            stroke="#000000"
             strokeWidth="2"
           />
         </g>
@@ -501,14 +504,14 @@ export function AssemblyDrawing({
           y={tankTop + tankH * 0.4}
           width={40}
           height={25}
-          fill="hsl(var(--secondary))"
-          stroke="hsl(var(--border))"
+          fill="#f5f5f5"
+          stroke="#000000"
           strokeWidth="1"
         />
         <text
           x={tankLeft + 35}
           y={tankTop + tankH * 0.4 + 15}
-          fill="hsl(var(--muted-foreground))"
+          fill="#000000"
           fontSize="6"
           textAnchor="middle"
         >
@@ -516,27 +519,27 @@ export function AssemblyDrawing({
         </text>
 
         {/* Legend */}
-        <rect x="10" y={height - 80} width="160" height="70" fill="hsl(var(--background))" stroke="hsl(var(--border))" strokeWidth="1" rx="4" />
-        <text x="20" y={height - 62} fill="hsl(var(--foreground))" fontSize="10" fontWeight="bold">
+        <rect x="10" y={height - 80} width="160" height="70" fill="#ffffff" stroke="#000000" strokeWidth="1" rx="4" />
+        <text x="20" y={height - 62} fill="#000000" fontSize="10" fontWeight="bold">
           CONNECTIONS
         </text>
         {/* HV */}
-        <circle cx="25" cy={height - 47} r="5" fill="hsl(var(--copper))" stroke="hsl(30, 60%, 35%)" />
-        <text x="35" y={height - 43} fill="hsl(var(--primary))" fontSize="9">
+        <circle cx="25" cy={height - 47} r="5" fill="#f5f5f5" stroke="#000000" />
+        <text x="35" y={height - 43} fill="#000000" fontSize="9">
           HV: H1-H2-H3 ({(primaryVoltage/1000).toFixed(1)}kV)
         </text>
         {/* LV */}
-        <circle cx="25" cy={height - 32} r="5" fill="hsl(var(--copper))" stroke="hsl(30, 60%, 35%)" />
-        <text x="35" y={height - 28} fill="hsl(var(--glow))" fontSize="9">
+        <circle cx="25" cy={height - 32} r="5" fill="#f5f5f5" stroke="#000000" />
+        <text x="35" y={height - 28} fill="#000000" fontSize="9">
           LV: X1-X2-X3-X0 ({secondaryVoltage}V)
         </text>
         {/* Vector */}
-        <text x="20" y={height - 15} fill="hsl(var(--muted-foreground))" fontSize="8">
+        <text x="20" y={height - 15} fill="#000000" fontSize="8">
           Vector Group: {vectorGroup}
         </text>
 
         {/* Dimensions */}
-        <g stroke="hsl(var(--muted-foreground))" strokeWidth="0.5" fontSize="8" fill="hsl(var(--muted-foreground))">
+        <g stroke="#000000" strokeWidth="0.5" fontSize="8" fill="#000000">
           {/* Width dimension */}
           <line x1={tankLeft} y1={tankTop + tankH + 25} x2={tankLeft + tankW} y2={tankTop + tankH + 25} />
           <line x1={tankLeft} y1={tankTop + tankH + 20} x2={tankLeft} y2={tankTop + tankH + 30} />
@@ -557,7 +560,7 @@ export function AssemblyDrawing({
         <text
           x={width - 10}
           y={height - 10}
-          fill="hsl(var(--muted-foreground))"
+          fill="#000000"
           fontSize="8"
           textAnchor="end"
         >

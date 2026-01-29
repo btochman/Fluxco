@@ -264,33 +264,16 @@ Lead Time: ${LEAD_TIME_OPTIONS[config.leadTimeIndex]?.weeks} weeks
 Estimated Price: $${price.toLocaleString()}
       `.trim();
 
-      // First, save to database (this is the critical step)
-      const { error: dbError } = await supabase
-        .from("quote_requests")
-        .insert({
-          name: quoteForm.name.trim(),
-          email: quoteForm.email.trim(),
-          company: quoteForm.company.trim() || null,
-          phone: null,
-          product_interest: `Transformer Quote Request - ${config.kva} kVA`,
-          project_details: specDetails,
-          estimated_price: price,
-        });
-
-      if (dbError) throw dbError;
-
-      // Then try to send email notification (non-blocking)
-      supabase.functions.invoke("send-contact-email", {
+      // Send email notification
+      await supabase.functions.invoke("send-contact-email", {
         body: {
           to: "brian@fluxco.com",
           name: quoteForm.name.trim(),
           email: quoteForm.email.trim(),
           company: quoteForm.company.trim() || "Not specified",
-          productInterest: `Transformer Quote Request - ${config.kva} kVA`,
+          productInterest: `Transformer Inquiry - ${config.kva} kVA`,
           projectDetails: specDetails,
         },
-      }).catch((emailError: unknown) => {
-        console.warn("Email notification failed (submission still saved):", emailError);
       });
 
       toast({

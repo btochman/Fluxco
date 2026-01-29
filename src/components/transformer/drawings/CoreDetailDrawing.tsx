@@ -42,24 +42,26 @@ export function CoreDetailDrawing({ core, phases }: CoreDetailDrawingProps) {
     <div className="w-full">
       <svg viewBox={`0 0 ${width} ${height}`} className="w-full">
         {/* Background */}
+        <rect width={width} height={height} fill="#ffffff" />
+
         <defs>
           <pattern id="coreGrid" width="20" height="20" patternUnits="userSpaceOnUse">
-            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="hsl(var(--primary) / 0.08)" strokeWidth="0.5" />
+            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#e0e0e0" strokeWidth="0.5" />
           </pattern>
           <pattern id="laminationPattern" width="2" height="2" patternUnits="userSpaceOnUse">
-            <line x1="0" y1="2" x2="2" y2="0" stroke="hsl(var(--steel) / 0.3)" strokeWidth="0.5" />
+            <line x1="0" y1="2" x2="2" y2="0" stroke="#999999" strokeWidth="0.5" />
           </pattern>
           <marker id="coreArrowS" markerWidth="6" markerHeight="6" refX="0" refY="3" orient="auto">
-            <path d="M6,0 L0,3 L6,6" fill="none" stroke="hsl(var(--muted-foreground))" strokeWidth="0.5" />
+            <path d="M6,0 L0,3 L6,6" fill="none" stroke="#000000" strokeWidth="0.5" />
           </marker>
           <marker id="coreArrowE" markerWidth="6" markerHeight="6" refX="6" refY="3" orient="auto">
-            <path d="M0,0 L6,3 L0,6" fill="none" stroke="hsl(var(--muted-foreground))" strokeWidth="0.5" />
+            <path d="M0,0 L6,3 L0,6" fill="none" stroke="#000000" strokeWidth="0.5" />
           </marker>
         </defs>
         <rect width={width} height={height} fill="url(#coreGrid)" />
 
         {/* Title */}
-        <text x={width / 2} y="20" fill="hsl(var(--primary))" fontSize="12" textAnchor="middle" fontWeight="bold">
+        <text x={width / 2} y="20" fill="#000000" fontSize="12" textAnchor="middle" fontWeight="bold">
           CORE ASSEMBLY - FRONT ELEVATION
         </text>
 
@@ -70,7 +72,7 @@ export function CoreDetailDrawing({ core, phases }: CoreDetailDrawingProps) {
           width={totalW}
           height={yokeH}
           fill="url(#laminationPattern)"
-          stroke="hsl(var(--steel))"
+          stroke="#000000"
           strokeWidth="1.5"
         />
 
@@ -81,7 +83,7 @@ export function CoreDetailDrawing({ core, phases }: CoreDetailDrawingProps) {
           width={totalW}
           height={yokeH}
           fill="url(#laminationPattern)"
-          stroke="hsl(var(--steel))"
+          stroke="#000000"
           strokeWidth="1.5"
         />
 
@@ -96,14 +98,14 @@ export function CoreDetailDrawing({ core, phases }: CoreDetailDrawingProps) {
                 width={dia}
                 height={winH}
                 fill="url(#laminationPattern)"
-                stroke="hsl(var(--steel))"
+                stroke="#000000"
                 strokeWidth="1.5"
               />
               {/* Phase label */}
               <text
                 x={limbX + dia / 2}
                 y={startY + yokeH + winH / 2}
-                fill="hsl(var(--foreground))"
+                fill="#000000"
                 fontSize="12"
                 textAnchor="middle"
                 dominantBaseline="middle"
@@ -125,8 +127,8 @@ export function CoreDetailDrawing({ core, phases }: CoreDetailDrawingProps) {
               y={startY + yokeH}
               width={winW}
               height={winH}
-              fill="hsl(var(--background))"
-              stroke="hsl(var(--steel))"
+              fill="#ffffff"
+              stroke="#000000"
               strokeWidth="0.5"
               strokeDasharray="5,3"
             />
@@ -134,7 +136,7 @@ export function CoreDetailDrawing({ core, phases }: CoreDetailDrawingProps) {
         })}
 
         {/* Dimension: Total Width */}
-        <g stroke="hsl(var(--muted-foreground))" strokeWidth="0.5" fill="hsl(var(--muted-foreground))" fontSize="9">
+        <g stroke="#000000" strokeWidth="0.5" fill="#000000" fontSize="9">
           <line x1={startX} y1={startY - 15} x2={startX + totalW} y2={startY - 15} markerStart="url(#coreArrowS)" markerEnd="url(#coreArrowE)" />
           <line x1={startX} y1={startY - 25} x2={startX} y2={startY - 5} />
           <line x1={startX + totalW} y1={startY - 25} x2={startX + totalW} y2={startY - 5} />
@@ -144,7 +146,7 @@ export function CoreDetailDrawing({ core, phases }: CoreDetailDrawingProps) {
         </g>
 
         {/* Dimension: Core Diameter */}
-        <g stroke="hsl(var(--primary))" strokeWidth="0.5" fill="hsl(var(--primary))" fontSize="8">
+        <g stroke="#000000" strokeWidth="0.5" fill="#000000" fontSize="8">
           <line x1={startX} y1={startY + yokeH + winH + yokeH + 20} x2={startX + dia} y2={startY + yokeH + winH + yokeH + 20} markerStart="url(#coreArrowS)" markerEnd="url(#coreArrowE)" />
           <line x1={startX} y1={startY + yokeH + winH + yokeH + 10} x2={startX} y2={startY + yokeH + winH + yokeH + 30} />
           <line x1={startX + dia} y1={startY + yokeH + winH + yokeH + 10} x2={startX + dia} y2={startY + yokeH + winH + yokeH + 30} />
@@ -155,7 +157,7 @@ export function CoreDetailDrawing({ core, phases }: CoreDetailDrawingProps) {
 
         {/* Dimension: Window Width */}
         {numLimbs > 1 && (
-          <g stroke="hsl(var(--primary))" strokeWidth="0.5" fill="hsl(var(--primary))" fontSize="8">
+          <g stroke="#000000" strokeWidth="0.5" fill="#000000" fontSize="8">
             <line x1={startX + dia} y1={startY + yokeH + winH + yokeH + 20} x2={startX + dia + winW} y2={startY + yokeH + winH + yokeH + 20} markerStart="url(#coreArrowS)" markerEnd="url(#coreArrowE)" />
             <line x1={startX + dia} y1={startY + yokeH + winH + yokeH + 10} x2={startX + dia} y2={startY + yokeH + winH + yokeH + 30} />
             <line x1={startX + dia + winW} y1={startY + yokeH + winH + yokeH + 10} x2={startX + dia + winW} y2={startY + yokeH + winH + yokeH + 30} />
@@ -166,7 +168,7 @@ export function CoreDetailDrawing({ core, phases }: CoreDetailDrawingProps) {
         )}
 
         {/* Dimension: Total Height */}
-        <g stroke="hsl(var(--muted-foreground))" strokeWidth="0.5" fill="hsl(var(--muted-foreground))" fontSize="9">
+        <g stroke="#000000" strokeWidth="0.5" fill="#000000" fontSize="9">
           <line x1={startX + totalW + 20} y1={startY} x2={startX + totalW + 20} y2={startY + totalH} markerStart="url(#coreArrowS)" markerEnd="url(#coreArrowE)" />
           <line x1={startX + totalW + 10} y1={startY} x2={startX + totalW + 30} y2={startY} />
           <line x1={startX + totalW + 10} y1={startY + totalH} x2={startX + totalW + 30} y2={startY + totalH} />
@@ -176,7 +178,7 @@ export function CoreDetailDrawing({ core, phases }: CoreDetailDrawingProps) {
         </g>
 
         {/* Dimension: Window Height */}
-        <g stroke="hsl(var(--primary))" strokeWidth="0.5" fill="hsl(var(--primary))" fontSize="8">
+        <g stroke="#000000" strokeWidth="0.5" fill="#000000" fontSize="8">
           <line x1={startX + totalW + 45} y1={startY + yokeH} x2={startX + totalW + 45} y2={startY + yokeH + winH} markerStart="url(#coreArrowS)" markerEnd="url(#coreArrowE)" />
           <line x1={startX + totalW + 35} y1={startY + yokeH} x2={startX + totalW + 55} y2={startY + yokeH} />
           <line x1={startX + totalW + 35} y1={startY + yokeH + winH} x2={startX + totalW + 55} y2={startY + yokeH + winH} />
@@ -186,7 +188,7 @@ export function CoreDetailDrawing({ core, phases }: CoreDetailDrawingProps) {
         </g>
 
         {/* Dimension: Yoke Height */}
-        <g stroke="hsl(var(--primary))" strokeWidth="0.5" fill="hsl(var(--primary))" fontSize="8">
+        <g stroke="#000000" strokeWidth="0.5" fill="#000000" fontSize="8">
           <line x1={startX - 20} y1={startY} x2={startX - 20} y2={startY + yokeH} markerStart="url(#coreArrowS)" markerEnd="url(#coreArrowE)" />
           <line x1={startX - 30} y1={startY} x2={startX - 10} y2={startY} />
           <line x1={startX - 30} y1={startY + yokeH} x2={startX - 10} y2={startY + yokeH} />
@@ -197,11 +199,11 @@ export function CoreDetailDrawing({ core, phases }: CoreDetailDrawingProps) {
 
         {/* Core Cross-Section Detail */}
         <g transform={`translate(${width - 180}, ${height - 180})`}>
-          <rect x="-5" y="-5" width="170" height="170" fill="hsl(var(--background))" stroke="hsl(var(--border))" rx="3" />
-          <text x="80" y="12" fill="hsl(var(--foreground))" fontSize="9" textAnchor="middle" fontWeight="bold">
+          <rect x="-5" y="-5" width="170" height="170" fill="#ffffff" stroke="#000000" rx="3" />
+          <text x="80" y="12" fill="#000000" fontSize="9" textAnchor="middle" fontWeight="bold">
             CORE CROSS-SECTION
           </text>
-          <text x="80" y="24" fill="hsl(var(--muted-foreground))" fontSize="7" textAnchor="middle">
+          <text x="80" y="24" fill="#000000" fontSize="7" textAnchor="middle">
             (Stepped Circular)
           </text>
 
@@ -219,8 +221,8 @@ export function CoreDetailDrawing({ core, phases }: CoreDetailDrawingProps) {
                       y={-stepH / 2}
                       width={stepW / 2}
                       height={stepH}
-                      fill={`hsl(var(--steel) / ${0.3 + i * 0.1})`}
-                      stroke="hsl(var(--steel))"
+                      fill={i % 2 === 0 ? '#e0e0e0' : '#cccccc'}
+                      stroke="#000000"
                       strokeWidth="0.5"
                     />
                     {/* Right half (mirror) */}
@@ -229,25 +231,25 @@ export function CoreDetailDrawing({ core, phases }: CoreDetailDrawingProps) {
                       y={-stepH / 2}
                       width={stepW / 2}
                       height={stepH}
-                      fill={`hsl(var(--steel) / ${0.3 + i * 0.1})`}
-                      stroke="hsl(var(--steel))"
+                      fill={i % 2 === 0 ? '#e0e0e0' : '#cccccc'}
+                      stroke="#000000"
                       strokeWidth="0.5"
                     />
                   </g>
                 );
               })}
               {/* Dimension line */}
-              <line x1={-core.coreDiameter * stepScale / 2} y1={50} x2={core.coreDiameter * stepScale / 2} y2={50} stroke="hsl(var(--primary))" strokeWidth="0.5" markerStart="url(#coreArrowS)" markerEnd="url(#coreArrowE)" />
-              <text x="0" y="62" fill="hsl(var(--primary))" fontSize="7" textAnchor="middle">
-                Ø{core.coreDiameter} mm
+              <line x1={-core.coreDiameter * stepScale / 2} y1={50} x2={core.coreDiameter * stepScale / 2} y2={50} stroke="#000000" strokeWidth="0.5" markerStart="url(#coreArrowS)" markerEnd="url(#coreArrowE)" />
+              <text x="0" y="62" fill="#000000" fontSize="7" textAnchor="middle">
+                {core.coreDiameter} mm
               </text>
             </g>
           ) : (
             <g transform="translate(80, 95)">
               {/* Simple circle if no step data */}
-              <circle r={core.coreDiameter * stepScale / 2} fill="hsl(var(--steel) / 0.3)" stroke="hsl(var(--steel))" strokeWidth="1" />
-              <text x="0" y={core.coreDiameter * stepScale / 2 + 15} fill="hsl(var(--primary))" fontSize="7" textAnchor="middle">
-                Ø{core.coreDiameter} mm
+              <circle r={core.coreDiameter * stepScale / 2} fill="#e0e0e0" stroke="#000000" strokeWidth="1" />
+              <text x="0" y={core.coreDiameter * stepScale / 2 + 15} fill="#000000" fontSize="7" textAnchor="middle">
+                {core.coreDiameter} mm
               </text>
             </g>
           )}
@@ -255,11 +257,11 @@ export function CoreDetailDrawing({ core, phases }: CoreDetailDrawingProps) {
 
         {/* Specifications Table */}
         <g transform="translate(10, height - 120)">
-          <rect x="0" y="0" width="160" height="110" fill="hsl(var(--background))" stroke="hsl(var(--border))" rx="3" />
-          <text x="80" y="15" fill="hsl(var(--foreground))" fontSize="9" textAnchor="middle" fontWeight="bold">
+          <rect x="0" y="0" width="160" height="110" fill="#ffffff" stroke="#000000" rx="3" />
+          <text x="80" y="15" fill="#000000" fontSize="9" textAnchor="middle" fontWeight="bold">
             CORE SPECIFICATIONS
           </text>
-          <line x1="5" y1="20" x2="155" y2="20" stroke="hsl(var(--border))" />
+          <line x1="5" y1="20" x2="155" y2="20" stroke="#000000" />
 
           {[
             ['Steel Grade:', core.steelGrade.name.split(' ')[0]],
@@ -271,8 +273,8 @@ export function CoreDetailDrawing({ core, phases }: CoreDetailDrawingProps) {
             ['Core Weight:', `${core.coreWeight.toFixed(0)} kg`],
           ].map(([label, value], i) => (
             <g key={i}>
-              <text x="10" y={35 + i * 12} fill="hsl(var(--muted-foreground))" fontSize="8">{label}</text>
-              <text x="150" y={35 + i * 12} fill="hsl(var(--foreground))" fontSize="8" textAnchor="end" fontWeight="bold">{value}</text>
+              <text x="10" y={35 + i * 12} fill="#000000" fontSize="8">{label}</text>
+              <text x="150" y={35 + i * 12} fill="#000000" fontSize="8" textAnchor="end" fontWeight="bold">{value}</text>
             </g>
           ))}
         </g>
