@@ -9,6 +9,7 @@ import { CalculationSteps } from '@/components/transformer/calculations/Calculat
 import { DesignSummary } from '@/components/transformer/output/DesignSummary';
 import { BillOfMaterials } from '@/components/transformer/output/BillOfMaterials';
 import { CostEstimate } from '@/components/transformer/output/CostEstimate';
+import { DesignCalculationLoader } from '@/components/transformer/DesignCalculationLoader';
 import { calculateCostEstimate, calculateLifecycleCost, formatCurrency } from '@/engine/core/costEstimation';
 import { CoreCrossSectionDrawing } from '@/components/transformer/drawings/CoreCrossSectionDrawing';
 import { WindingLayoutDrawing } from '@/components/transformer/drawings/WindingLayoutDrawing';
@@ -37,10 +38,15 @@ const defaultRequirements: DesignRequirements = {
 export function TransformerDesigner() {
   const [requirements, setRequirements] = useState<DesignRequirements>(defaultRequirements);
   const [design, setDesign] = useState<TransformerDesign | null>(null);
+  const [isCalculating, setIsCalculating] = useState(false);
   const [activeTab, setActiveTab] = useState('summary');
   const [activeDrawingTab, setActiveDrawingTab] = useState('assembly-front');
 
   const handleCalculate = () => {
+    setIsCalculating(true);
+  };
+
+  const handleCalculationComplete = () => {
     const result = designTransformer(requirements, {
       steelGrade: requirements.steelGrade.id,
       hvConductorMaterial: requirements.conductorType.id === 'copper' ? 'copper' : 'aluminum',
@@ -49,6 +55,7 @@ export function TransformerDesigner() {
     if (result.success && result.design) {
       setDesign(result.design);
     }
+    setIsCalculating(false);
   };
 
   const handleExportPDF = async () => {
@@ -273,6 +280,16 @@ export function TransformerDesigner() {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Loading Animation */}
+      {isCalculating && (
+        <DesignCalculationLoader
+          onComplete={handleCalculationComplete}
+          ratedPower={requirements.ratedPower}
+          primaryVoltage={requirements.primaryVoltage}
+          secondaryVoltage={requirements.secondaryVoltage}
+        />
+      )}
+
       {/* Header */}
       <header className="border-b bg-card">
         <div className="container mx-auto px-4 py-4">
