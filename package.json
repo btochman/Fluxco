@@ -1,5 +1,5 @@
 {
-  "name": "fluxco-rebuild",
+  "name": "fluxco",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -43,6 +43,7 @@
     "@tanstack/react-query": "^5.90.20",
     "@types/d3-geo": "^3.1.0",
     "@types/topojson-client": "^3.1.5",
+    "@vercel/analytics": "^1.6.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
