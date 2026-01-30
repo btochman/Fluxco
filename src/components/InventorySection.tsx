@@ -199,7 +199,7 @@ const InventorySection = () => {
                     <TableHead className="text-muted-foreground font-semibold">Category</TableHead>
                     <TableHead className="text-muted-foreground font-semibold">Capacity</TableHead>
                     <TableHead className="text-muted-foreground font-semibold">Voltage</TableHead>
-                    <TableHead className="text-muted-foreground font-semibold">Manufacturer</TableHead>
+                    <TableHead className="text-muted-foreground font-semibold">OEM</TableHead>
                     <TableHead className="text-muted-foreground font-semibold">Location</TableHead>
                     <TableHead className="text-muted-foreground font-semibold">FEOC</TableHead>
                     <TableHead className="text-muted-foreground font-semibold">Qty</TableHead>
