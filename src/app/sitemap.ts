@@ -1,7 +1,9 @@
 import { MetadataRoute } from "next";
+import { getAllArticles } from "@/data/articles";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = "https://fluxco.com";
+  const articles = getAllArticles();
 
   // Static pages
   const staticPages = [
@@ -99,7 +101,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   ];
 
-  // FAQ page
+  // FAQ and resources pages
   const resourcePages = [
     {
       url: `${baseUrl}/faq`,
@@ -107,12 +109,27 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly" as const,
       priority: 0.6,
     },
+    {
+      url: `${baseUrl}/resources`,
+      lastModified: new Date(),
+      changeFrequency: "weekly" as const,
+      priority: 0.8,
+    },
   ];
+
+  // Blog articles
+  const articlePages = articles.map((article) => ({
+    url: `${baseUrl}/resources/${article.slug}`,
+    lastModified: new Date(article.updatedAt || article.publishedAt),
+    changeFrequency: "monthly" as const,
+    priority: 0.7,
+  }));
 
   return [
     ...staticPages,
     ...transformerPages,
     ...solutionPages,
     ...resourcePages,
+    ...articlePages,
   ];
 }

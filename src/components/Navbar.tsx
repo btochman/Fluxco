@@ -170,13 +170,13 @@ const Navbar = () => {
                   </Link>
                 </NavigationMenuItem>
 
-                {/* FAQ - simple link */}
+                {/* Resources - simple link */}
                 <NavigationMenuItem>
                   <Link
-                    href="/faq"
+                    href="/resources"
                     className="text-muted-foreground hover:text-primary transition-colors duration-300 text-sm uppercase tracking-wider px-4 py-2"
                   >
-                    FAQ
+                    Resources
                   </Link>
                 </NavigationMenuItem>
 
@@ -302,13 +302,13 @@ const Navbar = () => {
                 Inventory
               </Link>
 
-              {/* FAQ */}
+              {/* Resources */}
               <Link
-                href="/faq"
+                href="/resources"
                 className="text-muted-foreground hover:text-primary transition-colors duration-300 text-sm uppercase tracking-wider py-2"
                 onClick={() => setIsOpen(false)}
               >
-                FAQ
+                Resources
               </Link>
 
               {/* Contact */}
