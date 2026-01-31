@@ -12,6 +12,7 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-background">
       <Navbar />
+      <ArticleTicker />
       <div className="fixed bottom-4 right-4 z-50 flex items-center gap-1.5 bg-card/90 backdrop-blur-sm border border-border px-3 py-1.5 rounded-full shadow-lg" title="Made in USA">
         <div className="flex gap-0.5">
           <div className="w-1.5 h-4 bg-[hsl(348,74%,40%)] rounded-sm" />
@@ -21,7 +22,6 @@ export default function Home() {
         <span className="text-xs font-display tracking-wider text-foreground">MADE IN USA</span>
       </div>
       <HeroSection />
-      <ArticleTicker />
       <AboutSection />
       <ProductsSection />
       <InventoryPreview />

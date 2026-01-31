@@ -1,8 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { ArrowRight } from "lucide-react";
 
 interface Article {
   slug: string;
@@ -66,53 +64,42 @@ const categoryLabels = {
 };
 
 export default function ArticleTicker() {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isAnimating, setIsAnimating] = useState(false);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setIsAnimating(true);
-      setTimeout(() => {
-        setCurrentIndex((prev) => (prev + 1) % articles.length);
-        setIsAnimating(false);
-      }, 300);
-    }, 4000);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  const article = articles[currentIndex];
+  // Double the articles for seamless loop
+  const doubledArticles = [...articles, ...articles];
 
   return (
-    <section className="bg-muted/50 border-b border-border py-3">
-      <div className="container mx-auto px-6">
-        <div className="flex items-center justify-center gap-4">
-          <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider hidden sm:block">
+    <div className="fixed top-20 left-0 right-0 z-40 bg-muted/95 backdrop-blur-sm border-b border-border overflow-hidden">
+      <div className="flex items-center h-9">
+        {/* Static label */}
+        <div className="flex-shrink-0 bg-[hsl(348,74%,40%)] px-4 h-full flex items-center">
+          <span className="text-xs font-display font-semibold text-white uppercase tracking-wider whitespace-nowrap">
             Latest Insights
           </span>
-          <div className="h-4 w-px bg-border hidden sm:block" />
-          <Link
-            href={`/resources/${article.slug}`}
-            className="group flex items-center gap-3 overflow-hidden"
-          >
-            <span
-              className={`text-xs font-semibold uppercase tracking-wider ${categoryColors[article.category]}`}
-            >
-              {categoryLabels[article.category]}
-            </span>
-            <span
-              className={`text-sm text-foreground group-hover:text-primary transition-all duration-300 ${
-                isAnimating
-                  ? "opacity-0 translate-y-2"
-                  : "opacity-100 translate-y-0"
-              }`}
-            >
-              {article.title}
-            </span>
-            <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
-          </Link>
+        </div>
+
+        {/* Scrolling container */}
+        <div className="flex-1 overflow-hidden">
+          <div className="animate-ticker flex items-center gap-12 whitespace-nowrap">
+            {doubledArticles.map((article, index) => (
+              <Link
+                key={`${article.slug}-${index}`}
+                href={`/resources/${article.slug}`}
+                className="group inline-flex items-center gap-2 hover:opacity-80 transition-opacity"
+              >
+                <span
+                  className={`text-xs font-semibold uppercase tracking-wider ${categoryColors[article.category]}`}
+                >
+                  {categoryLabels[article.category]}
+                </span>
+                <span className="text-sm text-foreground">
+                  {article.title}
+                </span>
+                <span className="text-muted-foreground mx-4">•</span>
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
-    </section>
+    </div>
   );
 }
