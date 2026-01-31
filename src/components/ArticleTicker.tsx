@@ -56,7 +56,7 @@ const articles: Article[] = [
 const categoryColors = {
   guides: "text-primary",
   technical: "text-blue-400",
-  industry: "text-green-400",
+  industry: "text-[hsl(348,74%,50%)]",
 };
 
 const categoryLabels = {

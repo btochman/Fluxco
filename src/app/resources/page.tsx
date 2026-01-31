@@ -42,7 +42,7 @@ const categoryInfo = {
     label: "Industry Insights",
     icon: TrendingUp,
     description: "Market trends, supply chain updates, and industry news",
-    color: "bg-green-600",
+    color: "bg-[hsl(348,74%,40%)]",
   },
 };
 
