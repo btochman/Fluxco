@@ -929,6 +929,555 @@ We built FluxCo because we lived this frustration. Our platform aggregates inven
 [See what's in stock now](/inventory) or [tell us what you need](#contact).
 `,
   },
+  {
+    slug: "is-your-transformer-really-made-in-america",
+    title: "That 'Made in America' Transformer? It Probably Isn't.",
+    description:
+      "FEOC compliance is now critical for clean energy projects, but many transformer suppliers obscure where units are actually manufactured. Here's how to see through the supply chain.",
+    category: "industry",
+    publishedAt: "2026-01-30",
+    readTime: "8 min read",
+    keywords: [
+      "FEOC compliance",
+      "made in america transformer",
+      "transformer country of origin",
+      "domestic content requirements",
+      "IRA transformer requirements",
+      "foreign entity of concern",
+      "transformer supply chain",
+    ],
+    content: `
+## The Uncomfortable Truth About Transformer Origins
+
+You just signed a contract for a new transformer. The sales rep assured you it's "domestic" or "made in America." You checked the box on your procurement form and moved on.
+
+**Here's the problem**: That transformer might be shipping from a facility in Mexico. Or assembled in the US from a core wound in China. Or built by a company with significant Chinese government ownership.
+
+And if you're building a project that needs Inflation Reduction Act (IRA) tax credits, that could cost you millions.
+
+## What Is FEOC and Why Should You Care?
+
+FEOC stands for **Foreign Entity of Concern**. Under the IRA's clean energy provisions, projects claiming certain tax credits cannot use components from entities that are:
+
+- Owned or controlled by governments of China, Russia, North Korea, or Iran
+- Headquartered in those countries
+- Subject to their jurisdiction in ways that compromise independence
+
+This applies to battery storage projects (Section 45X), EV charging infrastructure, and increasingly to transformers used in renewable energy and grid storage applications.
+
+**The stakes are real**: The domestic content bonus alone is worth 10% of the project's tax credit value. For a $50 million solar installation, that's $5 million you could lose by using the wrong transformer.
+
+## How Suppliers Obscure Country of Origin
+
+### The "Assembled In" Loophole
+
+A transformer might be "assembled in the USA" but contain:
+- A core manufactured in China
+- Windings from Mexico
+- Bushings from Korea
+- A tank fabricated in India
+
+The final nameplate says "Made in USA" but the substantial transformation happened elsewhere. For FEOC purposes, this matters.
+
+### The Shell Company Structure
+
+Some manufacturers have complex corporate structures specifically designed to obscure beneficial ownership:
+- US-incorporated subsidiary
+- Owned by a holding company in Singapore
+- Which is majority owned by a Chinese state enterprise
+
+The sales team doesn't mention this. The website shows American flags. But due diligence reveals the truth.
+
+### The "We Have a US Factory" Claim
+
+Yes, they have a facility in Texas. But that facility does final assembly and testing. The cores—the most labor-intensive and value-added component—ship from their main factory in Jiangsu Province.
+
+### Joint Ventures and Licensing
+
+Major brands sometimes license manufacturing to overseas partners. That transformer might bear a familiar American or European name but be entirely manufactured by a FEOC-affiliated company under license.
+
+## Real Examples (Names Changed)
+
+**Case 1**: A data center developer ordered 12 padmount transformers from a well-known brand. Due diligence later revealed the specific product line was manufactured in a Chinese facility owned by a state-backed enterprise. The developer had to source replacements at premium prices to maintain their tax credit eligibility.
+
+**Case 2**: A utility-scale solar project specified "domestic content" transformers. The supplier provided units from their "American" facility—which turned out to be a final assembly operation. Cores were manufactured in China. The project lost its domestic content bonus.
+
+**Case 3**: An EV charging network operator assumed their equipment supplier was FEOC-compliant because headquarters was in Germany. A subsidiary in their supply chain had 40% ownership by a Chinese battery manufacturer with state ties.
+
+## How to Actually Verify Transformer Origin
+
+### Ask the Right Questions
+
+Don't accept "Made in USA" at face value. Ask specifically:
+
+1. **Where is the core manufactured?** (This is the key component)
+2. **Where are windings produced?**
+3. **What percentage of value-added occurs domestically?**
+4. **Who is the ultimate beneficial owner of the manufacturing entity?**
+5. **Are any manufacturing facilities located in FEOC countries?**
+6. **Does any FEOC have ownership stake >25% in any entity in the supply chain?**
+
+### Request Documentation
+
+Legitimate suppliers can provide:
+- Country of origin certificates
+- Supply chain attestations
+- Corporate ownership disclosures
+- Manufacturing facility addresses
+- Third-party compliance certifications
+
+If a supplier gets defensive or vague when you ask, that's a red flag.
+
+### Check Corporate Registrations
+
+Use SEC filings, state business registrations, and international corporate databases to trace ownership. For significant purchases, consider engaging a compliance firm to conduct due diligence.
+
+### Look at Shipping Records
+
+Import records are public. If a "domestic" manufacturer has regular container shipments from Qingdao or Shenzhen, ask what's in those containers.
+
+## The Compliance Landscape Is Tightening
+
+This isn't going away. If anything, requirements are getting stricter:
+
+- **2024**: Initial FEOC guidance for battery components
+- **2025**: Expanded definitions and stricter enforcement
+- **2026**: Treasury clarifications on transformer applicability
+- **2027+**: Likely extension to broader grid infrastructure
+
+Companies that invest in genuinely domestic supply chains now will have a competitive advantage as requirements tighten.
+
+## What This Means for Your Next Transformer Purchase
+
+### For Clean Energy Projects
+
+If you're building solar, wind, storage, or EV infrastructure that will claim IRA credits:
+
+1. **Make FEOC compliance a bid requirement**, not an afterthought
+2. **Verify claims independently**—don't trust sales assurances
+3. **Document everything**—you may need to prove compliance years later
+4. **Build in lead time**—truly domestic options may have longer delivery
+
+### For All Buyers
+
+Even if IRA credits don't apply to your project today:
+
+- **Future-proof your procurement**—regulations expand
+- **Reduce supply chain risk**—geopolitical tensions affect imports
+- **Support domestic manufacturing**—if that's important to your organization
+
+## How FluxCo Helps
+
+We've built FEOC compliance verification into our platform because we saw too many buyers get burned.
+
+**What we provide:**
+- **Verified country of origin** for every unit in our inventory
+- **Supply chain transparency** showing where components are manufactured
+- **Ownership attestations** from manufacturers
+- **Compliance documentation** ready for your tax credit applications
+- **Filtered search** to show only FEOC-compliant options
+
+Don't find out your "American" transformer isn't American after you've already installed it.
+
+[Browse FEOC-compliant inventory](/inventory) or [ask our team about compliance verification](#contact).
+`,
+  },
+  {
+    slug: "ira-tax-credits-transformers-domestic-content",
+    title: "The Tax Credits You're Leaving on the Table: IRA Incentives for US-Made Transformers",
+    description:
+      "The Inflation Reduction Act offers significant tax credit bonuses for projects using domestically manufactured equipment—including transformers. Here's what you need to know to capture these incentives.",
+    category: "industry",
+    publishedAt: "2026-01-29",
+    readTime: "6 min read",
+    keywords: [
+      "IRA tax credits",
+      "domestic content bonus",
+      "transformer tax incentives",
+      "inflation reduction act",
+      "clean energy tax credits",
+      "made in america bonus",
+      "renewable energy incentives",
+    ],
+    content: `
+## Billions in Incentives, Often Overlooked
+
+The Inflation Reduction Act (IRA) created the largest clean energy investment in American history. But many project developers are leaving money on the table by overlooking one key provision: the **domestic content bonus**.
+
+For projects that meet domestic manufacturing requirements, the IRA adds a 10% bonus to the base tax credit. On a utility-scale solar project, that could mean an extra $5-15 million. For a data center power upgrade, potentially more.
+
+And transformers? They're a key component that can make or break your domestic content qualification.
+
+## How the Domestic Content Bonus Works
+
+### The Basic Structure
+
+The IRA's clean energy tax credits (like the Investment Tax Credit and Production Tax Credit) have a base value. Meeting domestic content requirements adds 10 percentage points:
+
+| Credit Type | Base Rate | With Domestic Content |
+|-------------|-----------|----------------------|
+| ITC (Investment Tax Credit) | 30% | 40% |
+| PTC (Production Tax Credit) | 100% | 110% |
+
+For a $100 million solar project claiming the ITC, that's the difference between a $30 million credit and a $40 million credit.
+
+### What Qualifies as "Domestic"
+
+The domestic content requirement has two parts:
+
+**1. Steel and Iron**: 100% of structural steel and iron must be produced in the US (melted, poured, and manufactured domestically).
+
+**2. Manufactured Products**: A percentage of manufactured components (by cost) must be domestic. This threshold increases over time:
+- 2024-2025: 40%
+- 2026: 45%
+- 2027+: 55%
+
+Transformers fall under "manufactured products." If your transformer is genuinely US-made, it contributes to hitting that threshold.
+
+## Transformers: A High-Value Component
+
+Here's why transformers matter so much for domestic content calculations:
+
+### They're Expensive
+
+Transformers often represent 5-15% of total project equipment cost. A $2 million substation transformer on a $30 million project is a significant line item.
+
+### They're Binary
+
+Either your transformer counts as domestic or it doesn't. There's no partial credit. Getting this right on a high-value component swings your overall percentage significantly.
+
+### They're Often Overlooked
+
+Project developers focus domestic content efforts on solar panels, wind turbines, and batteries. Transformers get ordered late with less scrutiny—and often default to imported units.
+
+## Calculating Your Domestic Content Percentage
+
+Here's a simplified example:
+
+**$50 Million Solar Project Equipment Breakdown:**
+
+| Component | Cost | Domestic? | Counts Toward Threshold |
+|-----------|------|-----------|------------------------|
+| Solar panels | $25M | Yes (US manufactured) | $25M |
+| Inverters | $8M | No (imported) | $0 |
+| Racking | $5M | Yes (US steel/assembly) | $5M |
+| Transformers | $4M | ??? | ??? |
+| Electrical BOS | $4M | Mixed | $2M |
+| Other | $4M | Mixed | $1M |
+
+**Scenario A**: Import transformers from Mexico
+- Domestic total: $33M of $50M = 66%
+- Meets 55% threshold: Yes (but barely)
+
+**Scenario B**: Source US-manufactured transformers
+- Domestic total: $37M of $50M = 74%
+- Meets 55% threshold: Yes (comfortable margin)
+
+In Scenario A, you hit the threshold but have no buffer for audit adjustments. In Scenario B, you have a comfortable margin that protects your credit.
+
+## The Cost-Benefit Math
+
+"But US-made transformers cost more!"
+
+Sometimes. Let's do the math:
+
+**Project**: $75 million solar installation
+**Base ITC**: $22.5 million (30%)
+**Domestic content bonus**: $7.5 million (additional 10%)
+
+**Transformer decision**:
+- Imported transformer: $1.5 million
+- US-made transformer: $1.9 million
+- Premium for domestic: $400,000
+
+**Net benefit of going domestic**: $7.5M - $400K = **$7.1 million**
+
+Even if the domestic transformer costs 25% more, you're still $7.1 million ahead by capturing the bonus.
+
+## Which Projects Qualify?
+
+The domestic content bonus applies to projects claiming:
+
+- **Investment Tax Credit (ITC)**: Solar, storage, offshore wind, fuel cells, and more
+- **Production Tax Credit (PTC)**: Wind, solar (if elected), geothermal, hydropower
+- **Advanced Manufacturing Credit (45X)**: Manufacturing facilities for clean energy components
+- **Clean Fuel Production Credit (45Z)**: Sustainable aviation fuel and other clean fuels
+
+If your project is claiming any of these credits, transformer sourcing affects your eligibility for the bonus.
+
+## Common Mistakes That Cost Money
+
+### 1. Assuming "North American" Counts
+
+It doesn't. Mexico and Canada are not "domestic" for IRA purposes. A transformer from Monterrey doesn't qualify, even though it might have favorable trade status under USMCA.
+
+### 2. Not Documenting Upfront
+
+The IRS requires contemporaneous documentation of domestic content. If you don't get certificates of origin and manufacturer attestations at purchase time, reconstructing proof later is difficult.
+
+### 3. Specifying Too Late
+
+By the time you realize you need a domestic transformer, lead times may force you into imports. Specify domestic sourcing at project inception, not final procurement.
+
+### 4. Taking Sales Rep Claims at Face Value
+
+"Yeah, it's American-made" from a sales rep won't satisfy an IRS audit. Get written attestations with specific manufacturing location, component sourcing, and ownership disclosures.
+
+### 5. Ignoring FEOC Rules
+
+Even if a transformer is physically made in the US, if the manufacturer is a Foreign Entity of Concern (Chinese state ownership, etc.), you may be disqualified. [Read more about FEOC compliance](/resources/is-your-transformer-really-made-in-america).
+
+## How to Capture the Bonus
+
+### Step 1: Know Your Threshold
+
+Calculate what percentage domestic content you need to hit based on your project's placed-in-service date. Build in a 5-10% buffer for audit protection.
+
+### Step 2: Prioritize High-Value Components
+
+Focus domestic sourcing efforts on the biggest line items: panels, turbines, batteries, inverters, and transformers. These move the needle most.
+
+### Step 3: Specify Early
+
+Include domestic content requirements in your RFPs and bid documents from day one. This gives suppliers time to source appropriately.
+
+### Step 4: Get Documentation
+
+Require from transformer suppliers:
+- Manufacturer's affidavit of US manufacturing
+- Country of origin for major components (core, windings, tank)
+- Corporate ownership disclosure
+- Facility address where transformation occurs
+
+### Step 5: Maintain Records
+
+Keep all domestic content documentation for the IRS's required retention period (typically 6 years from the filing date of the return claiming the credit).
+
+## What FluxCo Offers
+
+We've made it easy to source IRA-compliant transformers:
+
+- **Pre-verified domestic inventory**: Every unit marked "US-Made" has verified manufacturing documentation
+- **Tax credit documentation packages**: Ready for your IRA filing
+- **Domestic content calculations**: Our team can help you model scenarios
+- **Compliance certificates**: Manufacturer attestations included with purchase
+
+Don't leave $7 million on the table because of a transformer.
+
+[Browse US-made inventory](/inventory) or [talk to our team about domestic content requirements](#contact).
+`,
+  },
+  {
+    slug: "doe-2027-efficiency-standards-transformer-guide",
+    title: "DOE 2027 Efficiency Mandates: Why Your Standard Transformer Won't Be Legal Next Year",
+    description:
+      "New Department of Energy efficiency standards take effect in 2027, requiring higher-efficiency transformers for most applications. Here's what's changing and how to prepare.",
+    category: "technical",
+    publishedAt: "2026-01-28",
+    readTime: "7 min read",
+    keywords: [
+      "DOE transformer efficiency",
+      "2027 transformer standards",
+      "transformer efficiency requirements",
+      "distribution transformer regulations",
+      "energy efficient transformers",
+      "DOE efficiency mandate",
+      "transformer compliance 2027",
+    ],
+    content: `
+## A Major Regulatory Shift Is Coming
+
+On January 1, 2027, new Department of Energy (DOE) efficiency standards take effect for distribution transformers. These aren't minor tweaks—they represent the most significant efficiency increase in over a decade.
+
+If you're planning projects that will procure transformers in late 2026 or 2027, you need to understand what's changing. And if you're buying transformers now, you should consider whether future-proofing makes sense.
+
+## What's Changing in 2027
+
+The DOE's new efficiency standards increase minimum efficiency requirements for liquid-immersed and dry-type distribution transformers. The key changes:
+
+### Liquid-Immersed Transformers
+
+| kVA Rating | Current Standard | 2027 Standard | Efficiency Increase |
+|------------|-----------------|---------------|---------------------|
+| 50 kVA | 98.6% | 98.9% | +0.3% |
+| 150 kVA | 98.9% | 99.1% | +0.2% |
+| 500 kVA | 99.1% | 99.3% | +0.2% |
+| 1000 kVA | 99.2% | 99.4% | +0.2% |
+| 2500 kVA | 99.4% | 99.5% | +0.1% |
+
+### Dry-Type Transformers
+
+| kVA Rating | Current Standard | 2027 Standard | Efficiency Increase |
+|------------|-----------------|---------------|---------------------|
+| 45 kVA | 97.7% | 98.2% | +0.5% |
+| 150 kVA | 98.3% | 98.7% | +0.4% |
+| 500 kVA | 98.8% | 99.1% | +0.3% |
+| 1000 kVA | 99.0% | 99.2% | +0.2% |
+
+These percentages may look small, but they have big implications.
+
+## Why 0.2% Matters More Than You Think
+
+### The Math of Transformer Losses
+
+A 500 kVA transformer at 99.1% efficiency loses 0.9% of throughput power as heat. At 99.3% efficiency, losses drop to 0.7%.
+
+That's a **22% reduction in losses**.
+
+For a transformer running at 50% average load, 24/7/365:
+- Annual throughput: ~2.19 million kWh
+- Losses at 99.1%: ~19,700 kWh/year
+- Losses at 99.3%: ~15,300 kWh/year
+- **Annual savings: ~4,400 kWh**
+
+At $0.10/kWh, that's $440/year. Over a 30-year transformer life, that's $13,200 in energy savings from one unit.
+
+### Multiply Across Your Fleet
+
+Utilities and large commercial operators don't have one transformer—they have thousands. A utility with 10,000 distribution transformers could save:
+- 44 million kWh annually
+- $4.4 million per year in reduced losses
+- Equivalent to powering 4,000 homes
+
+## What This Means for Manufacturers
+
+Meeting the new standards requires changes to transformer design:
+
+### More Core Steel
+
+Higher efficiency means lower core losses, which typically requires:
+- More grain-oriented electrical steel (GOES)
+- Higher-grade steel (moving from M3 to M2 or better)
+- Larger core cross-sections
+
+This increases material costs and physical size.
+
+### Better Windings
+
+Reducing I²R losses in windings means:
+- Larger conductor cross-sections
+- More copper (or aluminum)
+- Sometimes redesigned winding geometry
+
+### Price Implications
+
+Industry estimates suggest 2027-compliant transformers will cost:
+- 10-15% more for liquid-immersed units
+- 15-25% more for dry-type units
+
+These premiums should decrease over time as production scales, but expect sticker shock initially.
+
+### Supply Chain Strain
+
+The transformer industry is already capacity-constrained. Adding a mandatory design change creates:
+- Engineering workload at manufacturers
+- Retooling for new core dimensions
+- Potential bottlenecks in high-grade steel supply
+- Testing backlogs as new designs get certified
+
+Lead times, already long, may extend further in the 2026-2027 transition period.
+
+## The 2029 Question
+
+The DOE hasn't finalized standards beyond 2027, but signals suggest another efficiency increase around 2029-2030. The pattern:
+
+- **2010**: First modern efficiency standards
+- **2016**: Updated standards (current baseline)
+- **2027**: New standards taking effect
+- **2029-2030**: Likely next revision
+
+If you're specifying transformers for long-life installations, consider whether buying to 2027 standards now avoids another upgrade cycle in three years.
+
+## Compliance Timeline
+
+### What's Legal Now (Through 2026)
+
+Transformers manufactured before January 1, 2027 can be sold indefinitely under current standards. There's no requirement to remove or replace existing equipment.
+
+### The January 2027 Cutoff
+
+Starting January 1, 2027:
+- Newly manufactured transformers must meet new efficiency standards
+- Existing inventory manufactured before 2027 can still be sold
+- Installed equipment is grandfathered indefinitely
+
+### Strategy Implications
+
+Some buyers are stockpiling pre-2027 transformers to:
+- Avoid higher costs of compliant units
+- Ensure supply during the transition
+- Defer the efficiency premium until later purchases
+
+Others are specifying 2027-compliant units now to:
+- Future-proof installations
+- Capture lifecycle energy savings
+- Avoid mixed-fleet maintenance complexity
+
+## How to Prepare
+
+### For 2026 Purchases
+
+**Option A**: Buy current-standard units and save 10-15%
+- Pro: Lower upfront cost
+- Con: Slightly higher lifecycle energy cost
+- Con: Mixed fleet if you buy post-2027 later
+
+**Option B**: Specify 2027-compliant units early
+- Pro: Maximum energy savings over transformer life
+- Pro: Consistent fleet specifications
+- Con: Higher upfront cost
+- Con: Possible availability issues as manufacturers transition
+
+### For 2027+ Purchases
+
+You'll be buying 2027-compliant units regardless. Focus on:
+- Locking in pricing early (premiums may spike initially)
+- Extending lead times in project schedules
+- Verifying manufacturer certification
+
+### For Long-Term Planning
+
+Consider total cost of ownership (TCO):
+
+| Transformer | Upfront Cost | 20-Year Energy Cost | TCO |
+|-------------|--------------|---------------------|-----|
+| Current standard | $50,000 | $9,000 | $59,000 |
+| 2027 standard | $57,500 | $7,000 | $64,500 |
+
+In this example, the efficient unit costs more over 20 years. But extend to 30 years and the math shifts. Add carbon cost or utility rate increases, and it shifts further.
+
+## Industry Impact by Sector
+
+### Utilities
+
+Utilities replacing aging infrastructure face a choice: accelerate replacements pre-2027 or pay premiums after. Many are evaluating fleet-wide replacement strategies.
+
+### Data Centers
+
+Data centers care about efficiency at every level. The 0.2% loss reduction contributes to PUE improvements. Many data center operators will specify 2027 standards immediately.
+
+### Renewable Energy
+
+Solar and wind projects have 20-30 year operating lives. Specifying high-efficiency transformers at project inception captures maximum lifecycle value.
+
+### Industrial
+
+Industrial operators with stable loads and long equipment lifecycles often favor efficiency. But tight project budgets may push some toward current-standard units while available.
+
+## FluxCo's Approach
+
+We're stocking both current-standard and 2027-compliant inventory so you can make the right choice for your project:
+
+- **Current-standard units**: Available now at current pricing
+- **2027-compliant units**: Pre-ordering from manufacturers with certified designs
+- **Side-by-side comparisons**: See specs and pricing for both options
+- **TCO calculator**: Model your specific use case
+
+Our engineering team can help you evaluate the trade-offs for your application.
+
+[View efficiency-rated inventory](/inventory) or [discuss your project requirements](#contact).
+`,
+  },
 ];
 
 export function getArticleBySlug(slug: string): Article | undefined {
