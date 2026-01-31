@@ -1,5 +1,6 @@
 import Navbar from '@/components/Navbar';
 import HeroSection from '@/components/HeroSection';
+import ArticleTicker from '@/components/ArticleTicker';
 import AboutSection from '@/components/AboutSection';
 import ProductsSection from '@/components/ProductsSection';
 import InventoryPreview from '@/components/InventoryPreview';
@@ -13,6 +14,7 @@ export default function Home() {
       <Navbar />
       <div className="fixed bottom-4 right-4 z-50 text-2xl" title="Made in USA">🇺🇸</div>
       <HeroSection />
+      <ArticleTicker />
       <AboutSection />
       <ProductsSection />
       <InventoryPreview />
