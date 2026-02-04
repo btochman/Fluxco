@@ -495,7 +495,7 @@ Regardless of type, here's what you're dealing with in 2026:
 
 **Large power transformers are a different story**. 40-80 week lead times are normal. Over 100 MVA, you're looking at 60-90 weeks. And most are foreign-made, which creates both supply chain risk and potential FEOC compliance issues.
 
-**Domestic matters more than ever**. Between IRA tax credits, FEOC rules, and basic supply chain resilience, American-made transformers are increasingly the smart choice—not just the patriotic one.
+**Domestic matters more than ever**. Between Big Beautiful Bill tax credits, FEOC rules, and basic supply chain resilience, American-made transformers are increasingly the smart choice—not just the patriotic one.
 
 ---
 
@@ -1277,7 +1277,7 @@ We built FluxCo to fix the fragmentation problem—for buyers and suppliers.
     slug: "is-your-transformer-really-made-in-america",
     title: "Is Your Transformer Really Made in America? How to Verify Before You Buy",
     description:
-      "FEOC compliance is critical for IRA tax credits, but 'Made in USA' claims can be confusing. Assembly vs. manufacturing, component sourcing, corporate ownership—here's how to verify what you're actually getting.",
+      "FEOC compliance is critical for tax credits, but 'Made in USA' claims can be confusing. Assembly vs. manufacturing, component sourcing, corporate ownership—here's how to verify what you're actually getting.",
     category: "industry",
     publishedAt: "2026-01-30",
     readTime: "8 min read",
@@ -1286,7 +1286,7 @@ We built FluxCo to fix the fragmentation problem—for buyers and suppliers.
       "made in america transformer",
       "transformer country of origin",
       "domestic content requirements",
-      "IRA transformer requirements",
+      "Big Beautiful Bill transformer requirements",
       "foreign entity of concern",
       "transformer supply chain",
       "chinese transformer",
@@ -1298,13 +1298,13 @@ You need a transformer. You want it made in America—for tax credits, supply ch
 
 Not quite.
 
-"Made in America" means different things to different people. And when it comes to IRA tax credits and FEOC compliance, the details matter enormously. A transformer that seems domestic might not qualify—and the financial stakes are real.
+"Made in America" means different things to different people. And when it comes to tax credits and FEOC compliance, the details matter enormously. A transformer that seems domestic might not qualify—and the financial stakes are real.
 
 **This isn't about bad actors.** Global supply chains are genuinely complex. A transformer manufacturer might have US facilities, international component suppliers, and complex corporate ownership—all completely legitimate. But if you need strict domestic content for tax credits, you need to understand what you're buying.
 
 ## What Is FEOC and Why It Matters
 
-FEOC stands for **Foreign Entity of Concern**. Under the IRA's clean energy provisions, projects claiming certain tax credits cannot use components from entities that are:
+FEOC stands for **Foreign Entity of Concern**. Under the Big Beautiful Bill's clean energy provisions, projects claiming certain tax credits cannot use components from entities that are:
 
 - Owned or controlled by governments of China, Russia, North Korea, or Iran
 - Headquartered in those countries
@@ -1325,7 +1325,7 @@ A transformer might be "assembled in the USA" but contain:
 
 For the manufacturer, this is often a practical supply chain decision—not deception. Core steel might come from the best global sources. Component suppliers specialize in specific parts.
 
-**But for IRA purposes, it matters.** "Substantial transformation" must occur domestically for domestic content credit. Assembly alone may not qualify.
+**But for tax credit purposes, it matters.** "Substantial transformation" must occur domestically for domestic content credit. Assembly alone may not qualify.
 
 **What to do**: Ask specifically where the core is manufactured. The core is the highest-value component and usually determines domestic content status.
 
@@ -1369,7 +1369,7 @@ These scenarios illustrate why verification matters—not because suppliers are 
 
 A data center developer ordered transformers from a well-known brand, assuming the brand's US presence meant domestic manufacturing. The specific product line they ordered, however, was manufactured at an overseas facility.
 
-The developer discovered this during IRA compliance documentation. They had to source replacements to maintain tax credit eligibility—adding cost and delay.
+The developer discovered this during compliance documentation. They had to source replacements to maintain tax credit eligibility—adding cost and delay.
 
 **Lesson**: Ask about specific product lines, not just brand reputation.
 
@@ -1389,11 +1389,11 @@ A buyer assumed a European-branded supplier was FEOC-compliant. European headqua
 
 **Example 4: North American ≠ Domestic**
 
-A wind farm developer assumed "North American" meant IRA-compliant. They sourced transformers from a Canadian manufacturer.
+A wind farm developer assumed "North American" meant compliant. They sourced transformers from a Canadian manufacturer.
 
-However, Canada isn't "domestic" for IRA domestic content purposes. The developer had to adjust their calculations.
+However, Canada isn't "domestic" for domestic content bonus purposes. The developer had to adjust their calculations.
 
-**Lesson**: For IRA purposes, "domestic" means United States. Canada and Mexico don't count, despite USMCA trade relationships.
+**Lesson**: For domestic content purposes, "domestic" means United States. Canada and Mexico don't count, despite USMCA trade relationships.
 
 ## How to Verify: The Right Questions to Ask
 
@@ -1409,7 +1409,7 @@ Most suppliers will answer these questions directly—they deal with compliance 
 
 ### Documentation to Request
 
-For IRA-eligible projects, request:
+For tax credit-eligible projects, request:
 - Country of origin certificate with component breakdown
 - Manufacturer attestation of domestic content percentage
 - For FEOC compliance: ownership disclosure
@@ -1438,7 +1438,7 @@ This creates opportunity for manufacturers with genuine domestic production. Buy
 
 ## Beyond Tax Credits: Why Domestic Matters
 
-Even if IRA credits don't apply to your project:
+Even if tax credits don't apply to your project:
 
 ### Supply Chain Resilience
 
@@ -1460,16 +1460,16 @@ Even if you don't need domestic content today, requirements are expanding. Buyin
 
 ### For Clean Energy Projects
 
-If you're building solar, wind, storage, or EV infrastructure claiming IRA credits:
+If you're building solar, wind, storage, or EV infrastructure claiming tax credits:
 
 1. **Specify domestic content requirements upfront** in your RFPs
 2. **Ask the verification questions** before you order, not after
 3. **Get documentation** at purchase time for your compliance files
-4. **Work with suppliers who understand IRA requirements** and can provide proper attestations
+4. **Work with suppliers who understand domestic content requirements** and can provide proper attestations
 
 ### For Everyone Else
 
-Even if IRA credits don't apply today:
+Even if tax credits don't apply today:
 
 - **Know what you're buying**—ask about manufacturing location
 - **Consider domestic**—it's often competitive when you factor in total cost
@@ -1494,18 +1494,17 @@ Navigating domestic content and FEOC compliance is exactly the kind of complexit
 `,
   },
   {
-    slug: "ira-tax-credits-transformers-domestic-content",
+    slug: "big-beautiful-bill-tax-credits-transformers-domestic-content",
     title: "Billions in Tax Credits for American Manufacturing—Are You Capturing Your Share?",
     description:
-      "The Inflation Reduction Act rewards projects using domestically manufactured transformers. The bonus is huge. The rules are strict. And most developers are leaving money on the table.",
+      "The Big Beautiful Bill rewards projects using domestically manufactured transformers. The bonus is huge. The rules are strict. And most developers are leaving money on the table.",
     category: "industry",
     publishedAt: "2026-01-29",
     readTime: "6 min read",
     keywords: [
-      "IRA tax credits",
+      "Big Beautiful Bill tax credits",
       "domestic content bonus",
       "transformer tax incentives",
-      "inflation reduction act",
       "clean energy tax credits",
       "made in america bonus",
       "renewable energy incentives",
@@ -1514,9 +1513,9 @@ Navigating domestic content and FEOC compliance is exactly the kind of complexit
     content: `
 ## The Biggest Industrial Policy in a Generation
 
-The Inflation Reduction Act (IRA) created the largest clean energy investment in American history. But it's more than climate policy—it's industrial policy designed to rebuild American manufacturing.
+The Big Beautiful Bill created massive clean energy and manufacturing incentives. It's industrial policy designed to rebuild American manufacturing and ensure energy dominance.
 
-For projects using domestically manufactured equipment, the IRA adds a **10% bonus** to the base tax credit. That's real money: $5-15 million on a utility-scale solar project. More for data centers and large industrial installations.
+For projects using domestically manufactured equipment, the Big Beautiful Bill adds a **10% bonus** to the base tax credit. That's real money: $5-15 million on a utility-scale solar project. More for data centers and large industrial installations.
 
 **And transformers are a key component that can make or break your qualification.**
 
@@ -1526,7 +1525,7 @@ Most developers are leaving this money on the table because they don't understan
 
 ### The Basic Structure
 
-The IRA's clean energy tax credits have a base value. Meeting domestic content requirements adds 10 percentage points:
+The Big Beautiful Bill's clean energy tax credits have a base value. Meeting domestic content requirements adds 10 percentage points:
 
 | Credit Type | Base Rate | With Domestic Content | Difference |
 |-------------|-----------|----------------------|------------|
@@ -1588,7 +1587,7 @@ You pay $400K more for the transformer. You get $7.5 million more in tax credits
 **Even if the domestic transformer costs 50% more, you're still massively ahead.**
 
 The only way foreign makes sense is if:
-1. You don't qualify for IRA credits at all, OR
+1. You don't qualify for the tax credits at all, OR
 2. You're already well above the domestic content threshold from other components
 
 Otherwise, buying American transformers isn't patriotism—it's profit maximization.
@@ -1622,15 +1621,15 @@ Scenario A is living on the edge. One IRS adjustment to your calculations and yo
 
 ### Mistake #1: Assuming "North American" Counts
 
-It doesn't. Mexico and Canada are not "domestic" for IRA purposes. A transformer from Monterrey doesn't qualify, even though it might have favorable trade status under USMCA.
+It doesn't. Mexico and Canada are not "domestic" for domestic content bonus purposes. A transformer from Monterrey doesn't qualify, even though it might have favorable trade status under USMCA.
 
-USMCA is for tariffs. IRA is for tax credits. Different rules.
+USMCA is for tariffs. The Big Beautiful Bill is for tax credits. Different rules.
 
 ### Mistake #2: Trusting "Made in USA" Labels
 
 As we've covered [in depth](/resources/is-your-transformer-really-made-in-america), "Made in USA" often means final assembly only. The core—the highest-value component—might come from China.
 
-For IRA purposes, you need substantial transformation to occur domestically. "Assembled in USA from foreign components" likely doesn't qualify.
+For domestic content bonus purposes, you need substantial transformation to occur domestically. "Assembled in USA from foreign components" likely doesn't qualify.
 
 ### Mistake #3: Not Documenting Upfront
 
@@ -1692,7 +1691,7 @@ Keep all domestic content documentation for the IRS's required retention period 
 
 ## The Bigger Picture
 
-The IRA's domestic content bonus isn't just about your project economics. It's about rebuilding American manufacturing capacity.
+The Big Beautiful Bill's domestic content bonus isn't just about your project economics. It's about rebuilding American manufacturing capacity.
 
 Every domestic transformer you buy:
 - Supports American jobs
@@ -1704,11 +1703,11 @@ The tax credit makes it profitable. The strategic benefits make it essential.
 
 ## What FluxCo Offers
 
-We've made it easy to source IRA-compliant transformers—because we believe every eligible project should capture the domestic content bonus.
+We've made it easy to source compliant transformers—because we believe every eligible project should capture the domestic content bonus.
 
 - **Pre-verified domestic inventory**: Every unit marked "US-Made" has manufacturing documentation we've reviewed
 - **FEOC compliance verification**: We don't guess—we verify ownership
-- **Tax credit documentation packages**: Ready for your IRA filing
+- **Tax credit documentation packages**: Ready for your filing
 - **Domestic content calculations**: Our team can help you model scenarios
 - **Compliance certificates**: Manufacturer attestations included with purchase
 
@@ -2153,7 +2152,7 @@ Other suppliers include:
 - **AMES** (China) - Growing capacity
 - **Qingdao Yunlu** (China) - Large producer
 
-**The supply chain concern**: If you care about domestic content (and you should), Metglas is the primary American source. Chinese amorphous metal may create FEOC compliance issues for IRA-eligible projects.
+**The supply chain concern**: If you care about domestic content (and you should), Metglas is the primary American source. Chinese amorphous metal may create FEOC compliance issues for tax credit-eligible projects.
 
 ### Who Makes Amorphous Core Transformers
 

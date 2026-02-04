@@ -35,7 +35,7 @@ const articles: Article[] = [
     category: "technical",
   },
   {
-    slug: "ira-tax-credits-transformers-domestic-content",
+    slug: "big-beautiful-bill-tax-credits-transformers-domestic-content",
     title: "Billions in Tax Credits You Might Be Missing",
     category: "industry",
   },

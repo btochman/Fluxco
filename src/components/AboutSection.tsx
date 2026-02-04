@@ -178,7 +178,7 @@ const AboutSection = () => {
                         Foreign Entity of Concern (FEOC)
                       </h4>
                       <ul className="text-sm text-muted-foreground space-y-1.5">
-                        <li>• <strong>IRA Section 45X:</strong> Components from FEOC countries may disqualify tax credits</li>
+                        <li>• <strong>Section 45X:</strong> Components from FEOC countries may disqualify tax credits</li>
                         <li>• Applies to China, Russia, North Korea, and Iran-sourced materials</li>
                         <li>• <strong>2024-2025:</strong> Increasing scrutiny on supply chain origin documentation</li>
                         <li>• Requires detailed traceability for steel, copper, and electrical components</li>
@@ -198,7 +198,7 @@ const AboutSection = () => {
                       <DollarSign className="w-4 h-4 text-primary shrink-0" />
                       <div>
                         <div className="text-xs font-medium text-foreground">Tax Credits</div>
-                        <div className="text-[10px] text-muted-foreground">US-made IRA</div>
+                        <div className="text-[10px] text-muted-foreground">US-made bonus</div>
                       </div>
                     </div>
                   </HoverCardTrigger>
@@ -206,7 +206,7 @@ const AboutSection = () => {
                     <div className="space-y-2">
                       <h4 className="font-semibold text-foreground flex items-center gap-2">
                         <DollarSign className="w-4 h-4 text-primary" />
-                        IRA Manufacturing Tax Credits
+                        Manufacturing Tax Credits
                       </h4>
                       <ul className="text-sm text-muted-foreground space-y-1.5">
                         <li>• <strong>Section 45X:</strong> Up to 10% credit for US-manufactured transformers</li>

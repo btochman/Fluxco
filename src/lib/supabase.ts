@@ -103,11 +103,25 @@ export interface MarketplaceListing {
   contact_name: string;
   contact_email: string;
   contact_phone: string | null;
+  zipcode: string | null;
   asking_price: number | null;
   notes: string | null;
-  status: 'pending_review' | 'approved' | 'listed' | 'sold' | 'rejected' | 'expired';
+  status: 'pending_review' | 'approved' | 'listed' | 'sold' | 'rejected' | 'expired' | 'completed';
   reviewed_by: string | null;
   review_notes: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface SupplierBid {
+  id: string;
+  listing_id: string;
+  supplier_id: string;
+  bid_price: number;
+  lead_time_weeks: number;
+  notes: string | null;
+  status: 'submitted' | 'under_review' | 'accepted' | 'rejected' | 'withdrawn';
+  interest_expressed_at: string | null;
   created_at: string;
   updated_at: string;
 }

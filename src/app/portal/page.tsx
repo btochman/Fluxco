@@ -63,9 +63,9 @@ export default function PortalPage() {
       {/* Main Content */}
       <main className="container mx-auto px-6 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Transformer Marketplace</h1>
+          <h1 className="text-3xl font-bold mb-2">Supplier Bidding Platform</h1>
           <p className="text-muted-foreground">
-            Browse available transformers and find opportunities for your business.
+            Browse transformer opportunities and submit bids. Click &quot;Place Bid&quot; to express interest and submit your pricing.
           </p>
         </div>
 
