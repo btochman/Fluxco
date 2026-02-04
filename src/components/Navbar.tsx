@@ -195,13 +195,19 @@ const Navbar = () => {
             </NavigationMenu>
 
             {/* Supplier Login Button */}
-            <Button asChild variant="outline" className="ml-4 h-10 px-4 text-sm">
-              <Link href="/portal/login">Supplier Login</Link>
+            <Button asChild variant="outline" className="ml-2 h-12 px-3">
+              <Link href="/portal/login" className="flex flex-col items-center text-xs leading-tight">
+                <span>Supplier</span>
+                <span>Login</span>
+              </Link>
             </Button>
 
             {/* Transformer Designer Button - DO NOT CHANGE THIS TEXT */}
-            <Button asChild variant="hero" className="h-10 px-4 text-sm whitespace-nowrap">
-              <Link href="/design">Transformer Designer</Link>
+            <Button asChild variant="hero" className="h-12 px-3">
+              <Link href="/design" className="flex flex-col items-center text-xs leading-tight">
+                <span>Transformer</span>
+                <span>Designer</span>
+              </Link>
             </Button>
           </div>
 
