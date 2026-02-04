@@ -1,6 +1,6 @@
 "use client";
 
-import { Zap, Menu, X, ChevronDown } from "lucide-react";
+import { Zap, Menu, X, ChevronDown, User } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -14,6 +14,7 @@ import {
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
+import { useSupplierAuth } from "@/hooks/useSupplierAuth";
 
 const transformerLinks = [
   {
@@ -71,6 +72,7 @@ const Navbar = () => {
   const [mobileSubmenu, setMobileSubmenu] = useState<string | null>(null);
   const pathname = usePathname();
   const isHomePage = pathname === "/";
+  const { user, loading } = useSupplierAuth();
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
@@ -194,10 +196,17 @@ const Navbar = () => {
               </NavigationMenuList>
             </NavigationMenu>
 
-            {/* Supplier Login Button */}
-            <Button asChild variant="outline" size="lg" className="ml-4">
-              <Link href="/portal/login">Supplier Login</Link>
-            </Button>
+            {/* Supplier Login / User Email */}
+            {!loading && user ? (
+              <Link href="/portal" className="ml-4 flex items-center gap-2 text-sm text-muted-foreground hover:text-primary">
+                <User className="w-4 h-4" />
+                <span>{user.email}</span>
+              </Link>
+            ) : (
+              <Button asChild variant="outline" size="lg" className="ml-4">
+                <Link href="/portal/login">Supplier Login</Link>
+              </Button>
+            )}
 
             {/* Design Button */}
             <Button asChild variant="hero" size="lg">
@@ -322,11 +331,22 @@ const Navbar = () => {
                 Contact
               </Link>
 
-              <Button asChild variant="outline" size="lg" className="mt-4">
-                <Link href="/portal/login" onClick={() => setIsOpen(false)}>
-                  Supplier Login
+              {!loading && user ? (
+                <Link
+                  href="/portal"
+                  className="mt-4 flex items-center gap-2 text-sm text-muted-foreground hover:text-primary py-2"
+                  onClick={() => setIsOpen(false)}
+                >
+                  <User className="w-4 h-4" />
+                  <span>{user.email}</span>
                 </Link>
-              </Button>
+              ) : (
+                <Button asChild variant="outline" size="lg" className="mt-4">
+                  <Link href="/portal/login" onClick={() => setIsOpen(false)}>
+                    Supplier Login
+                  </Link>
+                </Button>
+              )}
 
               <Button asChild variant="hero" size="lg">
                 <Link href="/design" onClick={() => setIsOpen(false)}>
