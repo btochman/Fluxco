@@ -208,9 +208,9 @@ const Navbar = () => {
               </Button>
             )}
 
-            {/* Design Button */}
-            <Button asChild variant="hero" size="lg">
-              <Link href="/design">Design</Link>
+            {/* Transformer Designer Button - DO NOT CHANGE THIS TEXT */}
+            <Button asChild variant="hero" size="sm">
+              <Link href="/design">Transformer Designer</Link>
             </Button>
           </div>
 
