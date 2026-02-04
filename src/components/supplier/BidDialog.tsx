@@ -29,6 +29,7 @@ interface BidDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   supplier: SupplierInfo | null;
+  userEmail?: string | null;
 }
 
 const formatVoltage = (voltage: number): string => {
@@ -38,7 +39,7 @@ const formatVoltage = (voltage: number): string => {
   return `${voltage} V`;
 };
 
-export function BidDialog({ listing, open, onOpenChange, supplier }: BidDialogProps) {
+export function BidDialog({ listing, open, onOpenChange, supplier, userEmail }: BidDialogProps) {
   const [bidPrice, setBidPrice] = useState("");
   const [leadTimeWeeks, setLeadTimeWeeks] = useState("");
   const [notes, setNotes] = useState("");
@@ -54,7 +55,8 @@ export function BidDialog({ listing, open, onOpenChange, supplier }: BidDialogPr
       return;
     }
 
-    if (!supplier) {
+    const email = supplier?.email || userEmail;
+    if (!email) {
       setError("You must be logged in to submit a bid");
       return;
     }
@@ -69,10 +71,10 @@ export function BidDialog({ listing, open, onOpenChange, supplier }: BidDialogPr
         body: JSON.stringify({
           listingId: listing.id,
           serialNumber: listing.serial_number,
-          supplierId: supplier.id,
-          supplierEmail: supplier.email,
-          supplierCompany: supplier.company_name,
-          contactName: supplier.contact_name,
+          supplierId: supplier?.id || "unknown",
+          supplierEmail: email,
+          supplierCompany: supplier?.company_name || "Unknown Company",
+          contactName: supplier?.contact_name || email,
           bidPrice: parseFloat(bidPrice.replace(/[^0-9.]/g, "")),
           leadTimeWeeks: parseInt(leadTimeWeeks, 10),
           notes: notes || null,
@@ -101,7 +103,8 @@ export function BidDialog({ listing, open, onOpenChange, supplier }: BidDialogPr
       return;
     }
 
-    if (!supplier) {
+    const email = supplier?.email || userEmail;
+    if (!email) {
       setError("You must be logged in to request info");
       return;
     }
@@ -116,10 +119,10 @@ export function BidDialog({ listing, open, onOpenChange, supplier }: BidDialogPr
         body: JSON.stringify({
           listingId: listing.id,
           serialNumber: listing.serial_number,
-          supplierId: supplier.id,
-          supplierEmail: supplier.email,
-          supplierCompany: supplier.company_name,
-          contactName: supplier.contact_name,
+          supplierId: supplier?.id || "unknown",
+          supplierEmail: email,
+          supplierCompany: supplier?.company_name || "Unknown Company",
+          contactName: supplier?.contact_name || email,
           type: "info_request",
         }),
       });
@@ -242,7 +245,10 @@ export function BidDialog({ listing, open, onOpenChange, supplier }: BidDialogPr
 
         {error && (
           <Alert variant="destructive">
-            <AlertDescription>{error}</AlertDescription>
+            <AlertDescription>
+              {error}
+              {!supplier && " (Supplier profile not found - please contact support)"}
+            </AlertDescription>
           </Alert>
         )}
 

@@ -44,7 +44,7 @@ const formatWeight = (kg: number | null): string => {
 
 export function MarketplaceList() {
   const { data, isLoading, error } = useMarketplace();
-  const { supplier } = useSupplierAuth();
+  const { supplier, user } = useSupplierAuth();
   const [selectedListing, setSelectedListing] = useState<MarketplaceListing | null>(null);
   const [bidDialogOpen, setBidDialogOpen] = useState(false);
 
@@ -232,6 +232,7 @@ export function MarketplaceList() {
         open={bidDialogOpen}
         onOpenChange={setBidDialogOpen}
         supplier={supplier}
+        userEmail={user?.email}
       />
     </>
   );
