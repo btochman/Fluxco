@@ -200,7 +200,7 @@ const Navbar = () => {
             </Button>
 
             {/* Transformer Designer Button */}
-            <Button asChild variant="hero" size="lg" className="whitespace-nowrap">
+            <Button asChild variant="hero" size="sm" className="whitespace-nowrap text-sm px-4">
               <Link href="/design">Transformer Designer</Link>
             </Button>
           </div>
