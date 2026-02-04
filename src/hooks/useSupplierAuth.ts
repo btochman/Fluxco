@@ -63,15 +63,27 @@ export function useSupplierAuth(): UseSupplierAuthReturn {
   }, []);
 
   useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        fetchSupplierProfile(session.user.id).then(setSupplier);
-      }
+    // Check if supabase client is available
+    if (!supabase) {
+      console.error("Supabase client not initialized");
       setLoading(false);
-    });
+      return;
+    }
+
+    // Get initial session
+    supabase.auth.getSession()
+      .then(({ data: { session } }) => {
+        setSession(session);
+        setUser(session?.user ?? null);
+        if (session?.user) {
+          fetchSupplierProfile(session.user.id).then(setSupplier);
+        }
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error getting session:", error);
+        setLoading(false);
+      });
 
     // Listen for auth changes
     const {
