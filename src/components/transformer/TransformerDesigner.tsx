@@ -1,9 +1,14 @@
 "use client";
 import { useState } from 'react';
 import Link from 'next/link';
-import { Zap, FileDown } from 'lucide-react';
+import { Zap, FileDown, Store } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { supabase } from '@/lib/supabase';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { DesignRequirementsForm } from '@/components/transformer/inputs/DesignRequirementsForm';
 import { CalculationSteps } from '@/components/transformer/calculations/CalculationSteps';
@@ -42,6 +47,16 @@ export function TransformerDesigner() {
   const [isCalculating, setIsCalculating] = useState(false);
   const [activeTab, setActiveTab] = useState('summary');
   const [activeDrawingTab, setActiveDrawingTab] = useState('assembly-front');
+  const [marketplaceOpen, setMarketplaceOpen] = useState(false);
+  const [marketplaceSubmitting, setMarketplaceSubmitting] = useState(false);
+  const [marketplaceSuccess, setMarketplaceSuccess] = useState(false);
+  const [marketplaceForm, setMarketplaceForm] = useState({
+    contactName: '',
+    contactEmail: '',
+    contactPhone: '',
+    askingPrice: '',
+    notes: '',
+  });
 
   const handleCalculate = () => {
     setIsCalculating(true);
@@ -279,6 +294,57 @@ export function TransformerDesigner() {
     pdf.save(`transformer-design-${requirements.ratedPower}kva.pdf`);
   };
 
+  const handleMarketplaceSubmit = async () => {
+    if (!design) return;
+
+    setMarketplaceSubmitting(true);
+
+    const costBreakdown = calculateCostEstimate(design, requirements, { oilType: 'mineral' });
+
+    const { error } = await supabase.from('marketplace_listings').insert({
+      rated_power_kva: requirements.ratedPower,
+      primary_voltage: requirements.primaryVoltage,
+      secondary_voltage: requirements.secondaryVoltage,
+      frequency: requirements.frequency,
+      phases: requirements.phases,
+      impedance_percent: design.impedance.percentZ,
+      vector_group: requirements.vectorGroup.name,
+      cooling_class: requirements.coolingClass.name,
+      conductor_type: requirements.conductorType.name,
+      steel_grade: requirements.steelGrade.name,
+      estimated_cost: costBreakdown.totalCost,
+      no_load_loss_w: design.losses.noLoadLoss,
+      load_loss_w: design.losses.loadLoss,
+      efficiency_percent: design.losses.efficiency.find(e => e.loadPercent === 100)?.efficiency || null,
+      total_weight_kg: design.core.coreWeight + design.hvWinding.weight + design.lvWinding.weight,
+      contact_name: marketplaceForm.contactName,
+      contact_email: marketplaceForm.contactEmail,
+      contact_phone: marketplaceForm.contactPhone || null,
+      asking_price: marketplaceForm.askingPrice ? parseFloat(marketplaceForm.askingPrice) : null,
+      notes: marketplaceForm.notes || null,
+      status: 'pending_review',
+    });
+
+    setMarketplaceSubmitting(false);
+
+    if (error) {
+      alert('Error submitting to marketplace: ' + error.message);
+    } else {
+      setMarketplaceSuccess(true);
+      setTimeout(() => {
+        setMarketplaceOpen(false);
+        setMarketplaceSuccess(false);
+        setMarketplaceForm({
+          contactName: '',
+          contactEmail: '',
+          contactPhone: '',
+          askingPrice: '',
+          notes: '',
+        });
+      }, 2000);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Loading Animation */}
@@ -327,10 +393,99 @@ export function TransformerDesigner() {
           <>
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-semibold">Design Results</h2>
-              <Button onClick={handleExportPDF} variant="outline">
-                <FileDown className="h-4 w-4 mr-2" />
-                Export PDF
-              </Button>
+              <div className="flex gap-2">
+                <Button onClick={handleExportPDF} variant="outline">
+                  <FileDown className="h-4 w-4 mr-2" />
+                  Export PDF
+                </Button>
+                <Dialog open={marketplaceOpen} onOpenChange={setMarketplaceOpen}>
+                  <DialogTrigger asChild>
+                    <Button variant="default">
+                      <Store className="h-4 w-4 mr-2" />
+                      Post to Marketplace
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Post to Marketplace</DialogTitle>
+                      <DialogDescription>
+                        Submit this {requirements.ratedPower} kVA transformer design to the supplier marketplace.
+                      </DialogDescription>
+                    </DialogHeader>
+                    {marketplaceSuccess ? (
+                      <div className="py-8 text-center">
+                        <p className="text-green-500 font-semibold">Successfully submitted!</p>
+                        <p className="text-sm text-muted-foreground mt-2">Your listing is pending review.</p>
+                      </div>
+                    ) : (
+                      <>
+                        <div className="grid gap-4 py-4">
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                              <Label htmlFor="contactName">Your Name *</Label>
+                              <Input
+                                id="contactName"
+                                value={marketplaceForm.contactName}
+                                onChange={(e) => setMarketplaceForm(f => ({ ...f, contactName: e.target.value }))}
+                                placeholder="John Smith"
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label htmlFor="contactEmail">Email *</Label>
+                              <Input
+                                id="contactEmail"
+                                type="email"
+                                value={marketplaceForm.contactEmail}
+                                onChange={(e) => setMarketplaceForm(f => ({ ...f, contactEmail: e.target.value }))}
+                                placeholder="you@company.com"
+                              />
+                            </div>
+                          </div>
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                              <Label htmlFor="contactPhone">Phone</Label>
+                              <Input
+                                id="contactPhone"
+                                value={marketplaceForm.contactPhone}
+                                onChange={(e) => setMarketplaceForm(f => ({ ...f, contactPhone: e.target.value }))}
+                                placeholder="+1 (555) 000-0000"
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label htmlFor="askingPrice">Asking Price ($)</Label>
+                              <Input
+                                id="askingPrice"
+                                type="number"
+                                value={marketplaceForm.askingPrice}
+                                onChange={(e) => setMarketplaceForm(f => ({ ...f, askingPrice: e.target.value }))}
+                                placeholder="Leave blank for 'Contact for pricing'"
+                              />
+                            </div>
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="notes">Additional Notes</Label>
+                            <Textarea
+                              id="notes"
+                              value={marketplaceForm.notes}
+                              onChange={(e) => setMarketplaceForm(f => ({ ...f, notes: e.target.value }))}
+                              placeholder="Any additional details about this design..."
+                              rows={3}
+                            />
+                          </div>
+                        </div>
+                        <DialogFooter>
+                          <Button
+                            onClick={handleMarketplaceSubmit}
+                            disabled={!marketplaceForm.contactName || !marketplaceForm.contactEmail || marketplaceSubmitting}
+                          >
+                            {marketplaceSubmitting ? 'Submitting...' : 'Submit Listing'}
+                          </Button>
+                        </DialogFooter>
+                      </>
+                    )}
+                  </DialogContent>
+                </Dialog>
+              </div>
             </div>
 
             <Tabs value={activeTab} onValueChange={setActiveTab}>
