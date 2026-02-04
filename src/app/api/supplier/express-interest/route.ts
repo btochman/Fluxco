@@ -9,7 +9,18 @@ const supabase = createClient(
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { listingId, supplierId, supplierEmail, supplierCompany, bidPrice, leadTimeWeeks, notes, type } = body;
+    const {
+      listingId,
+      serialNumber,
+      supplierId,
+      supplierEmail,
+      supplierCompany,
+      contactName,
+      bidPrice,
+      leadTimeWeeks,
+      notes,
+      type
+    } = body;
 
     // Get listing details
     const { data: listing, error: listingError } = await supabase
@@ -25,40 +36,47 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (type === "interest") {
-      // Just expressing interest - record it
+    if (type === "info_request") {
+      // Record info request
       const { error: bidError } = await supabase
         .from("supplier_bids")
         .upsert({
           listing_id: listingId,
           supplier_id: supplierId,
-          bid_price: 0, // Placeholder until they place actual bid
+          bid_price: 0,
           lead_time_weeks: 0,
           status: "interested",
+          notes: "Requested more information",
           interest_expressed_at: new Date().toISOString(),
         }, {
           onConflict: "listing_id,supplier_id",
         });
 
       if (bidError) {
-        console.error("Error storing interest:", bidError);
+        console.error("Error storing info request:", bidError);
         return NextResponse.json(
-          { error: "Failed to record interest" },
+          { error: "Failed to record request" },
           { status: 500 }
         );
       }
 
-      // Log for email notification
-      console.log("=== NEW INTEREST EXPRESSED ===");
+      // Log for email notification to brian@fluxco.com
+      console.log("=== INFO REQUEST ===");
       console.log(`To: brian@fluxco.com`);
-      console.log(`From: ${supplierEmail} (${supplierCompany})`);
-      console.log(`Listing: ${listing.serial_number} - ${listing.rated_power_kva} kVA`);
-      console.log(`Specs: ${listing.primary_voltage}V / ${listing.secondary_voltage}V`);
-      console.log("==============================");
+      console.log(`Subject: Info Request for ${serialNumber || listing.serial_number}`);
+      console.log(`---`);
+      console.log(`Supplier: ${supplierCompany}`);
+      console.log(`Contact: ${contactName}`);
+      console.log(`Email: ${supplierEmail}`);
+      console.log(`---`);
+      console.log(`Project: ${serialNumber || listing.serial_number}`);
+      console.log(`Specs: ${listing.rated_power_kva} kVA, ${listing.primary_voltage}V / ${listing.secondary_voltage}V`);
+      console.log(`Location: ${listing.zipcode || "Not specified"}`);
+      console.log("====================");
 
       return NextResponse.json({
         success: true,
-        message: "Interest recorded. FluxCo has been notified."
+        message: "Info request sent. FluxCo will contact you soon."
       });
 
     } else if (type === "bid") {
@@ -85,11 +103,18 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      // Log for email notification
+      // Log for email notification to brian@fluxco.com
       console.log("=== NEW BID SUBMITTED ===");
       console.log(`To: brian@fluxco.com`);
-      console.log(`From: ${supplierEmail} (${supplierCompany})`);
-      console.log(`Listing: ${listing.serial_number} - ${listing.rated_power_kva} kVA`);
+      console.log(`Subject: New Bid for ${serialNumber || listing.serial_number}`);
+      console.log(`---`);
+      console.log(`Supplier: ${supplierCompany}`);
+      console.log(`Contact: ${contactName}`);
+      console.log(`Email: ${supplierEmail}`);
+      console.log(`---`);
+      console.log(`Project: ${serialNumber || listing.serial_number}`);
+      console.log(`Specs: ${listing.rated_power_kva} kVA, ${listing.primary_voltage}V / ${listing.secondary_voltage}V`);
+      console.log(`---`);
       console.log(`Bid Price: $${bidPrice?.toLocaleString()}`);
       console.log(`Lead Time: ${leadTimeWeeks} weeks`);
       console.log(`Notes: ${notes || "None"}`);

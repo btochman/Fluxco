@@ -16,7 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { AlertCircle, PackageSearch, Zap, MapPin, CheckCircle, Clock, Info } from "lucide-react";
+import { AlertCircle, PackageSearch, Zap, MapPin, CheckCircle, Clock } from "lucide-react";
 import { MarketplaceListing } from "@/lib/supabase";
 import { BidDialog } from "./BidDialog";
 
@@ -166,8 +166,7 @@ export function MarketplaceList() {
                         className="border-primary/50 text-primary hover:bg-primary hover:text-primary-foreground"
                         onClick={() => handleBidClick(listing)}
                       >
-                        <Info className="w-3 h-3 mr-1" />
-                        Learn More
+                        Place Bid
                       </Button>
                     )}
                   </TableCell>
