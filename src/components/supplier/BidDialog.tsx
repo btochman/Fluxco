@@ -154,10 +154,6 @@ export function BidDialog({ listing, open, onOpenChange, supplier }: BidDialogPr
                   Project Location: {listing.zipcode}
                 </div>
               )}
-              <div className="pt-2 border-t border-border">
-                <span className="text-sm text-muted-foreground">Estimated Cost: </span>
-                <span className="font-semibold">{formatCurrency(listing.estimated_cost)}</span>
-              </div>
             </div>
 
             {error && (

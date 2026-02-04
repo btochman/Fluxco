@@ -107,7 +107,6 @@ export function MarketplaceList() {
                 <TableHead className="text-muted-foreground font-semibold">Cooling</TableHead>
                 <TableHead className="text-muted-foreground font-semibold">Weight</TableHead>
                 <TableHead className="text-muted-foreground font-semibold">Location</TableHead>
-                <TableHead className="text-muted-foreground font-semibold text-right">Est. Cost</TableHead>
                 <TableHead></TableHead>
               </TableRow>
             </TableHeader>
@@ -149,9 +148,6 @@ export function MarketplaceList() {
                     ) : (
                       "-"
                     )}
-                  </TableCell>
-                  <TableCell className="text-right font-semibold text-foreground">
-                    {formatCurrency(listing.estimated_cost)}
                   </TableCell>
                   <TableCell>
                     {isCompleted ? (
