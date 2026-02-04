@@ -15,13 +15,20 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Zap, DollarSign, Clock, Send, CheckCircle, MapPin, HelpCircle } from "lucide-react";
-import { MarketplaceListing, Supplier } from "@/lib/supabase";
+import { MarketplaceListing } from "@/lib/supabase";
+
+interface SupplierInfo {
+  id: string;
+  email: string;
+  company_name: string;
+  contact_name: string;
+}
 
 interface BidDialogProps {
   listing: MarketplaceListing | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  supplier: Supplier | null;
+  supplier: SupplierInfo | null;
 }
 
 const formatVoltage = (voltage: number): string => {
@@ -41,7 +48,16 @@ export function BidDialog({ listing, open, onOpenChange, supplier }: BidDialogPr
 
   const handleSubmitBid = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!listing || !supplier) return;
+
+    if (!listing) {
+      setError("No listing selected");
+      return;
+    }
+
+    if (!supplier) {
+      setError("You must be logged in to submit a bid");
+      return;
+    }
 
     setIsSubmitting(true);
     setError(null);
@@ -72,6 +88,7 @@ export function BidDialog({ listing, open, onOpenChange, supplier }: BidDialogPr
 
       setSubmitType("bid");
     } catch (err) {
+      console.error("Bid submission error:", err);
       setError(err instanceof Error ? err.message : "Failed to submit bid");
     } finally {
       setIsSubmitting(false);
@@ -79,7 +96,15 @@ export function BidDialog({ listing, open, onOpenChange, supplier }: BidDialogPr
   };
 
   const handleNeedMoreInfo = async () => {
-    if (!listing || !supplier) return;
+    if (!listing) {
+      setError("No listing selected");
+      return;
+    }
+
+    if (!supplier) {
+      setError("You must be logged in to request info");
+      return;
+    }
 
     setIsSubmitting(true);
     setError(null);
@@ -107,6 +132,7 @@ export function BidDialog({ listing, open, onOpenChange, supplier }: BidDialogPr
 
       setSubmitType("info");
     } catch (err) {
+      console.error("Info request error:", err);
       setError(err instanceof Error ? err.message : "Failed to send request");
     } finally {
       setIsSubmitting(false);
@@ -126,7 +152,7 @@ export function BidDialog({ listing, open, onOpenChange, supplier }: BidDialogPr
 
   if (!listing) return null;
 
-  // Success states
+  // Success: Bid submitted
   if (submitType === "bid") {
     return (
       <Dialog open={open} onOpenChange={handleClose}>
@@ -144,6 +170,7 @@ export function BidDialog({ listing, open, onOpenChange, supplier }: BidDialogPr
     );
   }
 
+  // Success: Info request sent
   if (submitType === "info") {
     return (
       <Dialog open={open} onOpenChange={handleClose}>
@@ -219,8 +246,29 @@ export function BidDialog({ listing, open, onOpenChange, supplier }: BidDialogPr
           </Alert>
         )}
 
+        {/* I Need More Info button */}
+        <Button
+          type="button"
+          variant="outline"
+          onClick={handleNeedMoreInfo}
+          disabled={isSubmitting}
+          className="w-full"
+        >
+          <HelpCircle className="w-4 h-4 mr-2" />
+          {isSubmitting ? "Sending..." : "I Need More Info"}
+        </Button>
+
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center">
+            <span className="w-full border-t" />
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-background px-2 text-muted-foreground">or submit a bid</span>
+          </div>
+        </div>
+
         {/* Bid Form */}
-        <form onSubmit={handleSubmitBid} className="space-y-4">
+        <div className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="bidPrice" className="flex items-center gap-2">
               <DollarSign className="w-4 h-4" />
@@ -239,7 +287,6 @@ export function BidDialog({ listing, open, onOpenChange, supplier }: BidDialogPr
                   setBidPrice("");
                 }
               }}
-              required
             />
           </div>
 
@@ -256,7 +303,6 @@ export function BidDialog({ listing, open, onOpenChange, supplier }: BidDialogPr
               placeholder="e.g., 12"
               value={leadTimeWeeks}
               onChange={(e) => setLeadTimeWeeks(e.target.value)}
-              required
             />
           </div>
 
@@ -271,33 +317,15 @@ export function BidDialog({ listing, open, onOpenChange, supplier }: BidDialogPr
             />
           </div>
 
-          <div className="flex flex-col gap-3 pt-4">
-            <Button type="submit" disabled={isSubmitting} className="w-full">
-              <Send className="w-4 h-4 mr-2" />
-              {isSubmitting ? "Submitting..." : "Submit Bid"}
-            </Button>
-
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t" />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-background px-2 text-muted-foreground">or</span>
-              </div>
-            </div>
-
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleNeedMoreInfo}
-              disabled={isSubmitting}
-              className="w-full"
-            >
-              <HelpCircle className="w-4 h-4 mr-2" />
-              I Need More Info
-            </Button>
-          </div>
-        </form>
+          <Button
+            onClick={handleSubmitBid}
+            disabled={isSubmitting || !bidPrice || !leadTimeWeeks}
+            className="w-full"
+          >
+            <Send className="w-4 h-4 mr-2" />
+            {isSubmitting ? "Submitting..." : "Submit Bid"}
+          </Button>
+        </div>
       </DialogContent>
     </Dialog>
   );
