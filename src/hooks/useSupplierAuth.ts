@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { User, Session } from "@supabase/supabase-js";
 
@@ -47,94 +47,51 @@ export function useSupplierAuth(): UseSupplierAuthReturn {
   const [session, setSession] = useState<Session | null>(null);
   const [supplier, setSupplier] = useState<SupplierProfile | null>(null);
   const [loading, setLoading] = useState(true);
-  const initialized = useRef(false);
-
-  const fetchSupplierProfile = useCallback(async (userId: string): Promise<SupplierProfile | null> => {
-    try {
-      const { data, error } = await supabase
-        .from("suppliers")
-        .select("*")
-        .eq("user_id", userId)
-        .single();
-
-      if (error) {
-        console.error("Error fetching supplier profile:", error);
-        return null;
-      }
-      return data as SupplierProfile;
-    } catch (err) {
-      console.error("Exception fetching supplier profile:", err);
-      return null;
-    }
-  }, []);
 
   useEffect(() => {
-    // Prevent double initialization in React Strict Mode
-    if (initialized.current) return;
-    initialized.current = true;
-
-    // Check if supabase client is available
     if (!supabase) {
       console.error("Supabase client not initialized");
       setLoading(false);
       return;
     }
 
-    let isMounted = true;
-
-    const initAuth = async () => {
-      try {
-        const { data: { session }, error } = await supabase.auth.getSession();
-
-        if (error) {
-          console.error("Error getting session:", error);
-          if (isMounted) setLoading(false);
-          return;
-        }
-
-        if (isMounted) {
-          setSession(session);
-          setUser(session?.user ?? null);
-
-          if (session?.user) {
-            const profile = await fetchSupplierProfile(session.user.id);
-            if (isMounted) setSupplier(profile);
-          }
-
-          setLoading(false);
-        }
-      } catch (err) {
-        console.error("Exception during auth init:", err);
-        if (isMounted) setLoading(false);
-      }
-    };
-
-    initAuth();
-
-    // Listen for auth changes
+    // Set up auth state listener FIRST
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      if (!isMounted) return;
+    } = supabase.auth.onAuthStateChange(async (event, currentSession) => {
+      console.log("Auth state change:", event, currentSession?.user?.email);
 
-      setSession(session);
-      setUser(session?.user ?? null);
+      setSession(currentSession);
+      setUser(currentSession?.user ?? null);
 
-      if (session?.user) {
-        const profile = await fetchSupplierProfile(session.user.id);
-        if (isMounted) setSupplier(profile);
+      if (currentSession?.user) {
+        // Use setTimeout to avoid Supabase deadlock issue
+        setTimeout(async () => {
+          const { data } = await supabase
+            .from("suppliers")
+            .select("*")
+            .eq("user_id", currentSession.user.id)
+            .single();
+          setSupplier(data as SupplierProfile | null);
+          setLoading(false);
+        }, 0);
       } else {
         setSupplier(null);
+        setLoading(false);
       }
-
-      setLoading(false);
     });
 
-    return () => {
-      isMounted = false;
-      subscription.unsubscribe();
-    };
-  }, [fetchSupplierProfile]);
+    // Then check for existing session
+    supabase.auth.getSession().then(({ data: { session: existingSession } }) => {
+      if (!existingSession) {
+        // No session, stop loading
+        setLoading(false);
+      }
+      // If there is a session, onAuthStateChange will handle it
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   const signIn = async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({
@@ -154,7 +111,6 @@ export function useSupplierAuth(): UseSupplierAuthReturn {
       notify_new_listings?: boolean;
     }
   ) => {
-    // Create auth user
     const { data: authData, error: authError } = await supabase.auth.signUp({
       email,
       password,
@@ -168,7 +124,6 @@ export function useSupplierAuth(): UseSupplierAuthReturn {
       return { error: new Error("Failed to create user") };
     }
 
-    // Create supplier profile
     const { error: profileError } = await supabase.from("suppliers").insert({
       user_id: authData.user.id,
       email,
