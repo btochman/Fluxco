@@ -99,7 +99,7 @@ export function MarketplaceList() {
           <Table>
             <TableHeader>
               <TableRow className="border-border hover:bg-transparent">
-                <TableHead className="text-muted-foreground font-semibold">Serial #</TableHead>
+                <TableHead className="text-muted-foreground font-semibold">FLX#</TableHead>
                 <TableHead className="text-muted-foreground font-semibold">Power</TableHead>
                 <TableHead className="text-muted-foreground font-semibold">Primary</TableHead>
                 <TableHead className="text-muted-foreground font-semibold">Secondary</TableHead>
