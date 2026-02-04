@@ -173,6 +173,7 @@ export function DesignRequirementsForm({
                 <SelectItem value="480">480 V - Most Common Industrial</SelectItem>
                 <SelectItem value="600">600 V (Canada)</SelectItem>
                 <SelectItem value="4160">4,160 V (large motors)</SelectItem>
+                <SelectItem value="13800">13.8 kV (medium voltage distribution)</SelectItem>
               </SelectContent>
             </Select>
             <HelpText>
