@@ -71,10 +71,16 @@ const Footer = () => {
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-border mt-8 pt-6 text-center">
+        <div className="border-t border-border mt-8 pt-6 flex items-center justify-between">
           <div className="text-muted-foreground text-sm">
             © {currentYear} Fluxco
           </div>
+          <a
+            href="/admin"
+            className="text-muted-foreground hover:text-primary transition-colors text-sm"
+          >
+            FluxCo Admin
+          </a>
         </div>
       </div>
     </footer>
