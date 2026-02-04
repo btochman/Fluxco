@@ -449,7 +449,7 @@ export function TransformerDesigner() {
                               />
                             </div>
                             <div className="space-y-2">
-                              <Label htmlFor="zipcode">Zipcode *</Label>
+                              <Label htmlFor="zipcode">Project Zipcode *</Label>
                               <Input
                                 id="zipcode"
                                 value={marketplaceForm.zipcode}
