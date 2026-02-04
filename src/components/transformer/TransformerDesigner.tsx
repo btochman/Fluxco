@@ -7,7 +7,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { supabase } from '@/lib/supabase';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { DesignRequirementsForm } from '@/components/transformer/inputs/DesignRequirementsForm';
@@ -54,8 +53,7 @@ export function TransformerDesigner() {
     contactName: '',
     contactEmail: '',
     contactPhone: '',
-    askingPrice: '',
-    notes: '',
+    zipcode: '',
   });
 
   const handleCalculate = () => {
@@ -320,8 +318,8 @@ export function TransformerDesigner() {
       contact_name: marketplaceForm.contactName,
       contact_email: marketplaceForm.contactEmail,
       contact_phone: marketplaceForm.contactPhone || null,
-      asking_price: marketplaceForm.askingPrice ? parseFloat(marketplaceForm.askingPrice) : null,
-      notes: marketplaceForm.notes || null,
+      asking_price: null,
+      notes: marketplaceForm.zipcode ? `Zipcode: ${marketplaceForm.zipcode}` : null,
       status: 'pending_review',
     });
 
@@ -338,8 +336,7 @@ export function TransformerDesigner() {
           contactName: '',
           contactEmail: '',
           contactPhone: '',
-          askingPrice: '',
-          notes: '',
+          zipcode: '',
         });
       }, 2000);
     }
@@ -452,31 +449,20 @@ export function TransformerDesigner() {
                               />
                             </div>
                             <div className="space-y-2">
-                              <Label htmlFor="askingPrice">Asking Price ($)</Label>
+                              <Label htmlFor="zipcode">Zipcode *</Label>
                               <Input
-                                id="askingPrice"
-                                type="number"
-                                value={marketplaceForm.askingPrice}
-                                onChange={(e) => setMarketplaceForm(f => ({ ...f, askingPrice: e.target.value }))}
-                                placeholder="Leave blank for 'Contact for pricing'"
+                                id="zipcode"
+                                value={marketplaceForm.zipcode}
+                                onChange={(e) => setMarketplaceForm(f => ({ ...f, zipcode: e.target.value }))}
+                                placeholder="12345"
                               />
                             </div>
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="notes">Additional Notes</Label>
-                            <Textarea
-                              id="notes"
-                              value={marketplaceForm.notes}
-                              onChange={(e) => setMarketplaceForm(f => ({ ...f, notes: e.target.value }))}
-                              placeholder="Any additional details about this design..."
-                              rows={3}
-                            />
                           </div>
                         </div>
                         <DialogFooter>
                           <Button
                             onClick={handleMarketplaceSubmit}
-                            disabled={!marketplaceForm.contactName || !marketplaceForm.contactEmail || marketplaceSubmitting}
+                            disabled={!marketplaceForm.contactName || !marketplaceForm.contactEmail || !marketplaceForm.zipcode || marketplaceSubmitting}
                           >
                             {marketplaceSubmitting ? 'Submitting...' : 'Submit Listing'}
                           </Button>
