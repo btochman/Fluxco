@@ -99,6 +99,7 @@ export function MarketplaceList() {
           <Table>
             <TableHeader>
               <TableRow className="border-border hover:bg-transparent">
+                <TableHead className="text-muted-foreground font-semibold">Serial #</TableHead>
                 <TableHead className="text-muted-foreground font-semibold">Power</TableHead>
                 <TableHead className="text-muted-foreground font-semibold">Primary</TableHead>
                 <TableHead className="text-muted-foreground font-semibold">Secondary</TableHead>
@@ -113,6 +114,9 @@ export function MarketplaceList() {
             <TableBody>
               {listings.map((listing) => (
                 <TableRow key={listing.id} className="border-border hover:bg-secondary/50">
+                  <TableCell className="font-mono text-sm text-primary">
+                    {listing.serial_number || "-"}
+                  </TableCell>
                   <TableCell className="font-semibold text-primary">
                     <div className="flex items-center gap-2">
                       <Zap className="w-4 h-4" />

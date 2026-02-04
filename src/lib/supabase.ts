@@ -85,6 +85,7 @@ export interface Project {
 
 export interface MarketplaceListing {
   id: string;
+  serial_number: string | null;
   rated_power_kva: number;
   primary_voltage: number;
   secondary_voltage: number;

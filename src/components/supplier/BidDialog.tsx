@@ -128,7 +128,12 @@ export function BidDialog({ listing, open, onOpenChange, supplier }: BidDialogPr
                 <span className="font-semibold text-lg text-primary">
                   {listing.rated_power_kva.toLocaleString()} kVA
                 </span>
-                <Badge variant="secondary">{listing.phases}-Phase</Badge>
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline" className="font-mono">
+                    {listing.serial_number}
+                  </Badge>
+                  <Badge variant="secondary">{listing.phases}-Phase</Badge>
+                </div>
               </div>
               <div className="grid grid-cols-2 gap-2 text-sm">
                 <div className="text-muted-foreground">
