@@ -209,8 +209,11 @@ const Navbar = () => {
             )}
 
             {/* Transformer Designer Button - DO NOT CHANGE THIS TEXT */}
-            <Button asChild variant="hero" size="sm">
-              <Link href="/design">Transformer Designer</Link>
+            <Button asChild variant="hero" className="h-auto py-1.5 px-3 text-xs leading-tight">
+              <Link href="/design" className="flex flex-col items-center">
+                <span>Transformer</span>
+                <span>Designer</span>
+              </Link>
             </Button>
           </div>
 
