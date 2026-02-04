@@ -195,8 +195,11 @@ const Navbar = () => {
             </NavigationMenu>
 
             {/* Supplier Login Button */}
-            <Button asChild variant="outline" size="lg" className="ml-4">
-              <Link href="/portal/login">Supplier Login</Link>
+            <Button asChild variant="outline" className="ml-4 h-auto py-1.5 px-3 text-xs leading-tight">
+              <Link href="/portal/login" className="flex flex-col items-center">
+                <span>Supplier</span>
+                <span>Login</span>
+              </Link>
             </Button>
 
             {/* Transformer Designer Button - DO NOT CHANGE THIS TEXT */}
