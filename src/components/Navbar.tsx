@@ -200,8 +200,11 @@ const Navbar = () => {
             </Button>
 
             {/* Transformer Designer Button */}
-            <Button asChild variant="hero" size="lg">
-              <Link href="/design">Designer</Link>
+            <Button asChild variant="hero" className="h-auto py-2 px-4 leading-tight text-center">
+              <Link href="/design" className="flex flex-col">
+                <span>Transformer</span>
+                <span>Designer</span>
+              </Link>
             </Button>
           </div>
 
