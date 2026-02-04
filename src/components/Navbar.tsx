@@ -89,14 +89,14 @@ const Navbar = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center gap-2 ml-auto">
+          <div className="hidden lg:flex items-center gap-1 ml-auto">
             <NavigationMenu>
               <NavigationMenuList>
                 {/* About - simple link */}
                 <NavigationMenuItem>
                   <Link
                     href={isHomePage ? "#about" : "/#about"}
-                    className="text-muted-foreground hover:text-primary transition-colors duration-300 text-sm uppercase tracking-wider px-4 py-2"
+                    className="text-muted-foreground hover:text-primary transition-colors duration-300 text-xs uppercase tracking-wider px-2 py-2"
                   >
                     About
                   </Link>
@@ -104,7 +104,7 @@ const Navbar = () => {
 
                 {/* Products Dropdown */}
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger className="text-muted-foreground hover:text-primary bg-transparent hover:bg-transparent focus:bg-transparent data-[state=open]:bg-transparent text-sm uppercase tracking-wider">
+                  <NavigationMenuTrigger className="text-muted-foreground hover:text-primary bg-transparent hover:bg-transparent focus:bg-transparent data-[state=open]:bg-transparent text-xs uppercase tracking-wider px-2">
                     Products
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
@@ -134,7 +134,7 @@ const Navbar = () => {
 
                 {/* Solutions Dropdown */}
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger className="text-muted-foreground hover:text-primary bg-transparent hover:bg-transparent focus:bg-transparent data-[state=open]:bg-transparent text-sm uppercase tracking-wider">
+                  <NavigationMenuTrigger className="text-muted-foreground hover:text-primary bg-transparent hover:bg-transparent focus:bg-transparent data-[state=open]:bg-transparent text-xs uppercase tracking-wider px-2">
                     Solutions
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
@@ -166,7 +166,7 @@ const Navbar = () => {
                 <NavigationMenuItem>
                   <Link
                     href="/inventory"
-                    className="text-muted-foreground hover:text-primary transition-colors duration-300 text-sm uppercase tracking-wider px-4 py-2"
+                    className="text-muted-foreground hover:text-primary transition-colors duration-300 text-xs uppercase tracking-wider px-2 py-2"
                   >
                     Inventory
                   </Link>
@@ -176,7 +176,7 @@ const Navbar = () => {
                 <NavigationMenuItem>
                   <Link
                     href="/resources"
-                    className="text-muted-foreground hover:text-primary transition-colors duration-300 text-sm uppercase tracking-wider px-4 py-2"
+                    className="text-muted-foreground hover:text-primary transition-colors duration-300 text-xs uppercase tracking-wider px-2 py-2"
                   >
                     Resources
                   </Link>
@@ -186,7 +186,7 @@ const Navbar = () => {
                 <NavigationMenuItem>
                   <Link
                     href={isHomePage ? "#contact" : "/#contact"}
-                    className="text-muted-foreground hover:text-primary transition-colors duration-300 text-sm uppercase tracking-wider px-4 py-2"
+                    className="text-muted-foreground hover:text-primary transition-colors duration-300 text-xs uppercase tracking-wider px-2 py-2"
                   >
                     Contact
                   </Link>
@@ -195,12 +195,12 @@ const Navbar = () => {
             </NavigationMenu>
 
             {/* Supplier Login Button */}
-            <Button asChild variant="outline" size="lg" className="ml-4">
+            <Button asChild variant="outline" size="sm" className="ml-2">
               <Link href="/portal/login">Supplier Login</Link>
             </Button>
 
             {/* Transformer Designer Button */}
-            <Button asChild variant="hero" className="h-auto py-2 px-4 leading-tight text-center">
+            <Button asChild variant="hero" className="h-auto py-1.5 px-3 leading-tight text-center text-xs">
               <Link href="/design" className="flex flex-col">
                 <span>Transformer</span>
                 <span>Designer</span>
