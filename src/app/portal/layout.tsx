@@ -1,58 +1,52 @@
 "use client";
 
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Zap, LayoutDashboard, FolderKanban, Home } from "lucide-react";
+import { useEffect } from "react";
+import { useRouter, usePathname } from "next/navigation";
+import { useSupplierAuth } from "@/hooks/useSupplierAuth";
+import { Loader2 } from "lucide-react";
 
 export default function PortalLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <div className="min-h-screen bg-background">
-      {/* Top Navigation */}
-      <header className="border-b bg-card sticky top-0 z-50">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-6">
-            <Link href="/portal" className="flex items-center gap-2">
-              <div className="p-1.5 bg-primary rounded">
-                <Zap className="h-5 w-5 text-primary-foreground" />
-              </div>
-              <span className="font-semibold text-lg">FluxCo Portal</span>
-            </Link>
+  const { user, loading } = useSupplierAuth();
+  const router = useRouter();
+  const pathname = usePathname();
 
-            <nav className="hidden md:flex items-center gap-1">
-              <Link href="/portal">
-                <Button variant="ghost" size="sm" className="gap-2">
-                  <LayoutDashboard className="h-4 w-4" />
-                  Dashboard
-                </Button>
-              </Link>
-              <Link href="/portal">
-                <Button variant="ghost" size="sm" className="gap-2">
-                  <FolderKanban className="h-4 w-4" />
-                  Projects
-                </Button>
-              </Link>
-            </nav>
-          </div>
+  const isAuthPage =
+    pathname === "/portal/login" || pathname === "/portal/register";
 
-          <div className="flex items-center gap-4">
-            <Link href="/">
-              <Button variant="ghost" size="sm" className="gap-2">
-                <Home className="h-4 w-4" />
-                <span className="hidden sm:inline">Back to Site</span>
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </header>
+  useEffect(() => {
+    if (!loading) {
+      // If user is logged in and on auth page, redirect to portal
+      if (user && isAuthPage) {
+        router.push("/portal");
+      }
+      // If user is not logged in and not on auth page, redirect to login
+      if (!user && !isAuthPage) {
+        router.push("/portal/login");
+      }
+    }
+  }, [user, loading, isAuthPage, router]);
 
-      {/* Main Content */}
-      <main className="container mx-auto px-4 py-6">
-        {children}
-      </main>
-    </div>
-  );
+  // Show loading while checking auth
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  // Don't render protected content if not authenticated
+  if (!user && !isAuthPage) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  return <>{children}</>;
 }

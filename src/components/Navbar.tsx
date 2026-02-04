@@ -194,14 +194,14 @@ const Navbar = () => {
               </NavigationMenuList>
             </NavigationMenu>
 
-            {/* Portal Button */}
+            {/* Supplier Login Button */}
             <Button asChild variant="outline" size="lg" className="ml-4">
-              <Link href="/portal">Portal</Link>
+              <Link href="/portal/login">Supplier Login</Link>
             </Button>
 
-            {/* Design Tool Button */}
+            {/* Transformer Designer Button */}
             <Button asChild variant="hero" size="lg">
-              <Link href="/design">Design Tool</Link>
+              <Link href="/design">Transformer Designer</Link>
             </Button>
           </div>
 
@@ -323,14 +323,14 @@ const Navbar = () => {
               </Link>
 
               <Button asChild variant="outline" size="lg" className="mt-4">
-                <Link href="/portal" onClick={() => setIsOpen(false)}>
-                  Portal
+                <Link href="/portal/login" onClick={() => setIsOpen(false)}>
+                  Supplier Login
                 </Link>
               </Button>
 
               <Button asChild variant="hero" size="lg">
                 <Link href="/design" onClick={() => setIsOpen(false)}>
-                  Design Tool
+                  Transformer Designer
                 </Link>
               </Button>
             </div>

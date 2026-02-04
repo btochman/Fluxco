@@ -76,13 +76,15 @@ const HeroSection = () => {
 
           {/* CTA Buttons */}
           <div className="flex flex-wrap gap-4 mb-16 animate-fade-up-delay-3">
-            <Button 
-              variant="hero" 
+            <Button
+              variant="hero"
               size="xl"
-              onClick={() => document.getElementById('spec-builder')?.scrollIntoView({ behavior: 'smooth' })}
+              asChild
             >
-              Get Started
-              <ArrowRight className="w-5 h-5" />
+              <Link href="/design">
+                Get Started
+                <ArrowRight className="w-5 h-5" />
+              </Link>
             </Button>
             <Button 
               variant="heroOutline" 

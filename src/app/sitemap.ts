@@ -31,12 +31,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "weekly" as const,
       priority: 0.6,
     },
-    {
-      url: `${baseUrl}/portal`,
-      lastModified: new Date(),
-      changeFrequency: "monthly" as const,
-      priority: 0.5,
-    },
   ];
 
   // Transformer category pages
