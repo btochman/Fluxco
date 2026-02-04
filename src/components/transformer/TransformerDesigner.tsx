@@ -320,7 +320,7 @@ export function TransformerDesigner() {
       contact_phone: marketplaceForm.contactPhone || null,
       asking_price: null,
       notes: marketplaceForm.zipcode ? `Zipcode: ${marketplaceForm.zipcode}` : null,
-      status: 'pending_review',
+      status: 'listed',
     });
 
     setMarketplaceSubmitting(false);
