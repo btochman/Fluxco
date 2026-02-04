@@ -7,8 +7,6 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -45,6 +43,10 @@ export async function POST(request: NextRequest) {
     const isValidSupplierId = supplierId && supplierId !== "unknown" &&
       /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(supplierId);
 
+    // Set up Resend for email
+    const apiKey = process.env.RESEND_API_KEY;
+    const resend = apiKey ? new Resend(apiKey) : null;
+
     if (type === "info_request") {
       // Try to store if we have valid supplier ID
       if (isValidSupplierId) {
@@ -64,37 +66,37 @@ export async function POST(request: NextRequest) {
       }
 
       // Send email notification
-      try {
-        await resend.emails.send({
-          from: "FluxCo Marketplace <notifications@fluxco.com>",
-          to: "brian@fluxco.com",
-          subject: `Info Request: ${projectId} - ${listing.rated_power_kva} kVA`,
-          html: `
-            <h2>New Information Request</h2>
-            <p>A supplier has requested more information about a transformer listing.</p>
+      if (resend) {
+        try {
+          await resend.emails.send({
+            from: "FluxCo <noreply@fluxco.com>",
+            to: "brian@fluxco.com",
+            replyTo: supplierEmail,
+            subject: `Info Request: ${projectId} - ${listing.rated_power_kva} kVA`,
+            html: `
+              <h2>New Information Request</h2>
+              <p>A supplier has requested more information about a transformer listing.</p>
 
-            <h3>Supplier Details</h3>
-            <ul>
-              <li><strong>Company:</strong> ${supplierCompany}</li>
-              <li><strong>Contact:</strong> ${contactName}</li>
-              <li><strong>Email:</strong> <a href="mailto:${supplierEmail}">${supplierEmail}</a></li>
-            </ul>
+              <h3>Supplier Details</h3>
+              <ul>
+                <li><strong>Company:</strong> ${supplierCompany}</li>
+                <li><strong>Contact:</strong> ${contactName}</li>
+                <li><strong>Email:</strong> ${supplierEmail}</li>
+              </ul>
 
-            <h3>Project Details</h3>
-            <ul>
-              <li><strong>Project ID:</strong> ${projectId}</li>
-              <li><strong>Rating:</strong> ${listing.rated_power_kva} kVA</li>
-              <li><strong>Voltage:</strong> ${listing.primary_voltage}V / ${listing.secondary_voltage}V</li>
-              <li><strong>Phase:</strong> ${listing.phases}-Phase</li>
-              <li><strong>Location:</strong> ${listing.zipcode || "Not specified"}</li>
-            </ul>
-
-            <p><a href="mailto:${supplierEmail}?subject=RE: ${projectId} - Information Request">Reply to Supplier</a></p>
-          `,
-        });
-      } catch (emailError) {
-        console.error("Failed to send email:", emailError);
-        // Continue anyway - don't fail the request if email fails
+              <h3>Project Details</h3>
+              <ul>
+                <li><strong>Project ID:</strong> ${projectId}</li>
+                <li><strong>Rating:</strong> ${listing.rated_power_kva} kVA</li>
+                <li><strong>Voltage:</strong> ${listing.primary_voltage}V / ${listing.secondary_voltage}V</li>
+                <li><strong>Phase:</strong> ${listing.phases}-Phase</li>
+                <li><strong>Location:</strong> ${listing.zipcode || "Not specified"}</li>
+              </ul>
+            `,
+          });
+        } catch (emailError) {
+          console.error("Failed to send email:", emailError);
+        }
       }
 
       return NextResponse.json({
@@ -105,7 +107,7 @@ export async function POST(request: NextRequest) {
     } else if (type === "bid") {
       // Try to store if we have valid supplier ID
       if (isValidSupplierId) {
-        const { error: bidError } = await supabase
+        await supabase
           .from("supplier_bids")
           .upsert({
             listing_id: listingId,
@@ -118,51 +120,47 @@ export async function POST(request: NextRequest) {
           }, {
             onConflict: "listing_id,supplier_id",
           });
-
-        if (bidError) {
-          console.error("Error storing bid:", bidError);
-        }
       }
 
       // Send email notification
-      try {
-        await resend.emails.send({
-          from: "FluxCo Marketplace <notifications@fluxco.com>",
-          to: "brian@fluxco.com",
-          subject: `New Bid: ${projectId} - $${bidPrice?.toLocaleString()} / ${leadTimeWeeks} weeks`,
-          html: `
-            <h2>New Bid Received</h2>
-            <p>A supplier has submitted a bid for a transformer listing.</p>
+      if (resend) {
+        try {
+          await resend.emails.send({
+            from: "FluxCo <noreply@fluxco.com>",
+            to: "brian@fluxco.com",
+            replyTo: supplierEmail,
+            subject: `New Bid: ${projectId} - $${bidPrice?.toLocaleString()} / ${leadTimeWeeks} weeks`,
+            html: `
+              <h2>New Bid Received</h2>
+              <p>A supplier has submitted a bid for a transformer listing.</p>
 
-            <h3>Bid Details</h3>
-            <ul>
-              <li><strong>Bid Price:</strong> $${bidPrice?.toLocaleString()}</li>
-              <li><strong>Lead Time:</strong> ${leadTimeWeeks} weeks</li>
-              ${notes ? `<li><strong>Notes:</strong> ${notes}</li>` : ''}
-            </ul>
+              <h3>Bid Details</h3>
+              <ul>
+                <li><strong>Bid Price:</strong> $${bidPrice?.toLocaleString()}</li>
+                <li><strong>Lead Time:</strong> ${leadTimeWeeks} weeks</li>
+                ${notes ? `<li><strong>Notes:</strong> ${notes}</li>` : ''}
+              </ul>
 
-            <h3>Supplier Details</h3>
-            <ul>
-              <li><strong>Company:</strong> ${supplierCompany}</li>
-              <li><strong>Contact:</strong> ${contactName}</li>
-              <li><strong>Email:</strong> <a href="mailto:${supplierEmail}">${supplierEmail}</a></li>
-            </ul>
+              <h3>Supplier Details</h3>
+              <ul>
+                <li><strong>Company:</strong> ${supplierCompany}</li>
+                <li><strong>Contact:</strong> ${contactName}</li>
+                <li><strong>Email:</strong> ${supplierEmail}</li>
+              </ul>
 
-            <h3>Project Details</h3>
-            <ul>
-              <li><strong>Project ID:</strong> ${projectId}</li>
-              <li><strong>Rating:</strong> ${listing.rated_power_kva} kVA</li>
-              <li><strong>Voltage:</strong> ${listing.primary_voltage}V / ${listing.secondary_voltage}V</li>
-              <li><strong>Phase:</strong> ${listing.phases}-Phase</li>
-              <li><strong>Location:</strong> ${listing.zipcode || "Not specified"}</li>
-            </ul>
-
-            <p><a href="mailto:${supplierEmail}?subject=RE: ${projectId} - Bid Confirmation">Reply to Supplier</a></p>
-          `,
-        });
-      } catch (emailError) {
-        console.error("Failed to send email:", emailError);
-        // Continue anyway
+              <h3>Project Details</h3>
+              <ul>
+                <li><strong>Project ID:</strong> ${projectId}</li>
+                <li><strong>Rating:</strong> ${listing.rated_power_kva} kVA</li>
+                <li><strong>Voltage:</strong> ${listing.primary_voltage}V / ${listing.secondary_voltage}V</li>
+                <li><strong>Phase:</strong> ${listing.phases}-Phase</li>
+                <li><strong>Location:</strong> ${listing.zipcode || "Not specified"}</li>
+              </ul>
+            `,
+          });
+        } catch (emailError) {
+          console.error("Failed to send email:", emailError);
+        }
       }
 
       return NextResponse.json({
