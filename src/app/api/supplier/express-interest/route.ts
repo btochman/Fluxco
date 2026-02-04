@@ -36,28 +36,26 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (type === "info_request") {
-      // Record info request
-      const { error: bidError } = await supabase
-        .from("supplier_bids")
-        .upsert({
-          listing_id: listingId,
-          supplier_id: supplierId,
-          bid_price: 0,
-          lead_time_weeks: 0,
-          status: "interested",
-          notes: "Requested more information",
-          interest_expressed_at: new Date().toISOString(),
-        }, {
-          onConflict: "listing_id,supplier_id",
-        });
+    // Only try to store in database if we have a valid supplier ID (UUID format)
+    const isValidSupplierId = supplierId && supplierId !== "unknown" &&
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(supplierId);
 
-      if (bidError) {
-        console.error("Error storing info request:", bidError);
-        return NextResponse.json(
-          { error: "Failed to record request" },
-          { status: 500 }
-        );
+    if (type === "info_request") {
+      // Try to store if we have valid supplier ID
+      if (isValidSupplierId) {
+        await supabase
+          .from("supplier_bids")
+          .upsert({
+            listing_id: listingId,
+            supplier_id: supplierId,
+            bid_price: 0,
+            lead_time_weeks: 0,
+            status: "interested",
+            notes: "Requested more information",
+            interest_expressed_at: new Date().toISOString(),
+          }, {
+            onConflict: "listing_id,supplier_id",
+          });
       }
 
       // Log for email notification to brian@fluxco.com
@@ -80,27 +78,26 @@ export async function POST(request: NextRequest) {
       });
 
     } else if (type === "bid") {
-      // Formal bid with price and lead time
-      const { error: bidError } = await supabase
-        .from("supplier_bids")
-        .upsert({
-          listing_id: listingId,
-          supplier_id: supplierId,
-          bid_price: bidPrice,
-          lead_time_weeks: leadTimeWeeks,
-          notes: notes || null,
-          status: "submitted",
-          interest_expressed_at: new Date().toISOString(),
-        }, {
-          onConflict: "listing_id,supplier_id",
-        });
+      // Try to store if we have valid supplier ID
+      if (isValidSupplierId) {
+        const { error: bidError } = await supabase
+          .from("supplier_bids")
+          .upsert({
+            listing_id: listingId,
+            supplier_id: supplierId,
+            bid_price: bidPrice,
+            lead_time_weeks: leadTimeWeeks,
+            notes: notes || null,
+            status: "submitted",
+            interest_expressed_at: new Date().toISOString(),
+          }, {
+            onConflict: "listing_id,supplier_id",
+          });
 
-      if (bidError) {
-        console.error("Error storing bid:", bidError);
-        return NextResponse.json(
-          { error: "Failed to store bid" },
-          { status: 500 }
-        );
+        if (bidError) {
+          console.error("Error storing bid:", bidError);
+          // Continue anyway - we'll still notify
+        }
       }
 
       // Log for email notification to brian@fluxco.com
