@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { supabase } from "@/lib/supabase";
 import { User, Session } from "@supabase/supabase-js";
 
@@ -47,22 +47,32 @@ export function useSupplierAuth(): UseSupplierAuthReturn {
   const [session, setSession] = useState<Session | null>(null);
   const [supplier, setSupplier] = useState<SupplierProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const initialized = useRef(false);
 
-  const fetchSupplierProfile = useCallback(async (userId: string) => {
-    const { data, error } = await supabase
-      .from("suppliers")
-      .select("*")
-      .eq("user_id", userId)
-      .single();
+  const fetchSupplierProfile = useCallback(async (userId: string): Promise<SupplierProfile | null> => {
+    try {
+      const { data, error } = await supabase
+        .from("suppliers")
+        .select("*")
+        .eq("user_id", userId)
+        .single();
 
-    if (error) {
-      console.error("Error fetching supplier profile:", error);
+      if (error) {
+        console.error("Error fetching supplier profile:", error);
+        return null;
+      }
+      return data as SupplierProfile;
+    } catch (err) {
+      console.error("Exception fetching supplier profile:", err);
       return null;
     }
-    return data as SupplierProfile;
   }, []);
 
   useEffect(() => {
+    // Prevent double initialization in React Strict Mode
+    if (initialized.current) return;
+    initialized.current = true;
+
     // Check if supabase client is available
     if (!supabase) {
       console.error("Supabase client not initialized");
@@ -70,37 +80,60 @@ export function useSupplierAuth(): UseSupplierAuthReturn {
       return;
     }
 
-    // Get initial session
-    supabase.auth.getSession()
-      .then(({ data: { session } }) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        if (session?.user) {
-          fetchSupplierProfile(session.user.id).then(setSupplier);
+    let isMounted = true;
+
+    const initAuth = async () => {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+
+        if (error) {
+          console.error("Error getting session:", error);
+          if (isMounted) setLoading(false);
+          return;
         }
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error getting session:", error);
-        setLoading(false);
-      });
+
+        if (isMounted) {
+          setSession(session);
+          setUser(session?.user ?? null);
+
+          if (session?.user) {
+            const profile = await fetchSupplierProfile(session.user.id);
+            if (isMounted) setSupplier(profile);
+          }
+
+          setLoading(false);
+        }
+      } catch (err) {
+        console.error("Exception during auth init:", err);
+        if (isMounted) setLoading(false);
+      }
+    };
+
+    initAuth();
 
     // Listen for auth changes
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      if (!isMounted) return;
+
       setSession(session);
       setUser(session?.user ?? null);
+
       if (session?.user) {
         const profile = await fetchSupplierProfile(session.user.id);
-        setSupplier(profile);
+        if (isMounted) setSupplier(profile);
       } else {
         setSupplier(null);
       }
+
       setLoading(false);
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+    };
   }, [fetchSupplierProfile]);
 
   const signIn = async (email: string, password: string) => {
