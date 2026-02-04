@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
 import { User, Session } from "@supabase/supabase-js";
 
@@ -48,6 +48,28 @@ export function useSupplierAuth(): UseSupplierAuthReturn {
   const [supplier, setSupplier] = useState<SupplierProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const fetchSupplierProfile = useCallback(async (userId: string) => {
+    try {
+      console.log("Fetching supplier profile for user:", userId);
+      const { data, error } = await supabase
+        .from("suppliers")
+        .select("*")
+        .eq("user_id", userId)
+        .single();
+
+      if (error) {
+        console.error("Error fetching supplier profile:", error);
+        return null;
+      }
+
+      console.log("Supplier profile fetched:", data);
+      return data as SupplierProfile;
+    } catch (err) {
+      console.error("Exception fetching supplier profile:", err);
+      return null;
+    }
+  }, []);
+
   useEffect(() => {
     if (!supabase) {
       console.error("Supabase client not initialized");
@@ -55,43 +77,67 @@ export function useSupplierAuth(): UseSupplierAuthReturn {
       return;
     }
 
-    // Set up auth state listener FIRST
+    let isMounted = true;
+
+    const initAuth = async () => {
+      try {
+        const { data: { session: currentSession }, error } = await supabase.auth.getSession();
+
+        if (error) {
+          console.error("Error getting session:", error);
+          if (isMounted) setLoading(false);
+          return;
+        }
+
+        if (isMounted) {
+          setSession(currentSession);
+          setUser(currentSession?.user ?? null);
+
+          if (currentSession?.user) {
+            const profile = await fetchSupplierProfile(currentSession.user.id);
+            if (isMounted) {
+              setSupplier(profile);
+            }
+          }
+
+          setLoading(false);
+        }
+      } catch (err) {
+        console.error("Exception during auth init:", err);
+        if (isMounted) setLoading(false);
+      }
+    };
+
+    initAuth();
+
+    // Listen for auth changes
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, currentSession) => {
-      console.log("Auth state change:", event, currentSession?.user?.email);
+    } = supabase.auth.onAuthStateChange(async (event, newSession) => {
+      console.log("Auth state change:", event);
 
-      setSession(currentSession);
-      setUser(currentSession?.user ?? null);
+      if (!isMounted) return;
 
-      if (currentSession?.user) {
-        // Use setTimeout to avoid Supabase deadlock issue
-        setTimeout(async () => {
-          const { data } = await supabase
-            .from("suppliers")
-            .select("*")
-            .eq("user_id", currentSession.user.id)
-            .single();
-          setSupplier(data as SupplierProfile | null);
-          setLoading(false);
-        }, 0);
+      setSession(newSession);
+      setUser(newSession?.user ?? null);
+
+      if (newSession?.user) {
+        const profile = await fetchSupplierProfile(newSession.user.id);
+        if (isMounted) {
+          setSupplier(profile);
+        }
       } else {
         setSupplier(null);
-        setLoading(false);
       }
+
+      setLoading(false);
     });
 
-    // Then check for existing session
-    supabase.auth.getSession().then(({ data: { session: existingSession } }) => {
-      if (!existingSession) {
-        // No session, stop loading
-        setLoading(false);
-      }
-      // If there is a session, onAuthStateChange will handle it
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+    };
+  }, [fetchSupplierProfile]);
 
   const signIn = async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({
