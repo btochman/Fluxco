@@ -314,7 +314,7 @@ export function TransformerDesigner() {
       no_load_loss_w: design.losses.noLoadLoss,
       load_loss_w: design.losses.loadLoss,
       efficiency_percent: design.losses.efficiency.find(e => e.loadPercent === 100)?.efficiency || null,
-      total_weight_kg: design.core.coreWeight + design.hvWinding.weight + design.lvWinding.weight,
+      total_weight_kg: design.core.coreWeight + design.hvWinding.conductorWeight + design.lvWinding.conductorWeight,
       contact_name: marketplaceForm.contactName,
       contact_email: marketplaceForm.contactEmail,
       contact_phone: marketplaceForm.contactPhone || null,
