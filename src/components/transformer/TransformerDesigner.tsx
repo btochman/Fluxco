@@ -299,22 +299,26 @@ export function TransformerDesigner() {
 
     const costBreakdown = calculateCostEstimate(design, requirements, { oilType: 'mineral' });
 
+    // Round numeric values to fit database column constraints
+    const round2 = (n: number | null | undefined) => n != null ? Math.round(n * 100) / 100 : null;
+    const efficiency = design.losses.efficiency.find(e => e.loadPercent === 100)?.efficiency;
+
     const listingData = {
       rated_power_kva: requirements.ratedPower,
       primary_voltage: requirements.primaryVoltage,
       secondary_voltage: requirements.secondaryVoltage,
       frequency: requirements.frequency,
       phases: requirements.phases,
-      impedance_percent: design.impedance.percentZ,
+      impedance_percent: round2(design.impedance.percentZ),
       vector_group: requirements.vectorGroup.name,
       cooling_class: requirements.coolingClass.name,
       conductor_type: requirements.conductorType.name,
       steel_grade: requirements.steelGrade.name,
-      estimated_cost: costBreakdown.totalCost,
-      no_load_loss_w: design.losses.noLoadLoss,
-      load_loss_w: design.losses.loadLoss,
-      efficiency_percent: design.losses.efficiency.find(e => e.loadPercent === 100)?.efficiency || null,
-      total_weight_kg: design.core.coreWeight + design.hvWinding.conductorWeight + design.lvWinding.conductorWeight,
+      estimated_cost: round2(costBreakdown.totalCost),
+      no_load_loss_w: round2(design.losses.noLoadLoss),
+      load_loss_w: round2(design.losses.loadLoss),
+      efficiency_percent: round2(efficiency),
+      total_weight_kg: round2(design.core.coreWeight + design.hvWinding.conductorWeight + design.lvWinding.conductorWeight),
       contact_name: marketplaceForm.contactName,
       contact_email: marketplaceForm.contactEmail,
       contact_phone: marketplaceForm.contactPhone || null,
