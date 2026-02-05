@@ -299,7 +299,7 @@ export function TransformerDesigner() {
 
     const costBreakdown = calculateCostEstimate(design, requirements, { oilType: 'mineral' });
 
-    const { error } = await supabase.from('marketplace_listings').insert({
+    const listingData = {
       rated_power_kva: requirements.ratedPower,
       primary_voltage: requirements.primaryVoltage,
       secondary_voltage: requirements.secondaryVoltage,
@@ -320,14 +320,24 @@ export function TransformerDesigner() {
       contact_phone: marketplaceForm.contactPhone || null,
       asking_price: null,
       notes: marketplaceForm.zipcode ? `Zipcode: ${marketplaceForm.zipcode}` : null,
+      zipcode: marketplaceForm.zipcode || null,
       status: 'listed',
-    });
+    };
+
+    const { error } = await supabase.from('marketplace_listings').insert(listingData);
 
     setMarketplaceSubmitting(false);
 
     if (error) {
       alert('Error submitting to marketplace: ' + error.message);
     } else {
+      // Notify suppliers with notifications enabled (fire and forget)
+      fetch('/api/supplier/notify-new-listing', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ listing: listingData }),
+      }).catch(console.error);
+
       setMarketplaceSuccess(true);
       setTimeout(() => {
         setMarketplaceOpen(false);
