@@ -69,9 +69,12 @@ export default function AdminPage() {
 
   const [savedPassword, setSavedPassword] = useState("");
 
+  const [error, setError] = useState("");
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setError("");
     try {
       const res = await fetch("/api/admin/data", {
         method: "POST",
@@ -79,21 +82,22 @@ export default function AdminPage() {
         body: JSON.stringify({ password }),
       });
 
+      const data = await res.json();
+
       if (!res.ok) {
-        alert("Incorrect password");
+        setError(data.error || "Login failed");
         setLoading(false);
         return;
       }
 
-      const data = await res.json();
       setBids(data.bids);
       setListings(data.listings);
       setSuppliers(data.suppliers);
       setSavedPassword(password);
       setAuthenticated(true);
-    } catch (error) {
-      console.error("Error:", error);
-      alert("Failed to login");
+    } catch (err: any) {
+      console.error("Error:", err);
+      setError(err.message || "Failed to login");
     }
     setLoading(false);
   };
@@ -155,8 +159,11 @@ export default function AdminPage() {
               onChange={(e) => setPassword(e.target.value)}
               className="w-full px-4 py-2 border border-border rounded-md bg-background mb-4"
             />
-            <Button type="submit" className="w-full">
-              Login
+            {error && (
+              <div className="text-red-500 text-sm mb-4">{error}</div>
+            )}
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? "Loading..." : "Login"}
             </Button>
           </form>
         </div>

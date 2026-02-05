@@ -1,20 +1,26 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
-
 export async function POST(request: NextRequest) {
+  const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "fluxco2026";
+
   try {
-    const { password } = await request.json();
-    const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "fluxco2026";
+    const body = await request.json();
+    const { password } = body;
 
     if (!password || password !== ADMIN_PASSWORD) {
-      console.log("Auth failed. Received:", password, "Expected:", ADMIN_PASSWORD);
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    // Check for required env vars
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      return NextResponse.json({ error: "Server configuration error" }, { status: 500 });
+    }
+
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_ROLE_KEY
+    );
 
     // Fetch all data using service role (bypasses RLS)
     const [bidsResult, listingsResult, suppliersResult] = await Promise.all([
@@ -43,8 +49,8 @@ export async function POST(request: NextRequest) {
       listings: listingsResult.data || [],
       suppliers: suppliersResult.data || [],
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Admin API error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json({ error: error.message || "Internal server error" }, { status: 500 });
   }
 }
