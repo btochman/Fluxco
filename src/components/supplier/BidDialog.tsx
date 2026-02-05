@@ -247,7 +247,7 @@ export function BidDialog({ listing, open, onOpenChange, supplier, userEmail }: 
           <Alert variant="destructive">
             <AlertDescription>
               {error}
-              {!supplier && " (Supplier profile not found - please contact support)"}
+              {!supplier && " (OEM profile not found - please contact support)"}
             </AlertDescription>
           </Alert>
         )}

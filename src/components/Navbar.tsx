@@ -194,10 +194,10 @@ const Navbar = () => {
               </NavigationMenuList>
             </NavigationMenu>
 
-            {/* Supplier Login Button */}
+            {/* OEM Login Button */}
             <Button asChild variant="outline" className="ml-2 h-12 px-3">
               <Link href="/portal/login" className="flex flex-col items-center text-xs leading-tight">
-                <span>Supplier</span>
+                <span>OEM</span>
                 <span>Login</span>
               </Link>
             </Button>
@@ -330,7 +330,7 @@ const Navbar = () => {
 
               <Button asChild variant="outline" size="lg" className="mt-4">
                 <Link href="/portal/login" onClick={() => setIsOpen(false)}>
-                  Supplier Login
+                  OEM Login
                 </Link>
               </Button>
 

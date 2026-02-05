@@ -4,8 +4,8 @@ import { Zap } from "lucide-react";
 import { RegisterForm } from "@/components/supplier/RegisterForm";
 
 export const metadata: Metadata = {
-  title: "Supplier Registration | FluxCo",
-  description: "Create a FluxCo supplier account to access the transformer marketplace and submit bids.",
+  title: "OEM Registration | FluxCo",
+  description: "Create a FluxCo OEM account to access the transformer marketplace and submit bids.",
 };
 
 export default function RegisterPage() {
@@ -22,7 +22,7 @@ export default function RegisterPage() {
               FLUXCO
             </span>
           </Link>
-          <h1 className="text-2xl font-semibold text-center">Create Supplier Account</h1>
+          <h1 className="text-2xl font-semibold text-center">Create OEM Account</h1>
           <p className="text-muted-foreground text-center mt-2">
             Register to access transformer listings and marketplace opportunities
           </p>

@@ -4,8 +4,8 @@ import { Zap } from "lucide-react";
 import { LoginForm } from "@/components/supplier/LoginForm";
 
 export const metadata: Metadata = {
-  title: "Supplier Login | FluxCo",
-  description: "Sign in to your FluxCo supplier account to view marketplace listings and manage your bids.",
+  title: "OEM Login | FluxCo",
+  description: "Sign in to your FluxCo OEM account to view marketplace listings and manage your bids.",
 };
 
 export default function LoginPage() {
@@ -22,7 +22,7 @@ export default function LoginPage() {
               FLUXCO
             </span>
           </Link>
-          <h1 className="text-2xl font-semibold text-center">Supplier Portal</h1>
+          <h1 className="text-2xl font-semibold text-center">OEM Portal</h1>
           <p className="text-muted-foreground text-center mt-2">
             Sign in to access the transformer marketplace
           </p>

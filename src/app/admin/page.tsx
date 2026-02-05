@@ -49,7 +49,7 @@ interface Listing {
   created_at: string;
 }
 
-interface Supplier {
+interface OEM {
   id: string;
   company_name: string;
   contact_name: string;
@@ -65,7 +65,7 @@ export default function AdminPage() {
   const [savedPassword, setSavedPassword] = useState("");
   const [bids, setBids] = useState<Bid[]>([]);
   const [listings, setListings] = useState<Listing[]>([]);
-  const [suppliers, setSuppliers] = useState<Supplier[]>([]);
+  const [oems, setOEMs] = useState<OEM[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -96,7 +96,7 @@ export default function AdminPage() {
     const data = await res.json();
     setBids(data.bids);
     setListings(data.listings);
-    setSuppliers(data.suppliers);
+    setOEMs(data.suppliers);
     setSavedPassword(password);
     setAuthenticated(true);
     setLoading(false);
@@ -114,7 +114,7 @@ export default function AdminPage() {
       const data = await res.json();
       setBids(data.bids);
       setListings(data.listings);
-      setSuppliers(data.suppliers);
+      setOEMs(data.suppliers);
     }
     setLoading(false);
   };
@@ -207,9 +207,9 @@ export default function AdminPage() {
           <div className="bg-card border border-border rounded-lg p-4">
             <div className="flex items-center gap-2 text-muted-foreground mb-1">
               <Users className="w-4 h-4" />
-              Suppliers
+              OEMs
             </div>
-            <div className="text-3xl font-bold">{suppliers.length}</div>
+            <div className="text-3xl font-bold">{oems.length}</div>
           </div>
         </div>
 
@@ -217,7 +217,7 @@ export default function AdminPage() {
           <TabsList className="mb-6">
             <TabsTrigger value="bids">Bids ({bids.length})</TabsTrigger>
             <TabsTrigger value="listings">Listings ({listings.length})</TabsTrigger>
-            <TabsTrigger value="suppliers">Suppliers ({suppliers.length})</TabsTrigger>
+            <TabsTrigger value="oems">OEMs ({oems.length})</TabsTrigger>
           </TabsList>
 
           <TabsContent value="bids">
@@ -227,7 +227,7 @@ export default function AdminPage() {
                   <TableRow>
                     <TableHead>Date</TableHead>
                     <TableHead>Project</TableHead>
-                    <TableHead>Supplier</TableHead>
+                    <TableHead>OEM</TableHead>
                     <TableHead>Bid Price</TableHead>
                     <TableHead>Lead Time</TableHead>
                     <TableHead>Status</TableHead>
@@ -317,7 +317,7 @@ export default function AdminPage() {
             </div>
           </TabsContent>
 
-          <TabsContent value="suppliers">
+          <TabsContent value="oems">
             <div className="bg-card border border-border rounded-lg overflow-hidden">
               <Table>
                 <TableHeader>
@@ -331,25 +331,25 @@ export default function AdminPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {suppliers.length === 0 ? (
+                  {oems.length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
-                        No suppliers registered yet
+                        No OEMs registered yet
                       </TableCell>
                     </TableRow>
                   ) : (
-                    suppliers.map((supplier) => (
-                      <TableRow key={supplier.id}>
-                        <TableCell className="font-semibold">{supplier.company_name}</TableCell>
-                        <TableCell>{supplier.contact_name}</TableCell>
-                        <TableCell>{supplier.email}</TableCell>
-                        <TableCell>{supplier.phone || "-"}</TableCell>
+                    oems.map((oem) => (
+                      <TableRow key={oem.id}>
+                        <TableCell className="font-semibold">{oem.company_name}</TableCell>
+                        <TableCell>{oem.contact_name}</TableCell>
+                        <TableCell>{oem.email}</TableCell>
+                        <TableCell>{oem.phone || "-"}</TableCell>
                         <TableCell>
-                          <Badge variant={supplier.notify_new_listings ? "default" : "outline"}>
-                            {supplier.notify_new_listings ? "On" : "Off"}
+                          <Badge variant={oem.notify_new_listings ? "default" : "outline"}>
+                            {oem.notify_new_listings ? "On" : "Off"}
                           </Badge>
                         </TableCell>
-                        <TableCell className="text-sm">{formatDate(supplier.created_at)}</TableCell>
+                        <TableCell className="text-sm">{formatDate(oem.created_at)}</TableCell>
                       </TableRow>
                     ))
                   )}

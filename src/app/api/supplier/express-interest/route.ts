@@ -43,10 +43,10 @@ export async function POST(request: NextRequest) {
     const isValidSupplierId = supplierId && supplierId !== "unknown" &&
       /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(supplierId);
 
-    // Require valid supplier ID for bids - don't silently fail
+    // Require valid OEM ID for bids - don't silently fail
     if (!isValidSupplierId) {
       return NextResponse.json(
-        { error: "You must be logged in as a supplier to submit a bid. Please sign in or create a supplier account." },
+        { error: "You must be logged in as an OEM to submit a bid. Please sign in or create an OEM account." },
         { status: 401 }
       );
     }
@@ -83,9 +83,9 @@ export async function POST(request: NextRequest) {
             subject: `Info Request: ${projectId} - ${listing.rated_power_kva} kVA`,
             html: `
               <h2>New Information Request</h2>
-              <p>A supplier has requested more information about a transformer listing.</p>
+              <p>An OEM has requested more information about a transformer listing.</p>
 
-              <h3>Supplier Details</h3>
+              <h3>OEM Details</h3>
               <ul>
                 <li><strong>Company:</strong> ${supplierCompany}</li>
                 <li><strong>Contact:</strong> ${contactName}</li>
@@ -140,7 +140,7 @@ export async function POST(request: NextRequest) {
             subject: `New Bid: ${projectId} - $${bidPrice?.toLocaleString()} / ${leadTimeWeeks} weeks`,
             html: `
               <h2>New Bid Received</h2>
-              <p>A supplier has submitted a bid for a transformer listing.</p>
+              <p>An OEM has submitted a bid for a transformer listing.</p>
 
               <h3>Bid Details</h3>
               <ul>
@@ -149,7 +149,7 @@ export async function POST(request: NextRequest) {
                 ${notes ? `<li><strong>Notes:</strong> ${notes}</li>` : ''}
               </ul>
 
-              <h3>Supplier Details</h3>
+              <h3>OEM Details</h3>
               <ul>
                 <li><strong>Company:</strong> ${supplierCompany}</li>
                 <li><strong>Contact:</strong> ${contactName}</li>
