@@ -16,7 +16,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { AlertCircle, PackageSearch, Zap, MapPin, CheckCircle, Clock } from "lucide-react";
+import { AlertCircle, PackageSearch, Zap, MapPin, CheckCircle, Clock, LogIn } from "lucide-react";
+import Link from "next/link";
 import { MarketplaceListing } from "@/lib/supabase";
 import { BidDialog } from "./BidDialog";
 
@@ -159,7 +160,7 @@ export function MarketplaceList() {
                         <CheckCircle className="w-3 h-3 mr-1" />
                         Awarded
                       </Badge>
-                    ) : (
+                    ) : supplier ? (
                       <Button
                         size="sm"
                         variant="outline"
@@ -167,6 +168,18 @@ export function MarketplaceList() {
                         onClick={() => handleBidClick(listing)}
                       >
                         Place Bid
+                      </Button>
+                    ) : (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="border-primary/50 text-primary hover:bg-primary hover:text-primary-foreground"
+                        asChild
+                      >
+                        <Link href="/portal/login">
+                          <LogIn className="w-3 h-3 mr-1" />
+                          Login to Bid
+                        </Link>
                       </Button>
                     )}
                   </TableCell>
