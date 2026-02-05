@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Zap, Users, FileText, DollarSign, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -60,43 +60,64 @@ interface Supplier {
 }
 
 export default function AdminPage() {
+  const [authenticated, setAuthenticated] = useState(false);
+  const [password, setPassword] = useState("");
+  const [savedPassword, setSavedPassword] = useState("");
   const [bids, setBids] = useState<Bid[]>([]);
   const [listings, setListings] = useState<Listing[]>([]);
   const [suppliers, setSuppliers] = useState<Supplier[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const fetchData = async () => {
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
     setLoading(true);
     setError("");
-    try {
-      const res = await fetch("/api/admin/data", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({}),
-      });
 
-      const data = await res.json();
+    const res = await fetch("/api/admin/data", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ password }),
+    });
 
-      if (!res.ok) {
-        setError(data.error || "Failed to load data");
-        setLoading(false);
-        return;
-      }
-
-      setBids(data.bids);
-      setListings(data.listings);
-      setSuppliers(data.suppliers);
-    } catch (err: any) {
-      console.error("Error:", err);
-      setError(err.message || "Failed to load data");
+    if (res.status === 401) {
+      setError("Incorrect password");
+      setLoading(false);
+      return;
     }
+
+    if (!res.ok) {
+      const data = await res.json();
+      setError(data.error || "Failed to login");
+      setLoading(false);
+      return;
+    }
+
+    const data = await res.json();
+    setBids(data.bids);
+    setListings(data.listings);
+    setSuppliers(data.suppliers);
+    setSavedPassword(password);
+    setAuthenticated(true);
     setLoading(false);
   };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  const fetchData = async () => {
+    setLoading(true);
+    const res = await fetch("/api/admin/data", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ password: savedPassword }),
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      setBids(data.bids);
+      setListings(data.listings);
+      setSuppliers(data.suppliers);
+    }
+    setLoading(false);
+  };
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat("en-US", {
@@ -116,23 +137,32 @@ export default function AdminPage() {
     });
   };
 
-  if (loading) {
+  if (!authenticated) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="flex items-center gap-3">
-          <RefreshCw className="w-6 h-6 animate-spin text-primary" />
-          <span>Loading...</span>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="bg-card border border-border rounded-lg p-8 text-center">
-          <div className="text-red-500 mb-4">{error}</div>
-          <Button onClick={fetchData}>Retry</Button>
+        <div className="bg-card border border-border rounded-lg p-8 w-full max-w-sm">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+              <Zap className="w-6 h-6 text-primary-foreground" />
+            </div>
+            <span className="font-display text-2xl">FLUXCO Admin</span>
+          </div>
+          <form onSubmit={handleLogin}>
+            <input
+              type="password"
+              placeholder="Enter admin password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full px-4 py-2 border border-border rounded-md bg-background mb-4"
+              autoComplete="current-password"
+            />
+            {error && (
+              <div className="text-red-500 text-sm mb-4">{error}</div>
+            )}
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? "Loading..." : "Login"}
+            </Button>
+          </form>
         </div>
       </div>
     );

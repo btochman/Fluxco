@@ -3,6 +3,14 @@ import { createClient } from "@supabase/supabase-js";
 
 export async function POST(request: NextRequest) {
   try {
+    const body = await request.json();
+    const { password } = body;
+
+    // Hardcoded password
+    if (password !== "fluxco2026") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     // Check for required env vars
     if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
       return NextResponse.json({ error: "Server configuration error" }, { status: 500 });
