@@ -1,24 +1,63 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSupplierAuth } from "@/hooks/useSupplierAuth";
 import { MarketplaceList } from "@/components/supplier/MarketplaceList";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import Link from "next/link";
 import { Zap, LogOut, Bell, BellOff, User } from "lucide-react";
 
 export default function PortalPage() {
   const router = useRouter();
   const { supplier, loading, signOut } = useSupplierAuth();
+  const [notificationsOn, setNotificationsOn] = useState(false);
+  const [togglingNotifications, setTogglingNotifications] = useState(false);
+
+  useEffect(() => {
+    if (supplier) {
+      setNotificationsOn(supplier.notify_new_listings);
+    }
+  }, [supplier]);
 
   useEffect(() => {
     if (!loading && !supplier) {
       router.replace("/portal/login");
     }
   }, [loading, supplier, router]);
+
+  const toggleNotifications = async () => {
+    if (!supplier || togglingNotifications) return;
+
+    setTogglingNotifications(true);
+    const newValue = !notificationsOn;
+
+    try {
+      const res = await fetch("/api/supplier/update-notifications", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          supplierId: supplier.id,
+          notifyNewListings: newValue,
+        }),
+      });
+
+      if (res.ok) {
+        setNotificationsOn(newValue);
+      }
+    } catch (err) {
+      console.error("Failed to update notifications:", err);
+    } finally {
+      setTogglingNotifications(false);
+    }
+  };
 
   // Show loading state while checking auth
   if (loading) {
@@ -67,17 +106,37 @@ export default function PortalPage() {
                       {supplier.company_name}
                     </span>
                   </div>
-                  {supplier.notify_new_listings ? (
-                    <Badge variant="secondary" className="gap-1">
-                      <Bell className="w-3 h-3" />
-                      Notifications on
-                    </Badge>
-                  ) : (
-                    <Badge variant="outline" className="gap-1">
-                      <BellOff className="w-3 h-3" />
-                      Notifications off
-                    </Badge>
-                  )}
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <button
+                          onClick={toggleNotifications}
+                          disabled={togglingNotifications}
+                          className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium transition-colors cursor-pointer ${
+                            notificationsOn
+                              ? "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+                              : "border border-input bg-background hover:bg-accent hover:text-accent-foreground"
+                          } ${togglingNotifications ? "opacity-50" : ""}`}
+                        >
+                          {notificationsOn ? (
+                            <>
+                              <Bell className="w-3 h-3" />
+                              Notifications on
+                            </>
+                          ) : (
+                            <>
+                              <BellOff className="w-3 h-3" />
+                              Notifications off
+                            </>
+                          )}
+                        </button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Get emailed when new transformer opportunities are posted</p>
+                        <p className="text-muted-foreground text-xs">Click to toggle</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 </div>
               )}
               <Button variant="outline" size="sm" onClick={handleSignOut}>
