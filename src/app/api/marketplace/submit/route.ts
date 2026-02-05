@@ -31,14 +31,18 @@ export async function POST(request: NextRequest) {
       estimated_cost: safeDecimal(listing.estimated_cost, 12, 2),           // DECIMAL(12,2)
     };
 
-    console.log("Sanitized listing values:", {
+    const debugInfo = {
+      rated_power_kva: sanitizedListing.rated_power_kva,
+      primary_voltage: sanitizedListing.primary_voltage,
+      secondary_voltage: sanitizedListing.secondary_voltage,
       impedance_percent: sanitizedListing.impedance_percent,
       efficiency_percent: sanitizedListing.efficiency_percent,
       no_load_loss_w: sanitizedListing.no_load_loss_w,
       load_loss_w: sanitizedListing.load_loss_w,
       total_weight_kg: sanitizedListing.total_weight_kg,
       estimated_cost: sanitizedListing.estimated_cost,
-    });
+    };
+    console.log("Sanitized listing values:", debugInfo);
 
     // Insert the listing
     const { data, error } = await supabase
@@ -49,8 +53,9 @@ export async function POST(request: NextRequest) {
 
     if (error) {
       console.error("Error inserting listing:", error);
+      console.error("Values that failed:", debugInfo);
       return NextResponse.json(
-        { error: error.message },
+        { error: `${error.message} - Values: ${JSON.stringify(debugInfo)}` },
         { status: 500 }
       );
     }
