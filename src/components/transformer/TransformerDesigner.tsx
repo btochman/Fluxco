@@ -328,20 +328,20 @@ export function TransformerDesigner() {
       status: 'listed',
     };
 
-    const { error } = await supabase.from('marketplace_listings').insert(listingData);
+    // Use API route to bypass RLS
+    const response = await fetch('/api/marketplace/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(listingData),
+    });
+
+    const result = await response.json();
 
     setMarketplaceSubmitting(false);
 
-    if (error) {
-      alert('Error submitting to marketplace: ' + error.message);
+    if (!response.ok) {
+      alert('Error submitting to marketplace: ' + result.error);
     } else {
-      // Notify suppliers with notifications enabled (fire and forget)
-      fetch('/api/supplier/notify-new-listing', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ listing: listingData }),
-      }).catch(console.error);
-
       setMarketplaceSuccess(true);
       setTimeout(() => {
         setMarketplaceOpen(false);
