@@ -2,12 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { Resend } from "resend";
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
-
 export async function POST(request: NextRequest) {
+  // Create client inside function to avoid build-time env var issues
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
   try {
     const body = await request.json();
     const {
@@ -39,9 +39,17 @@ export async function POST(request: NextRequest) {
 
     const projectId = serialNumber || listing.serial_number;
 
-    // Only try to store in database if we have a valid supplier ID (UUID format)
+    // Validate supplier ID (must be a valid UUID format)
     const isValidSupplierId = supplierId && supplierId !== "unknown" &&
       /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(supplierId);
+
+    // Require valid supplier ID for bids - don't silently fail
+    if (!isValidSupplierId) {
+      return NextResponse.json(
+        { error: "You must be logged in as a supplier to submit a bid. Please sign in or create a supplier account." },
+        { status: 401 }
+      );
+    }
 
     // Set up Resend for email
     const apiKey = process.env.RESEND_API_KEY;

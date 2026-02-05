@@ -157,37 +157,42 @@ export function useSupplierAuth(): UseSupplierAuthReturn {
       notify_new_listings?: boolean;
     }
   ) => {
-    const { data: authData, error: authError } = await supabase.auth.signUp({
-      email,
-      password,
-    });
+    try {
+      // Use API route to create user and profile (bypasses RLS issues)
+      const response = await fetch("/api/supplier/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email,
+          password,
+          company_name: profile.company_name,
+          contact_name: profile.contact_name,
+          phone: profile.phone || null,
+          notify_new_listings: profile.notify_new_listings ?? false,
+        }),
+      });
 
-    if (authError) {
-      return { error: authError as Error };
+      const data = await response.json();
+
+      if (!response.ok) {
+        return { error: new Error(data.error || "Registration failed") };
+      }
+
+      // Auto sign-in after successful registration
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (signInError) {
+        console.error("Auto sign-in failed:", signInError);
+        // Registration succeeded but auto-login failed - not critical
+      }
+
+      return { error: null };
+    } catch (err: any) {
+      return { error: new Error(err.message || "Registration failed") };
     }
-
-    if (!authData.user) {
-      return { error: new Error("Failed to create user") };
-    }
-
-    const { error: profileError } = await supabase.from("suppliers").insert({
-      user_id: authData.user.id,
-      email,
-      company_name: profile.company_name,
-      contact_name: profile.contact_name,
-      phone: profile.phone || null,
-      notify_new_listings: profile.notify_new_listings ?? false,
-      country: "USA",
-      certifications: [],
-      specialties: [],
-      is_verified: false,
-    });
-
-    if (profileError) {
-      return { error: profileError as Error };
-    }
-
-    return { error: null };
   };
 
   const signOut = async () => {
