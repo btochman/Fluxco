@@ -6,13 +6,13 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
-const ADMIN_PASSWORD = "fluxco2026"; // Same as in the page
-
 export async function POST(request: NextRequest) {
   try {
     const { password } = await request.json();
+    const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "fluxco2026";
 
-    if (password !== ADMIN_PASSWORD) {
+    if (!password || password !== ADMIN_PASSWORD) {
+      console.log("Auth failed. Received:", password, "Expected:", ADMIN_PASSWORD);
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
