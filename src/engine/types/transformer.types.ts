@@ -90,6 +90,8 @@ export interface DesignRequirements {
   altitude?: number;
   /** Maximum ambient temperature in degrees C */
   ambientTemperature?: number;
+  /** Project location zipcode */
+  zipcode?: string;
 }
 
 /**

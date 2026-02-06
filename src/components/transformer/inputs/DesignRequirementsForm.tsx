@@ -1,5 +1,5 @@
 "use client";
-import { Calculator, Lightbulb, AlertCircle, HelpCircle, DollarSign, Clock, Zap, Info } from 'lucide-react';
+import { Calculator, HelpCircle, DollarSign, Clock, Zap, Info } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -11,7 +11,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import type { DesignRequirements } from '@/engine/types/transformer.types';
-import { STEEL_GRADES, CONDUCTOR_TYPES, COOLING_CLASSES, VECTOR_GROUPS, LOAD_PROFILES, STEEL_SELECTION_GUIDANCE } from '@/engine/constants/materials';
+import { CONDUCTOR_TYPES, COOLING_CLASSES, VECTOR_GROUPS } from '@/engine/constants/materials';
 
 interface DesignRequirementsFormProps {
   requirements: DesignRequirements;
@@ -75,9 +75,6 @@ export function DesignRequirementsForm({
   ) => {
     onChange({ ...requirements, [key]: value });
   };
-
-  const isAmorphous = requirements.steelGrade.id.includes('amorphous');
-  const isPremiumSteel = ['hi-b', 'laser', 'amorphous-sa1', 'amorphous-hb1m'].includes(requirements.steelGrade.id);
 
   return (
     <div className="space-y-6">
@@ -248,6 +245,46 @@ export function DesignRequirementsForm({
               Your electrical engineer will specify if different is needed.
             </HelpText>
           </div>
+
+          {/* Project Zipcode */}
+          <div className="space-y-2">
+            <Label>Project Zipcode</Label>
+            <Input
+              type="text"
+              maxLength={10}
+              value={requirements.zipcode || ''}
+              onChange={(e) => updateRequirement('zipcode', e.target.value)}
+              placeholder="12345"
+            />
+            <HelpText>
+              Location helps estimate shipping costs and may affect design for local climate conditions.
+            </HelpText>
+          </div>
+
+          {/* Maximum Ambient Temperature */}
+          <div className="space-y-2">
+            <Label>Maximum Ambient Temperature (°C)</Label>
+            <Select
+              value={(requirements.ambientTemperature || 40).toString()}
+              onValueChange={(val) => updateRequirement('ambientTemperature', parseInt(val))}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="30">30°C (86°F) - Cool climate / indoor</SelectItem>
+                <SelectItem value="35">35°C (95°F) - Moderate climate</SelectItem>
+                <SelectItem value="40">40°C (104°F) - Standard / Most common</SelectItem>
+                <SelectItem value="45">45°C (113°F) - Hot climate</SelectItem>
+                <SelectItem value="50">50°C (122°F) - Very hot / desert</SelectItem>
+                <SelectItem value="55">55°C (131°F) - Extreme conditions</SelectItem>
+              </SelectContent>
+            </Select>
+            <HelpText>
+              The highest expected outdoor temperature where the transformer will be installed.
+              Higher ambient temps may require derating or enhanced cooling.
+            </HelpText>
+          </div>
         </div>
       </div>
 
@@ -367,177 +404,7 @@ export function DesignRequirementsForm({
             </HelpText>
           </div>
 
-          {/* Core Steel Grade */}
-          <div className="space-y-2">
-            <Label className="flex items-center justify-between">
-              <span>Core Steel Grade</span>
-              <span className="flex gap-1">
-                {isPremiumSteel ? (
-                  <>
-                    <ImpactBadge type="cost" level="high" />
-                    <ImpactBadge type="leadTime" level={isAmorphous ? 'high' : 'medium'} />
-                    <ImpactBadge type="efficiency" level="high" />
-                  </>
-                ) : (
-                  <>
-                    <ImpactBadge type="cost" level="low" />
-                    <ImpactBadge type="leadTime" level="low" />
-                    <ImpactBadge type="efficiency" level="medium" />
-                  </>
-                )}
-              </span>
-            </Label>
-            <Select
-              value={requirements.steelGrade.id}
-              onValueChange={(val) => {
-                const steel = STEEL_GRADES.find(s => s.id === val);
-                if (steel) updateRequirement('steelGrade', steel);
-              }}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="m4">M4 Standard - Good balance of cost/performance</SelectItem>
-                <SelectItem value="m3">M3 High Grade - Better efficiency</SelectItem>
-                <SelectItem value="m2">M2 Premium - High efficiency</SelectItem>
-                <SelectItem value="hi-b">Hi-B Ultra Premium - Excellent efficiency</SelectItem>
-                <SelectItem value="laser">Laser-Scribed - Best conventional efficiency</SelectItem>
-                <SelectItem value="amorphous-sa1">Amorphous 2605SA1 - 70% lower no-load loss</SelectItem>
-                <SelectItem value="amorphous-hb1m">Amorphous 2605HB1M - Lowest losses available</SelectItem>
-              </SelectContent>
-            </Select>
-            <HelpText>
-              Core steel is the biggest factor in no-load losses (energy used 24/7 even with no load).
-              <strong> Amorphous steel</strong> costs 2-3x more but saves 70-80% on no-load losses - often pays back in 3-5 years.
-            </HelpText>
-          </div>
         </div>
-      </div>
-
-      {/* SECTION 3: Load Profile & Steel Guidance */}
-      <div className="border rounded-lg p-4 bg-muted/30">
-        <div className="flex items-center gap-2 mb-3">
-          <Lightbulb className="w-5 h-5 text-yellow-500" />
-          <span className="font-medium">Steel Selection Guide - Based on Your Usage Pattern</span>
-        </div>
-
-        <div className="grid gap-4 md:grid-cols-2">
-          {/* Load Profile */}
-          <div className="space-y-2">
-            <Label>How will this transformer be used?</Label>
-            <Select
-              value={requirements.loadProfile?.id || 'medium'}
-              onValueChange={(val) => {
-                const profile = LOAD_PROFILES.find(p => p.id === val);
-                if (profile) updateRequirement('loadProfile', profile);
-              }}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {LOAD_PROFILES.map((profile) => (
-                  <SelectItem key={profile.id} value={profile.id}>
-                    {profile.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <div className="text-xs text-muted-foreground p-2 bg-background rounded">
-              {requirements.loadProfile?.id === 'light-variable' && (
-                <span><strong>Light/Variable:</strong> Office buildings, retail, schools - transformer often lightly loaded or idle (nights/weekends). No-load losses dominate energy costs.</span>
-              )}
-              {(requirements.loadProfile?.id === 'medium' || !requirements.loadProfile) && (
-                <span><strong>Medium/Mixed:</strong> General industrial, warehouses - moderate loading during business hours. Balance of no-load and load losses.</span>
-              )}
-              {requirements.loadProfile?.id === 'heavy-constant' && (
-                <span><strong>Heavy/Constant:</strong> Data centers, continuous manufacturing - transformer heavily loaded 24/7. Load losses dominate.</span>
-              )}
-            </div>
-          </div>
-
-          {/* Steel Recommendation */}
-          <div className="space-y-2">
-            <Label>Recommended Steel Type</Label>
-            {(() => {
-              const profile = requirements.loadProfile || LOAD_PROFILES.find(p => p.id === 'medium');
-              const recommendation = profile?.recommendedSteel;
-
-              const matchesRecommendation =
-                recommendation === 'either' ||
-                (recommendation === 'amorphous' && isAmorphous) ||
-                (recommendation === 'goes' && !isAmorphous);
-
-              return (
-                <div className={`p-3 rounded-md text-sm ${matchesRecommendation ? 'bg-green-100 dark:bg-green-900/30 border border-green-200 dark:border-green-800' : 'bg-yellow-100 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-800'}`}>
-                  {recommendation === 'amorphous' && (
-                    <div>
-                      <strong className="text-green-800 dark:text-green-200">Amorphous Steel Recommended</strong>
-                      <p className="text-xs mt-1">Your light/variable load pattern means no-load losses are your biggest energy cost.
-                      Amorphous steel cuts these by 70-80%, typically paying back the higher upfront cost in 3-5 years through energy savings.</p>
-                    </div>
-                  )}
-                  {recommendation === 'goes' && (
-                    <div>
-                      <strong className="text-blue-800 dark:text-blue-200">Conventional GOES Steel Recommended</strong>
-                      <p className="text-xs mt-1">With heavy constant loads, load losses dominate your energy costs.
-                      Conventional grain-oriented steel provides good efficiency at lower upfront cost. Consider Hi-B or M2 for best performance.</p>
-                    </div>
-                  )}
-                  {recommendation === 'either' && (
-                    <div>
-                      <strong className="text-yellow-800 dark:text-yellow-200">Either Steel Type Works</strong>
-                      <p className="text-xs mt-1">With mixed loading, run a lifecycle cost comparison. Amorphous has lower operating cost;
-                      conventional has lower purchase price. The Cost Estimate tab will help you decide.</p>
-                    </div>
-                  )}
-                  {!matchesRecommendation && (
-                    <div className="flex items-start gap-1 mt-2 text-yellow-700 dark:text-yellow-300">
-                      <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
-                      <span className="text-xs">Your current selection ({requirements.steelGrade.name}) differs from the recommendation. This may be fine if you have specific requirements.</span>
-                    </div>
-                  )}
-                </div>
-              );
-            })()}
-          </div>
-        </div>
-
-        {/* Detailed guidance accordion */}
-        <details className="mt-3">
-          <summary className="text-sm cursor-pointer text-muted-foreground hover:text-foreground font-medium">
-            Learn more about steel types and cost implications...
-          </summary>
-          <div className="mt-2 grid md:grid-cols-2 gap-3 text-xs">
-            <div className="p-3 rounded bg-background border">
-              <strong className="text-green-700 dark:text-green-300">Amorphous Steel</strong>
-              <ul className="mt-2 space-y-1 text-muted-foreground">
-                <li>• <strong>70-80% lower no-load losses</strong> - runs 24/7</li>
-                <li>• Higher upfront cost (2-3x steel cost)</li>
-                <li>• Longer lead time (specialty material)</li>
-                <li>• Slightly larger transformer size</li>
-                <li>• <strong>Best ROI for:</strong> Distribution, commercial buildings, variable loads</li>
-              </ul>
-              <p className="mt-2 p-2 bg-green-50 dark:bg-green-900/20 rounded text-green-700 dark:text-green-300">
-                <strong>Example:</strong> A 1500 kVA transformer at $0.10/kWh saves ~$3,000-5,000/year in energy costs with amorphous steel.
-              </p>
-            </div>
-            <div className="p-3 rounded bg-background border">
-              <strong className="text-blue-700 dark:text-blue-300">Conventional GOES Steel</strong>
-              <ul className="mt-2 space-y-1 text-muted-foreground">
-                <li>• Lower upfront cost</li>
-                <li>• Shorter lead time (standard material)</li>
-                <li>• More compact design possible</li>
-                <li>• Wide range of grades (M6 to laser-scribed)</li>
-                <li>• <strong>Best for:</strong> Heavy industrial, constant loads, budget-constrained</li>
-              </ul>
-              <p className="mt-2 p-2 bg-blue-50 dark:bg-blue-900/20 rounded text-blue-700 dark:text-blue-300">
-                <strong>Tip:</strong> If choosing GOES, at minimum use M3 or M2 grade. The cost difference vs M4/M5 is small but efficiency gains are significant.
-              </p>
-            </div>
-          </div>
-        </details>
       </div>
 
       {/* Summary of Current Selections */}
@@ -556,14 +423,12 @@ export function DesignRequirementsForm({
             <span className="ml-2 font-medium">{(requirements.primaryVoltage/1000).toFixed(1)}kV / {requirements.secondaryVoltage}V</span>
           </div>
           <div>
-            <span className="text-muted-foreground">Steel:</span>
-            <span className={`ml-2 font-medium ${isAmorphous ? 'text-green-600' : ''}`}>
-              {isAmorphous ? 'Amorphous (High Eff.)' : requirements.steelGrade.name.split(' ')[0]}
-            </span>
-          </div>
-          <div>
             <span className="text-muted-foreground">Conductor:</span>
             <span className="ml-2 font-medium">{requirements.conductorType.name}</span>
+          </div>
+          <div>
+            <span className="text-muted-foreground">Ambient Temp:</span>
+            <span className="ml-2 font-medium">{requirements.ambientTemperature || 40}°C</span>
           </div>
         </div>
       </div>
