@@ -1,5 +1,5 @@
 "use client";
-import { Calculator, HelpCircle, DollarSign, Clock, Zap, Info } from 'lucide-react';
+import { Calculator, HelpCircle, Clock, Zap, Info } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -20,14 +20,12 @@ interface DesignRequirementsFormProps {
 }
 
 // Impact indicator component
-function ImpactBadge({ type, level }: { type: 'cost' | 'leadTime' | 'efficiency'; level: 'low' | 'medium' | 'high' }) {
+function ImpactBadge({ type, level }: { type: 'leadTime' | 'efficiency'; level: 'low' | 'medium' | 'high' }) {
   const icons = {
-    cost: DollarSign,
     leadTime: Clock,
     efficiency: Zap,
   };
   const labels = {
-    cost: 'Cost',
     leadTime: 'Lead Time',
     efficiency: 'Efficiency',
   };
@@ -296,11 +294,8 @@ export function DesignRequirementsForm({
         <div className="grid gap-6 md:grid-cols-2">
           {/* Impedance */}
           <div className="space-y-2">
-            <Label className="flex items-center justify-between">
+            <Label>
               <span>Impedance (%Z)</span>
-              <span className="flex gap-1">
-                <ImpactBadge type="cost" level="low" />
-              </span>
             </Label>
             <Select
               value={requirements.targetImpedance.toString()}
@@ -330,17 +325,7 @@ export function DesignRequirementsForm({
             <Label className="flex items-center justify-between">
               <span>Cooling Method</span>
               <span className="flex gap-1">
-                {requirements.coolingClass.id === 'onan' ? (
-                  <>
-                    <ImpactBadge type="cost" level="low" />
-                    <ImpactBadge type="leadTime" level="low" />
-                  </>
-                ) : (
-                  <>
-                    <ImpactBadge type="cost" level="medium" />
-                    <ImpactBadge type="leadTime" level="medium" />
-                  </>
-                )}
+                <ImpactBadge type="leadTime" level={requirements.coolingClass.id === 'onan' ? 'low' : 'medium'} />
               </span>
             </Label>
             <Select
@@ -370,17 +355,7 @@ export function DesignRequirementsForm({
             <Label className="flex items-center justify-between">
               <span>Winding Conductor</span>
               <span className="flex gap-1">
-                {requirements.conductorType.id === 'copper' ? (
-                  <>
-                    <ImpactBadge type="cost" level="high" />
-                    <ImpactBadge type="efficiency" level="high" />
-                  </>
-                ) : (
-                  <>
-                    <ImpactBadge type="cost" level="low" />
-                    <ImpactBadge type="efficiency" level="medium" />
-                  </>
-                )}
+                <ImpactBadge type="efficiency" level={requirements.conductorType.id === 'copper' ? 'high' : 'medium'} />
               </span>
             </Label>
             <Select
