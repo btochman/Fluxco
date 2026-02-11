@@ -576,10 +576,13 @@ export function TransformerDesigner() {
 
       {/* Footer */}
       <footer className="border-t mt-auto">
-        <div className="container mx-auto px-4 py-4">
+        <div className="container mx-auto px-4 py-4 flex flex-col items-center gap-1">
           <p className="text-sm text-muted-foreground text-center">
             Fluxco transformer design tool. Always verify results with a qualified electrical engineer.
           </p>
+          <a href="tel:+15125376282" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+            (512) 537-6282
+          </a>
         </div>
       </footer>
     </div>

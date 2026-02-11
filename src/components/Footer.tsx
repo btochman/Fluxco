@@ -1,4 +1,4 @@
-import { Zap } from "lucide-react";
+import { Zap, Phone } from "lucide-react";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -75,6 +75,13 @@ const Footer = () => {
           <div className="text-muted-foreground text-sm">
             © {currentYear} Fluxco
           </div>
+          <a
+            href="tel:+15125376282"
+            className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors text-sm"
+          >
+            <Phone className="w-4 h-4" />
+            (512) 537-6282
+          </a>
           <a
             href="/admin"
             className="text-muted-foreground hover:text-primary transition-colors text-sm"
