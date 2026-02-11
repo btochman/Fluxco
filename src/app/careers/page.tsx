@@ -1,6 +1,19 @@
+import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
 import JobsSection from "@/components/JobsSection";
 import Footer from "@/components/Footer";
+
+export const metadata: Metadata = {
+  title: "Careers at FluxCo | Join the Transformer Industry Revolution",
+  description:
+    "Join FluxCo and help modernize America's power infrastructure. Browse open positions in engineering, sales, and operations.",
+  openGraph: {
+    title: "Careers at FluxCo",
+    description:
+      "Join FluxCo and help modernize America's power infrastructure.",
+    type: "website",
+  },
+};
 
 export default function CareersPage() {
   return (

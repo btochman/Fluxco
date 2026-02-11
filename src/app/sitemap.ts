@@ -4,119 +4,120 @@ import { getAllArticles } from "@/data/articles";
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = "https://fluxco.com";
   const articles = getAllArticles();
+  const now = new Date().toISOString();
 
-  // Static pages
-  const staticPages = [
+  // Static pages - core site
+  const staticPages: MetadataRoute.Sitemap = [
     {
       url: baseUrl,
-      lastModified: new Date(),
-      changeFrequency: "weekly" as const,
+      lastModified: now,
+      changeFrequency: "weekly",
       priority: 1,
     },
     {
       url: `${baseUrl}/inventory`,
-      lastModified: new Date(),
-      changeFrequency: "daily" as const,
-      priority: 0.9,
+      lastModified: now,
+      changeFrequency: "daily",
+      priority: 0.95,
     },
     {
       url: `${baseUrl}/design`,
-      lastModified: new Date(),
-      changeFrequency: "monthly" as const,
+      lastModified: "2025-12-01",
+      changeFrequency: "monthly",
       priority: 0.8,
     },
     {
       url: `${baseUrl}/careers`,
-      lastModified: new Date(),
-      changeFrequency: "weekly" as const,
-      priority: 0.6,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.5,
     },
   ];
 
-  // Transformer category pages
-  const transformerPages = [
+  // Transformer category pages - high value for SEO
+  const transformerPages: MetadataRoute.Sitemap = [
     {
       url: `${baseUrl}/transformers`,
-      lastModified: new Date(),
-      changeFrequency: "weekly" as const,
+      lastModified: now,
+      changeFrequency: "weekly",
       priority: 0.9,
     },
     {
       url: `${baseUrl}/transformers/padmount`,
-      lastModified: new Date(),
-      changeFrequency: "weekly" as const,
-      priority: 0.8,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.9,
     },
     {
       url: `${baseUrl}/transformers/substation`,
-      lastModified: new Date(),
-      changeFrequency: "weekly" as const,
-      priority: 0.8,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.9,
     },
     {
       url: `${baseUrl}/transformers/distribution`,
-      lastModified: new Date(),
-      changeFrequency: "weekly" as const,
-      priority: 0.8,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.9,
     },
     {
       url: `${baseUrl}/transformers/dry-type`,
-      lastModified: new Date(),
-      changeFrequency: "weekly" as const,
-      priority: 0.8,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.85,
     },
   ];
 
-  // Solution pages (to be created)
-  const solutionPages = [
+  // Solution/vertical pages - important for industry-specific SEO
+  const solutionPages: MetadataRoute.Sitemap = [
     {
       url: `${baseUrl}/solutions/data-centers`,
-      lastModified: new Date(),
-      changeFrequency: "monthly" as const,
-      priority: 0.7,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.85,
     },
     {
       url: `${baseUrl}/solutions/renewable-energy`,
-      lastModified: new Date(),
-      changeFrequency: "monthly" as const,
-      priority: 0.7,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.85,
     },
     {
       url: `${baseUrl}/solutions/ev-infrastructure`,
-      lastModified: new Date(),
-      changeFrequency: "monthly" as const,
-      priority: 0.7,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.8,
     },
     {
       url: `${baseUrl}/solutions/industrial`,
-      lastModified: new Date(),
-      changeFrequency: "monthly" as const,
-      priority: 0.7,
-    },
-  ];
-
-  // FAQ and resources pages
-  const resourcePages = [
-    {
-      url: `${baseUrl}/faq`,
-      lastModified: new Date(),
-      changeFrequency: "monthly" as const,
-      priority: 0.6,
-    },
-    {
-      url: `${baseUrl}/resources`,
-      lastModified: new Date(),
-      changeFrequency: "weekly" as const,
+      lastModified: now,
+      changeFrequency: "monthly",
       priority: 0.8,
     },
   ];
 
-  // Blog articles
-  const articlePages = articles.map((article) => ({
+  // Resource & FAQ pages
+  const resourcePages: MetadataRoute.Sitemap = [
+    {
+      url: `${baseUrl}/resources`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/faq`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
+  ];
+
+  // Dynamic article pages - use actual publish/update dates
+  const articlePages: MetadataRoute.Sitemap = articles.map((article) => ({
     url: `${baseUrl}/resources/${article.slug}`,
-    lastModified: new Date(article.updatedAt || article.publishedAt),
+    lastModified: article.updatedAt || article.publishedAt,
     changeFrequency: "monthly" as const,
-    priority: 0.7,
+    priority: 0.75,
   }));
 
   return [
