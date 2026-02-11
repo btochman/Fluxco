@@ -21,7 +21,7 @@ import { SideViewDrawing } from '@/components/transformer/drawings/SideViewDrawi
 import { TopViewDrawing } from '@/components/transformer/drawings/TopViewDrawing';
 import { designTransformer } from '@/engine/TransformerDesignEngine';
 import type { DesignRequirements, TransformerDesign } from '@/engine/types/transformer.types';
-import { STEEL_GRADES, CONDUCTOR_TYPES, COOLING_CLASSES, VECTOR_GROUPS } from '@/engine/constants/materials';
+import { STEEL_GRADES, CONDUCTOR_TYPES, COOLING_CLASSES, VECTOR_GROUPS, calculatePowerRatings } from '@/engine/constants/materials';
 
 const defaultRequirements: DesignRequirements = {
   ratedPower: 1500,
@@ -87,7 +87,8 @@ export function TransformerDesigner() {
 
     pdf.setFontSize(14);
     pdf.setFont('helvetica', 'normal');
-    pdf.text(`${requirements.ratedPower} kVA Power Transformer`, pageWidth / 2, 55, { align: 'center' });
+    const ratings = calculatePowerRatings(requirements.ratedPower, requirements.coolingClass.id);
+    pdf.text(`${ratings.display} Power Transformer`, pageWidth / 2, 55, { align: 'center' });
     pdf.text(`${requirements.primaryVoltage}V / ${requirements.secondaryVoltage}V`, pageWidth / 2, 65, { align: 'center' });
 
     pdf.setFontSize(10);
@@ -106,7 +107,7 @@ export function TransformerDesigner() {
     const lineHeight = 6;
 
     const summaryData = [
-      ['Rated Power', `${requirements.ratedPower} kVA`],
+      ['Power Rating', ratings.display],
       ['Primary Voltage', `${requirements.primaryVoltage} V`],
       ['Secondary Voltage', `${requirements.secondaryVoltage} V`],
       ['Frequency', `${requirements.frequency} Hz`],
@@ -319,7 +320,10 @@ export function TransformerDesigner() {
       contact_email: marketplaceForm.contactEmail,
       contact_phone: marketplaceForm.contactPhone || null,
       asking_price: null,
-      notes: marketplaceForm.zipcode ? `Zipcode: ${marketplaceForm.zipcode}` : null,
+      notes: [
+        marketplaceForm.zipcode ? `Zipcode: ${marketplaceForm.zipcode}` : null,
+        requirements.coolingClass.id !== 'onan' ? `Power Rating: ${calculatePowerRatings(requirements.ratedPower, requirements.coolingClass.id).display}` : null,
+      ].filter(Boolean).join('. ') || null,
       zipcode: marketplaceForm.zipcode || null,
       status: 'listed',
     };

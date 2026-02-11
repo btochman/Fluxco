@@ -136,7 +136,7 @@ export const CURRENT_DENSITY_BY_COOLING: Record<string, { min: number; max: numb
   'ONAN': { min: 2.0, max: 3.5, typical: 3.0 },
   'ONAF': { min: 3.0, max: 4.5, typical: 4.0 },
   'ONAN/ONAF': { min: 2.5, max: 4.0, typical: 3.5 },
-  'ONAN/ONAF/ONAF': { min: 3.0, max: 4.5, typical: 4.0 },
+  'ONAN/ONAF/OFAF': { min: 3.0, max: 4.5, typical: 4.0 },
 };
 
 // ============================================================================
@@ -274,7 +274,7 @@ export const THERMAL_CONSTANTS = {
     'ONAN': 4.5,
     'ONAF': 4.0,
     'ONAN/ONAF': 4.2,
-    'ONAN/ONAF/ONAF': 3.8,
+    'ONAN/ONAF/OFAF': 3.8,
   },
 };
 
@@ -342,10 +342,41 @@ export const CONDUCTOR_TYPES: ConductorType[] = [
 ];
 
 export const COOLING_CLASSES: CoolingClassType[] = [
-  { id: 'onan', name: 'ONAN', description: 'Oil Natural, Air Natural' },
-  { id: 'onaf', name: 'ONAF', description: 'Oil Natural, Air Forced' },
-  { id: 'onan-onaf', name: 'ONAN/ONAF', description: 'Dual Rating' },
+  { id: 'onan', name: 'ONAN', description: 'Self-Cooled Only' },
+  { id: 'onan-onaf', name: 'ONAN/ONAF', description: 'Self-Cooled + Fans (Dual Rating)' },
+  { id: 'onan-onaf-ofaf', name: 'ONAN/ONAF/OFAF', description: 'Full Triple Rating' },
 ];
+
+export const COOLING_RATING_MULTIPLIERS = {
+  ONAN: 1.0,
+  ONAF: 1.33,
+  OFAF: 1.67,
+};
+
+export interface PowerRating {
+  onan: number;
+  onaf: number | null;
+  ofaf: number | null;
+  display: string;
+}
+
+export function calculatePowerRatings(baseKVA: number, coolingClassId: string): PowerRating {
+  const onan = baseKVA;
+  let onaf: number | null = null;
+  let ofaf: number | null = null;
+
+  if (coolingClassId === 'onan-onaf' || coolingClassId === 'onan-onaf-ofaf') {
+    onaf = Math.round(baseKVA * COOLING_RATING_MULTIPLIERS.ONAF);
+  }
+  if (coolingClassId === 'onan-onaf-ofaf') {
+    ofaf = Math.round(baseKVA * COOLING_RATING_MULTIPLIERS.OFAF);
+  }
+
+  const parts = [onan, onaf, ofaf].filter(v => v !== null);
+  const display = parts.join('/') + ' kVA';
+
+  return { onan, onaf, ofaf, display };
+}
 
 export const VECTOR_GROUPS: VectorGroupType[] = [
   { id: 'dyn11', name: 'Dyn11', description: 'Delta-Wye, 30° lag', phaseShift: -30 },

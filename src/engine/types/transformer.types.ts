@@ -9,7 +9,7 @@
 // INPUT TYPES - Design Requirements
 // ============================================================================
 
-export type CoolingClass = 'ONAN' | 'ONAF' | 'ONAN/ONAF' | 'ONAN/ONAF/ONAF';
+export type CoolingClass = 'ONAN' | 'ONAN/ONAF' | 'ONAN/ONAF/OFAF';
 export type PhaseCount = 1 | 3;
 export type ConductorMaterial = 'copper' | 'aluminum';
 export type ConductorShape = 'round' | 'rectangular' | 'CTC';

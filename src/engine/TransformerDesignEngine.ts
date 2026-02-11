@@ -20,6 +20,7 @@ import { calculateLosses } from './core/lossCalculations';
 import { calculateImpedance, checkImpedanceTarget } from './core/impedanceCalculation';
 import { calculateThermalDesign, checkThermalLimits } from './core/thermalDesign';
 import { calculateTankDesign, generateTankBOM } from './core/tankDesign';
+import { calculatePowerRatings } from './constants/materials';
 
 export interface DesignResult {
   success: boolean;
@@ -378,11 +379,11 @@ export function getDesignSummary(design: TransformerDesign): string {
     '                    TRANSFORMER DESIGN SUMMARY',
     '═══════════════════════════════════════════════════════════════',
     '',
-    `Rating:         ${design.requirements.ratedPower} kVA, ${design.requirements.phases}-phase`,
+    `Rating:         ${calculatePowerRatings(design.requirements.ratedPower, design.requirements.coolingClass.id).display}, ${design.requirements.phases}-phase`,
     `Voltages:       ${design.requirements.primaryVoltage / 1000}kV / ${design.requirements.secondaryVoltage}V`,
     `Frequency:      ${design.requirements.frequency} Hz`,
-    `Vector Group:   ${design.requirements.vectorGroup}`,
-    `Cooling:        ${design.requirements.coolingClass}`,
+    `Vector Group:   ${design.requirements.vectorGroup.name}`,
+    `Cooling:        ${design.requirements.coolingClass.name}`,
     '',
     '───────────────────────────────────────────────────────────────',
     '                       ELECTRICAL DATA',

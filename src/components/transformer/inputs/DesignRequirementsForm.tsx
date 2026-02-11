@@ -11,7 +11,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import type { DesignRequirements } from '@/engine/types/transformer.types';
-import { CONDUCTOR_TYPES, COOLING_CLASSES, VECTOR_GROUPS } from '@/engine/constants/materials';
+import { CONDUCTOR_TYPES, COOLING_CLASSES, VECTOR_GROUPS, calculatePowerRatings } from '@/engine/constants/materials';
 
 interface DesignRequirementsFormProps {
   requirements: DesignRequirements;
@@ -339,14 +339,16 @@ export function DesignRequirementsForm({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="onan">ONAN - Natural cooling (simplest, most reliable)</SelectItem>
-                <SelectItem value="onaf">ONAF - With cooling fans (more capacity)</SelectItem>
-                <SelectItem value="onan-onaf">ONAN/ONAF - Dual rated (flexible)</SelectItem>
+                <SelectItem value="onan">ONAN - Self-cooled only (single rating)</SelectItem>
+                <SelectItem value="onan-onaf">ONAN/ONAF - With fans (dual rating, +33% capacity)</SelectItem>
+                <SelectItem value="onan-onaf-ofaf">ONAN/ONAF/OFAF - Fans + pumps (triple rating, +67%)</SelectItem>
               </SelectContent>
             </Select>
             <HelpText>
-              <strong>ONAN</strong> = no fans, lowest maintenance, most reliable. <strong>ONAF</strong> = fans for higher capacity
-              in hot environments or overload situations. ONAN is preferred unless space/heat is a concern.
+              Transformers can have multiple power ratings based on cooling stages.
+              <strong>ONAN</strong> = base self-cooled rating.
+              <strong>ONAF</strong> = fans add ~33% capacity.
+              <strong>OFAF</strong> = forced oil + fans add ~67%. Example: a 1500 kVA base becomes 1500/2000/2500 kVA.
             </HelpText>
           </div>
 
@@ -391,7 +393,7 @@ export function DesignRequirementsForm({
         <div className="grid gap-2 md:grid-cols-2 lg:grid-cols-4 text-sm">
           <div>
             <span className="text-muted-foreground">Power:</span>
-            <span className="ml-2 font-medium">{requirements.ratedPower} kVA</span>
+            <span className="ml-2 font-medium">{calculatePowerRatings(requirements.ratedPower, requirements.coolingClass.id).display}</span>
           </div>
           <div>
             <span className="text-muted-foreground">Voltages:</span>

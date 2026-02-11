@@ -1,6 +1,7 @@
 "use client";
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { TransformerDesign, DesignRequirements } from '@/engine/types/transformer.types';
+import { calculatePowerRatings } from '@/engine/constants/materials';
 
 interface DesignSummaryProps {
   design: TransformerDesign;
@@ -18,8 +19,8 @@ export function DesignSummary({ design, requirements }: DesignSummaryProps) {
         <CardContent>
           <dl className="space-y-2 text-sm">
             <div className="flex justify-between">
-              <dt className="text-muted-foreground">Rated Power</dt>
-              <dd className="font-medium">{requirements.ratedPower} kVA</dd>
+              <dt className="text-muted-foreground">Power Rating</dt>
+              <dd className="font-medium">{calculatePowerRatings(requirements.ratedPower, requirements.coolingClass.id).display}</dd>
             </div>
             <div className="flex justify-between">
               <dt className="text-muted-foreground">Primary Voltage</dt>
