@@ -68,7 +68,7 @@ export function calculateLosses(
   const efficiency = calculateEfficiencyCurve(kVA, noLoadLoss, loadLoss, steps);
 
   // Step 7: Find maximum efficiency point
-  const { maxEfficiencyLoad, maxEfficiency } = findMaxEfficiency(noLoadLoss, loadLoss);
+  const { maxEfficiencyLoad, maxEfficiency } = findMaxEfficiency(noLoadLoss, loadLoss, kVA);
 
   return {
     noLoadLoss: Math.round(noLoadLoss),
@@ -254,15 +254,18 @@ function calculateEfficiencyCurve(
  */
 function findMaxEfficiency(
   noLoadLoss: number,
-  loadLoss: number
+  loadLoss: number,
+  kVA: number
 ): { maxEfficiencyLoad: number; maxEfficiency: number } {
   // Maximum efficiency occurs when P0 = Pk × load²
   // Therefore: load = √(P0/Pk)
   const maxEfficiencyLoad = Math.sqrt(noLoadLoss / loadLoss);
 
-  // At this point, total loss = 2 × P0
-  // Can calculate exact efficiency if needed
-  const maxEfficiency = 100 - ((2 * noLoadLoss) / (noLoadLoss / maxEfficiencyLoad + 2 * noLoadLoss)) * 100;
+  // At max efficiency load, total losses = 2 × P0
+  // η = output / (output + losses) = (k × S) / (k × S + 2 × P0)
+  const outputAtMaxEff = maxEfficiencyLoad * kVA * 1000; // watts
+  const lossesAtMaxEff = 2 * noLoadLoss;
+  const maxEfficiency = (outputAtMaxEff / (outputAtMaxEff + lossesAtMaxEff)) * 100;
 
   return {
     maxEfficiencyLoad: Math.round(maxEfficiencyLoad * 100), // as percentage

@@ -186,9 +186,9 @@ function calculateTemperatureRises(
   const windingSurface = calculateWindingSurface(hvWinding) + calculateWindingSurface(lvWinding);
   const windingLossDensity = loadLoss / windingSurface; // W/m²
 
-  // Empirical formula: ΔT_wg = K × (q)^0.8, where q is loss density
-  // K ≈ 0.5 for natural oil circulation, 0.4 for directed flow
-  const K_winding = 0.5;
+  // Empirical formula: ΔT_wg = K × (q)^0.8, where q is loss density in W/m²
+  // K ≈ 0.035 for natural oil circulation, 0.028 for directed flow (IEEE C57.91)
+  const K_winding = 0.035;
   const windingGradient = K_winding * Math.pow(windingLossDensity, 0.8);
 
   // Average winding rise = top oil rise + winding gradient
@@ -220,10 +220,10 @@ function calculateTemperatureRises(
  * Calculate winding surface area for heat dissipation.
  */
 function calculateWindingSurface(winding: WindingDesign): number {
-  // Approximate winding as a cylinder
-  // Surface area = 2πrh (outer surface only, inner surface against core/other winding)
+  // Approximate winding as a cylinder with oil cooling on both inner and outer surfaces
   const outerSurface = 2 * Math.PI * (winding.outerRadius / 1000) * (winding.windingHeight / 1000);
-  return outerSurface;
+  const innerSurface = 2 * Math.PI * (winding.innerRadius / 1000) * (winding.windingHeight / 1000);
+  return outerSurface + innerSurface;
 }
 
 /**
