@@ -277,7 +277,7 @@ function generateBillOfMaterials(
     description: 'HV Bushings',
     quantity: numHvBushings,
     unit: 'ea',
-    specification: `${requirements.primaryVoltage}kV class`,
+    specification: `${requirements.primaryVoltage / 1000}kV class`,
   });
 
   items.push({
@@ -336,7 +336,7 @@ export function validateDesignInputs(
   }
 
   if (requirements.primaryVoltage && requirements.secondaryVoltage) {
-    if (requirements.primaryVoltage * 1000 <= requirements.secondaryVoltage) {
+    if (requirements.primaryVoltage <= requirements.secondaryVoltage) {
       issues.push('Primary voltage must be greater than secondary voltage');
     }
   }
@@ -360,8 +360,8 @@ export function getDesignSummary(design: TransformerDesign): string {
     '                    TRANSFORMER DESIGN SUMMARY',
     '═══════════════════════════════════════════════════════════════',
     '',
-    `Rating:         ${design.requirements.ratedPower} MVA, ${design.requirements.phases}-phase`,
-    `Voltages:       ${design.requirements.primaryVoltage}kV / ${design.requirements.secondaryVoltage}V`,
+    `Rating:         ${design.requirements.ratedPower} kVA, ${design.requirements.phases}-phase`,
+    `Voltages:       ${design.requirements.primaryVoltage / 1000}kV / ${design.requirements.secondaryVoltage}V`,
     `Frequency:      ${design.requirements.frequency} Hz`,
     `Vector Group:   ${design.requirements.vectorGroup}`,
     `Cooling:        ${design.requirements.coolingClass}`,

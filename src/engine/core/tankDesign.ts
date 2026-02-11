@@ -64,7 +64,7 @@ export function calculateTankDesign(
   const totalWeight = shippingWeight + oilWeight;
 
   // Step 6: Overall height including bushings
-  const bushingHeight = requirements.primaryVoltage > 25 ? 600 : 400; // mm, rough estimate
+  const bushingHeight = requirements.primaryVoltage / 1000 > 25 ? 600 : 400; // mm, rough estimate
   const overallHeight = height + bushingHeight;
 
   steps.push({
@@ -303,7 +303,7 @@ export function generateTankBOM(
       description: 'HV bushings',
       quantity: isThreePhase ? 3 : 2,
       unit: 'ea',
-      specification: `${voltage}kV class, porcelain/polymer`,
+      specification: `${voltage / 1000}kV class, porcelain/polymer`,
     },
     {
       description: 'LV bushings',

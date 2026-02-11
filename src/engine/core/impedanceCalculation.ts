@@ -163,8 +163,8 @@ function calculatePercentX(
   const N = hvWinding.turns;
 
   // Base impedance
-  // Zbase = V² / S = (kV)² × 1000 / kVA
-  const Zbase = Math.pow(requirements.primaryVoltage, 2) * 1000 / kVA;
+  // Zbase = V² / S where V is in volts and S is in VA
+  const Zbase = Math.pow(requirements.primaryVoltage, 2) / (kVA * 1000);
 
   // Permeability of free space
   const mu0 = 4 * Math.PI * 1e-7; // H/m

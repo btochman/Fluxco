@@ -46,10 +46,10 @@ export function calculateWindingDesign(
     ? advancedOptions.hvConductorMaterial
     : advancedOptions.lvConductorMaterial;
 
-  // Voltage in Volts
+  // Voltage in Volts (both primaryVoltage and secondaryVoltage are already in V)
   const voltage = side === 'HV'
-    ? requirements.primaryVoltage * 1000  // kV to V
-    : requirements.secondaryVoltage;       // Already in V
+    ? requirements.primaryVoltage
+    : requirements.secondaryVoltage;
 
   // Step 1: Calculate number of turns
   const turns = calculateTurns(side, voltage, coreDesign.voltsPerTurn, steps);
@@ -491,7 +491,7 @@ export function adjustHVWindingRadii(
 ): WindingDesign {
   // Main gap between LV and HV based on BIL
   // Rule of thumb: 0.2-0.25 mm per kV of BIL
-  const bilLevel = getBILLevel(requirements.primaryVoltage);
+  const bilLevel = getBILLevel(requirements.primaryVoltage / 1000);
   const mainGap = Math.max(15, bilLevel * INSULATION_CLEARANCES.hvToLvGap);
 
   const innerRadius = lvWinding.outerRadius + mainGap;
