@@ -533,6 +533,8 @@ export function TransformerDesigner() {
                             primaryVoltage={requirements.primaryVoltage}
                             secondaryVoltage={requirements.secondaryVoltage}
                             vectorGroup={requirements.vectorGroup.name}
+                            requirements={requirements}
+                            bom={design.bom}
                           />
                         </TabsContent>
 
