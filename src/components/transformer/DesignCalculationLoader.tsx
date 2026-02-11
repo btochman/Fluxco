@@ -56,14 +56,22 @@ const calculationPhases = [
   { name: "Generating Technical Drawings", duration: 500 },
 ];
 
-// Generate random position for each equation
-function getRandomPosition(index: number) {
-  // Use index to create deterministic but scattered positions
-  const seed = index * 7919; // Prime number for better distribution
-  const x = ((seed * 13) % 85) + 5; // 5-90% from left
-  const y = ((seed * 17) % 70) + 15; // 15-85% from top
-  const rotation = ((seed % 30) - 15); // -15 to 15 degrees
-  const scale = 0.8 + ((seed % 40) / 100); // 0.8 to 1.2 scale
+// Generate grid-based positions to prevent overlap
+function getGridPosition(index: number, total: number) {
+  // Use a grid layout: 6 columns x 5 rows = 30 slots
+  const cols = 6;
+  const rows = 5;
+  const slot = index % (cols * rows);
+  const col = slot % cols;
+  const row = Math.floor(slot / cols);
+  // Each cell gets a base position with slight jitter
+  const seed = index * 7919;
+  const jitterX = ((seed * 13) % 6) - 3; // -3 to 3%
+  const jitterY = ((seed * 17) % 4) - 2; // -2 to 2%
+  const x = (col / cols) * 80 + 8 + jitterX; // spread across 8-88%
+  const y = (row / rows) * 65 + 8 + jitterY; // spread across 8-73%
+  const rotation = ((seed % 16) - 8); // -8 to 8 degrees (subtler)
+  const scale = 0.85 + ((seed % 20) / 100); // 0.85 to 1.05
   return { x, y, rotation, scale };
 }
 
@@ -82,7 +90,7 @@ export function DesignCalculationLoader({
     const shuffled = [...equations].sort(() => Math.random() - 0.5);
     return shuffled.map((eq, i) => ({
       ...eq,
-      position: getRandomPosition(i + Math.floor(Math.random() * 100))
+      position: getGridPosition(i, shuffled.length)
     }));
   }, []);
 
@@ -165,17 +173,14 @@ export function DesignCalculationLoader({
                 className="pointer-events-none"
               >
                 <div
-                  className="bg-card/90 border border-primary/30 rounded-lg px-3 py-2 shadow-lg shadow-primary/10 backdrop-blur-sm"
+                  className="px-2 py-1"
                   style={{ transform: `rotate(${pos.rotation}deg)` }}
                 >
-                  <div className="text-[9px] text-primary uppercase tracking-wider font-medium">
+                  <div className="text-[8px] text-muted-foreground/60 uppercase tracking-wider">
                     {eq.category}
                   </div>
-                  <div className="font-mono text-sm text-foreground font-semibold whitespace-nowrap">
+                  <div className="font-mono text-sm text-foreground/50 font-medium whitespace-nowrap">
                     {eq.equation}
-                  </div>
-                  <div className="text-[9px] text-muted-foreground">
-                    {eq.description}
                   </div>
                 </div>
               </motion.div>
