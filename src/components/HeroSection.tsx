@@ -121,7 +121,7 @@ const HeroSection = () => {
                   {rfpCount.toLocaleString()}
                   <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
                 </div>
-                <div className="text-muted-foreground text-sm">RFQs Created</div>
+                <div className="text-muted-foreground text-sm">RFP Responses</div>
               </div>
             </div>
             <div className="flex items-center gap-3">
