@@ -2736,6 +2736,342 @@ Need a transformer that will work reliably for decades? [Browse our inventory](/
 Building a data center or charging network and want to explore SST options? [Talk to our engineering team](#contact).
 `,
   },
+  {
+    slug: "feoc-compliance-guide-transformer-buyers",
+    title: "FEOC Compliance for Transformer Buyers: What You Need to Know Before Your Next Purchase",
+    description:
+      "The Foreign Entity of Concern rules are reshaping transformer procurement. If your project claims clean energy tax credits, your transformer supply chain is now under the microscope.",
+    category: "guides",
+    publishedAt: "2026-02-11",
+    readTime: "10 min read",
+    keywords: [
+      "FEOC compliant transformers",
+      "foreign entity of concern",
+      "transformer procurement compliance",
+      "FEOC transformer requirements",
+      "prohibited foreign entity",
+      "clean energy tax credits transformers",
+      "domestic content transformers",
+      "OBBBA transformer rules",
+      "material assistance cost ratio",
+      "transformer supply chain compliance",
+    ],
+    content: `
+## What Is FEOC and Why Should Transformer Buyers Care?
+
+Foreign Entity of Concern (FEOC) is a federal classification that identifies companies linked to adversarial nations — primarily **China, Russia, North Korea, and Iran** — that are restricted from benefiting from US clean energy tax credits.
+
+Originally a narrow provision in the Inflation Reduction Act targeting EV battery supply chains, FEOC rules were **dramatically expanded** by the One Big Beautiful Bill Act (OBBBA), signed into law on July 4, 2025. The expansion added FEOC restrictions to six additional clean energy tax credits, including the ones that matter most for transformer procurement:
+
+- **Section 45X** — Advanced Manufacturing Production Credit
+- **Section 45Y** — Clean Electricity Production Credit
+- **Section 48E** — Clean Electricity Investment Credit
+
+**The bottom line:** If your project claims any of these credits, every component in your supply chain — including transformers — is now scrutinized for FEOC ties. Non-compliance doesn't reduce your credit. It **eliminates it entirely.**
+
+## Why This Hits Transformer Buyers Especially Hard
+
+Here's the uncomfortable reality: America imports roughly **80% of its large power transformers** and **50% of its distribution transformers.** China controls approximately 60% of global transformer production capacity.
+
+That means many of the transformers being installed in US infrastructure projects right now have supply chain ties to a Prohibited Foreign Entity — and the buyers may not even know it.
+
+## The Material Assistance Cost Ratio (MACR) Test
+
+The OBBBA introduced a new compliance mechanism called the **Material Assistance Cost Ratio (MACR)**. Here's how it works:
+
+**MACR = ((T - P) / T) x 100%**
+
+Where:
+- **T** = Total direct costs of all manufactured products in the project
+- **P** = Total direct costs attributable to Prohibited Foreign Entities
+
+If your MACR falls below the applicable threshold, your project is deemed to have received "material assistance" from a Prohibited Foreign Entity — and you **lose your entire tax credit.**
+
+### MACR Thresholds (They Get Stricter Every Year)
+
+For clean electricity projects (Sections 45Y and 48E):
+
+| Year | Qualified Facilities | Energy Storage |
+|------|---------------------|----------------|
+| 2026 | 40% | 55% |
+| 2027 | 45% | 60% |
+| 2028 | 50% | 65% |
+| 2029 | 55% | 70% |
+| 2030 | 60% | 75% |
+
+These thresholds increase by 5 percentage points every year. A transformer that passes FEOC review in 2026 might fail the same test in 2028 if its supply chain hasn't changed.
+
+## What Counts as a "Prohibited Foreign Entity"?
+
+The OBBBA defines two categories:
+
+### Specified Foreign Entity (SFE)
+- Companies headquartered or incorporated in China, Russia, North Korea, or Iran
+- Entities with 25%+ ownership by a covered nation's government
+- Chinese military companies (per DoD list)
+- Listed Uyghur sanctions entities
+
+### Foreign-Influenced Entity (FIE)
+An entity subject to **formal or effective control** by an SFE. This includes:
+- An SFE owns 25%+ of the entity's stock
+- SFEs collectively own 40%+ of the entity's stock
+- SFEs hold 15%+ of the entity's debt
+- An SFE has authority to appoint key officers
+- An SFE has control over production decisions, component sourcing, or operations
+
+**This second category is the one that catches people off guard.** A transformer "assembled in the USA" can still be a Prohibited Foreign Entity product if the manufacturer is controlled by or has significant ownership from a Chinese company.
+
+## What Transformer Buyers Need to Verify
+
+For every transformer in your project, you need to trace:
+
+1. **Core steel origin** — Where was the grain-oriented electrical steel (GOES) or amorphous alloy manufactured?
+2. **Copper winding origin** — Where was the copper sourced and wound?
+3. **Insulation materials** — Origin of paper, pressboard, and insulation fluids
+4. **Bushings and tap changers** — These are often sourced from different manufacturers
+5. **Final assembly location** — Where was the transformer assembled and tested?
+6. **Corporate ownership structure** — Who owns the manufacturer, and do any SFEs have significant stakes?
+
+### How to Conduct Due Diligence
+
+- **Obtain supplier attestations** — Manufacturers must provide traceable documentation proving FEOC compliance
+- **Include FEOC clauses in procurement contracts** — Allocate compliance risk and require ongoing certification
+- **Map your supply chain** — Know where every major component originates, not just where the nameplate says "Made in"
+- **Retain documentation** — Keep records of direct costs and supplier certifications for audit purposes
+
+Per DOE guidance, buyers may rely on supplier attestations if they don't know or have reason to know they're incorrect. But suppliers who provide false certifications face penalties.
+
+## The Financial Stakes
+
+Let's put real numbers on this.
+
+A utility-scale solar project claiming the Section 48E Investment Tax Credit with domestic content bonus could receive credits worth **40-50% of qualified investment.** For a $100 million project, that's $40-50 million in tax credits.
+
+If a single transformer in that project's substation has FEOC-linked components that push the MACR below threshold? **The entire credit is disqualified.** Not reduced — gone.
+
+The OBBBA also introduced:
+- **6-year statute of limitations** (up from standard 3) for FEOC-related deficiencies
+- **Accuracy-related penalties** for MACR misstatements
+- **Supplier penalties** for false certifications
+
+## How FEOC Intersects with DOE Efficiency Standards
+
+The DOE's new distribution transformer efficiency standards (mandatory compliance by April 2029) align well with FEOC goals. The standards push the market toward:
+
+- **Grain-Oriented Electrical Steel (GOES)** — produced domestically by Cleveland-Cliffs (Butler Works, PA and Zanesville Works, OH)
+- **Amorphous alloy** — produced domestically by Metglas
+
+This means DOE-compliant transformers are more likely to pass FEOC review because their core materials can be domestically sourced. But there's a concentration risk: with one domestic GOES supplier, any capacity constraints could force buyers toward imported steel — creating FEOC exposure.
+
+## The Dual Compliance Timeline
+
+Procurement teams now face **two overlapping compliance deadlines:**
+
+1. **FEOC MACR thresholds** — escalating annually starting 2026
+2. **DOE efficiency standards** — mandatory by April 2029
+
+Transformers ordered today for delivery in 2027-2029 must satisfy both frameworks. This requires planning supply chains simultaneously for:
+- FEOC-compliant sourcing (corporate ownership + component origin)
+- DOE-compliant efficiency levels (core steel type + design efficiency)
+
+## What Smart Buyers Are Doing Right Now
+
+1. **Auditing current supplier relationships** for FEOC exposure
+2. **Requiring FEOC attestations** in all new procurement contracts
+3. **Prioritizing domestically manufactured transformers** to simplify compliance
+4. **Working with brokers** who maintain pre-vetted, FEOC-compliant inventory pools
+5. **Planning procurement 18-24 months ahead** to lock in compliant units before thresholds tighten
+
+## How FluxCo Helps with FEOC Compliance
+
+FluxCo maintains relationships with 100+ global suppliers — all vetted for supply chain transparency. When you source through FluxCo:
+
+- We can identify FEOC-compliant options across our network
+- We provide supply chain documentation for every unit
+- We help you navigate the MACR calculation for your specific project
+- We track evolving thresholds so you don't have to
+
+**Don't risk your tax credits on a transformer with unknown supply chain origins.** [Request a quote](/get-quote) and tell us about your compliance requirements, or [browse our inventory](/inventory) to see what's available now.
+`,
+  },
+  {
+    slug: "transformer-lead-times-tracker-2026",
+    title: "Transformer Lead Times Tracker: Real Numbers, Updated Monthly",
+    description:
+      "The definitive source for current transformer lead times by type, size, and source. Updated monthly with data from manufacturers, brokers, and industry reports.",
+    category: "industry",
+    publishedAt: "2026-02-11",
+    updatedAt: "2026-02-11",
+    readTime: "7 min read",
+    keywords: [
+      "transformer lead times 2026",
+      "transformer delivery times",
+      "padmount transformer lead time",
+      "power transformer lead time",
+      "distribution transformer lead time",
+      "dry type transformer lead time",
+      "transformer shortage 2026",
+      "how long to get a transformer",
+      "transformer delivery schedule",
+    ],
+    content: `
+## Current Lead Times at a Glance (February 2026)
+
+| Transformer Type | Stock/Standard | Custom Build | Refurbished |
+|-----------------|---------------|--------------|-------------|
+| Padmount (75 kVA-10 MVA) | 12-26 weeks | 40-50 weeks | 1-6 weeks |
+| Substation/Power (10-500+ MVA) | N/A (all custom) | 128+ weeks | 4-12 weeks |
+| Distribution (25 kVA-2.5 MVA) | Improving: ~30 weeks | 40-60 weeks | 1-4 weeks |
+| Dry-Type (15 kVA-30 MVA) | 6-18 weeks (by size) | 50-104 weeks | 2-8 weeks |
+
+**Last updated: February 2026** — We update this page monthly with the latest data from manufacturers, brokers, and industry reports.
+
+## The Big Picture: Where We Are Now
+
+Distribution transformer lead times have **improved dramatically** — down from 100+ weeks at the 2023 peak to approximately 30 weeks in early 2026. That's the best news in this market in years.
+
+Large power transformers? Still in crisis. Average lead times sit at **128 weeks (2.5 years)** for standard power transformers and **144 weeks (2.8 years)** for generator step-up (GSU) units. Modest improvement is expected through 2026, but don't hold your breath for anything dramatic before 2027 when new US manufacturing capacity comes online.
+
+## Lead Times by Type: The Details
+
+### Padmount Transformers
+
+Padmount transformers are the workhorses of commercial and residential distribution. Lead times vary significantly based on whether you're buying stock or custom:
+
+- **Stock/catalog-spec units:** 12-26 weeks — the fastest option if your voltage and kVA requirements match standard configurations
+- **Custom single-phase:** 45-50 weeks
+- **Custom three-phase:** 40+ weeks for non-standard voltages or enclosure modifications
+- **Expedited programs:** Some manufacturers offer 16-week tracks at premium pricing
+- **Refurbished/remanufactured:** 1-6 weeks — the fastest path to a working unit
+
+**Watch out:** Three-phase padmount demand is the tightest segment right now. Data centers, EV charging stations, and industrial facilities are all competing for the same units.
+
+### Substation & Power Transformers
+
+This is where the supply crisis is most severe. These are large, complex units that take months to manufacture even without backlog:
+
+**Ideal manufacturing timeline (no backlog):**
+
+| Phase | Duration |
+|-------|----------|
+| Design & Engineering | 2-3 weeks |
+| Material Procurement | 3-5 weeks |
+| Core & Coil Manufacturing | 3 weeks |
+| Assembly | 2 weeks |
+| Tanking & Oil Filling | 2 weeks |
+| Testing & QA | 2 weeks |
+| Domestic Logistics | 1 week |
+| **Total (ideal)** | **18-24 weeks** |
+
+**Real-world lead times:** 80-210 weeks depending on MVA rating, with the average sitting at 128 weeks. Units over 100 MVA at 220+ kV routinely take 18-36 months, and some 500+ MVA units are approaching 4 years.
+
+### Distribution Transformers
+
+The good news story. Distribution transformers have seen the most improvement:
+
+- **Current average:** ~30 weeks (down from 100+ in 2023)
+- **Pole-mount single-phase:** Some manufacturers quoting stock delivery
+- **Pole-mount three-phase:** Still constrained — demand up 77% in recent years
+- **Single-phase padmount distribution:** Demand up 39%
+
+### Dry-Type Transformers
+
+Lead times vary enormously by size:
+
+| Size Range | Standard | Expedited | Custom |
+|-----------|----------|-----------|--------|
+| 50-250 kVA | 6-8 weeks | 3-5 weeks | 8-10 weeks |
+| 500 kVA-1 MVA | 8-12 weeks | 6-8 weeks | 10-16 weeks |
+| 1-5 MVA | 12-18 weeks | 8-12 weeks | 20-28 weeks |
+| 5+ MVA / High Voltage | 24-52 weeks | N/A | 50+ weeks |
+| VPI (Vacuum Pressure Impregnated) | 78-104 weeks | N/A | N/A |
+
+## How We Got Here: The Lead Time Trend
+
+| Year | Distribution | Power Transformers | Large Power/GSU |
+|------|-------------|-------------------|-----------------|
+| Pre-2020 | 8-12 weeks | 40-60 weeks | 52-78 weeks |
+| 2021 | ~50 weeks | Rising | Rising |
+| 2022 | 52-80 weeks | 80-120 weeks | 100-150 weeks |
+| 2023 (peak) | 100+ weeks | 120-150 weeks | 150-200 weeks |
+| 2024 | 60-80 weeks | 120-140 weeks | 140-210 weeks |
+| 2025 | ~30 weeks | ~128 weeks | ~144 weeks |
+| 2026 (projected) | 26-40 weeks | 100-130 weeks | 120-150 weeks |
+
+## What's Driving These Lead Times
+
+### Demand Is Through the Roof
+
+- **Power transformer demand up 119%** since 2019
+- **Distribution transformer demand up 34%** since 2019
+- **Data center electricity consumption** projected to double from 17 GW (2022) to 35 GW (2030) — AI is the accelerant
+- **EV charging infrastructure** driving three-phase padmount demand
+- **Renewable energy integration** requiring step-up transformers
+- **40 million US distribution units** past their service life need replacement
+
+### Supply Can't Keep Up
+
+- Only ~20% of US transformer demand is met domestically
+- Global demand growing 7-9% annually; supply capacity expanding only 3-4%
+- Wood Mackenzie projects a **30% supply deficit for power transformers** in 2025
+- Labor shortages: Specialized manufacturing workforce is aging out
+
+### Tariffs and Material Costs
+
+- Transformer prices up **77%** since 2019 for power transformers
+- New 50% tariffs on copper (effective August 2025) add $50K-$200K to large units
+- Section 232 steel/aluminum duties expanded
+- Monthly US transformer core imports now exceed $40 million (up from $10 million in 2018)
+
+## What You Can Do About It
+
+### Get a Transformer Fast (Days to Weeks)
+
+1. **Buy refurbished/remanufactured** — Lead times of 1-6 weeks vs. months or years for new
+2. **Source from broker inventory pools** — Brokers like FluxCo maintain ready-to-ship stock from 100+ suppliers
+3. **Buy stock/catalog-spec** — Standard configurations ship 12-26 weeks vs. 40-100+ for custom
+
+### Plan Smarter (Months Ahead)
+
+4. **Avoid unnecessary customization** — Standard designs skip production queues
+5. **Engage suppliers 18-24 months out** for power-class transformers
+6. **Split orders** — Order long-lead components (cores, tap changers) early while finalizing design
+7. **Diversify suppliers** — Source from multiple OEMs across different regions
+
+### Build Resilience (Strategic)
+
+8. **Maintain inventory pools** — Pre-buy standard sizes and hold safety stock
+9. **Choose vertically integrated suppliers** — Single-source design and production reduces handoff delays
+10. **Work with a marketplace** — Access to 100+ suppliers means finding available units faster than calling around one by one
+
+## New Manufacturing Capacity Coming Online
+
+About **$2 billion** has been committed to new or expanded North American transformer manufacturing since 2023:
+
+- **Hitachi Energy** — New facility in Virginia
+- **Siemens Energy** — Charlotte, NC plant (expected 2027)
+- **Eaton** — South Carolina, $340M investment (expected 2027)
+- **HD Hyundai** — Alabama, 30% capacity increase by 2026
+
+This new capacity should begin to bend the curve in late 2026/2027 — but demand growth from data centers, EVs, and renewables is expected to absorb much of it.
+
+## 2026 Outlook
+
+**Distribution transformers:** Continued improvement. Expect 26-40 week lead times through 2026.
+
+**Power transformers:** Stubbornly elevated at 2+ years. Modest improvement possible, but no meaningful relief before 2027.
+
+**Pricing:** High but steady. No significant price relief expected in 2026.
+
+**Net assessment:** The distribution transformer market is stabilizing. The power transformer market remains in a genuine supply crisis that won't resolve until new manufacturing capacity comes online.
+
+## Need a Transformer Now?
+
+FluxCo has access to in-stock inventory from 100+ global suppliers. Instead of calling five manufacturers and waiting for quotes, search our network in one step.
+
+[Browse inventory](/inventory) | [Request a quote](/get-quote) | [Use the Designer tool](/design)
+`,
+  },
 ];
 
 export function getArticleBySlug(slug: string): Article | undefined {
