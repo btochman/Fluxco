@@ -16,13 +16,9 @@ import { BillOfMaterials } from '@/components/transformer/output/BillOfMaterials
 import { CostEstimate } from '@/components/transformer/output/CostEstimate';
 import { DesignCalculationLoader } from '@/components/transformer/DesignCalculationLoader';
 import { calculateCostEstimate, calculateLifecycleCost, formatCurrency } from '@/engine/core/costEstimation';
-import { CoreCrossSectionDrawing } from '@/components/transformer/drawings/CoreCrossSectionDrawing';
-import { WindingLayoutDrawing } from '@/components/transformer/drawings/WindingLayoutDrawing';
 import { AssemblyDrawing } from '@/components/transformer/drawings/AssemblyDrawing';
 import { SideViewDrawing } from '@/components/transformer/drawings/SideViewDrawing';
 import { TopViewDrawing } from '@/components/transformer/drawings/TopViewDrawing';
-import { CoreDetailDrawing } from '@/components/transformer/drawings/CoreDetailDrawing';
-import { WindingDetailDrawing } from '@/components/transformer/drawings/WindingDetailDrawing';
 import { designTransformer } from '@/engine/TransformerDesignEngine';
 import type { DesignRequirements, TransformerDesign } from '@/engine/types/transformer.types';
 import { STEEL_GRADES, CONDUCTOR_TYPES, COOLING_CLASSES, VECTOR_GROUPS } from '@/engine/constants/materials';
@@ -513,13 +509,10 @@ export function TransformerDesigner() {
                   </CardHeader>
                   <CardContent>
                     <Tabs value={activeDrawingTab} onValueChange={setActiveDrawingTab}>
-                      <TabsList className="grid w-full grid-cols-3 lg:grid-cols-6 mb-4">
+                      <TabsList className="grid w-full grid-cols-3 mb-4">
                         <TabsTrigger value="assembly-front" className="text-xs">Front View</TabsTrigger>
                         <TabsTrigger value="assembly-side" className="text-xs">Side View</TabsTrigger>
                         <TabsTrigger value="assembly-top" className="text-xs">Top View</TabsTrigger>
-                        <TabsTrigger value="core-detail" className="text-xs">Core Detail</TabsTrigger>
-                        <TabsTrigger value="winding-detail" className="text-xs">Winding Detail</TabsTrigger>
-                        <TabsTrigger value="cross-section" className="text-xs">Cross Section</TabsTrigger>
                       </TabsList>
 
                       <div id="drawings-container">
@@ -559,37 +552,6 @@ export function TransformerDesigner() {
                           />
                         </TabsContent>
 
-                        <TabsContent value="core-detail" className="mt-0">
-                          <CoreDetailDrawing
-                            core={design.core}
-                            phases={requirements.phases}
-                          />
-                        </TabsContent>
-
-                        <TabsContent value="winding-detail" className="mt-0">
-                          <WindingDetailDrawing
-                            core={design.core}
-                            hvWinding={design.hvWinding}
-                            lvWinding={design.lvWinding}
-                          />
-                        </TabsContent>
-
-                        <TabsContent value="cross-section" className="mt-0">
-                          <div className="grid gap-6 md:grid-cols-2">
-                            <div>
-                              <h3 className="text-sm font-medium mb-2">Core Stepped Cross-Section</h3>
-                              <CoreCrossSectionDrawing core={design.core} />
-                            </div>
-                            <div>
-                              <h3 className="text-sm font-medium mb-2">Winding Concentric Layout</h3>
-                              <WindingLayoutDrawing
-                                core={design.core}
-                                hvWinding={design.hvWinding}
-                                lvWinding={design.lvWinding}
-                              />
-                            </div>
-                          </div>
-                        </TabsContent>
                       </div>
                     </Tabs>
                   </CardContent>
