@@ -49,56 +49,74 @@ export function designTransformer(
     const core = calculateCoreDesign(requirements, advancedOptions, calculationSteps);
 
     // =========================================================================
-    // STEP 2: LV Winding Design (inner winding)
+    // STEPS 2-5: Winding Design + Impedance Targeting Loop
+    //
+    // The engine iterates on window height to converge on the target impedance.
+    // %X is inversely proportional to winding height and proportional to the
+    // ampere-turn-distance, both of which change with window height.
     // =========================================================================
-    const lvWinding = calculateWindingDesign(
-      'LV',
-      requirements,
-      advancedOptions,
-      core,
-      calculationSteps
-    );
+    const targetZ = requirements.targetImpedance;
+    const maxIterations = 8;
+    const tolerance = 0.3; // ±0.3% is acceptable per IEEE
 
-    // =========================================================================
-    // STEP 3: HV Winding Design (outer winding)
-    // =========================================================================
-    let hvWinding = calculateWindingDesign(
-      'HV',
-      requirements,
-      advancedOptions,
-      core,
-      calculationSteps
-    );
-
-    // Adjust HV winding radii based on actual LV winding dimensions
+    let lvWinding = calculateWindingDesign('LV', requirements, advancedOptions, core, calculationSteps);
+    let hvWinding = calculateWindingDesign('HV', requirements, advancedOptions, core, calculationSteps);
     hvWinding = adjustHVWindingRadii(hvWinding, lvWinding, requirements);
 
-    // =========================================================================
-    // STEP 4: Loss Calculations
-    // =========================================================================
-    const losses = calculateLosses(
-      requirements,
-      core,
-      hvWinding,
-      lvWinding,
-      calculationSteps
-    );
+    let losses = calculateLosses(requirements, core, hvWinding, lvWinding, calculationSteps);
+    let impedance = calculateImpedance(requirements, hvWinding, lvWinding, losses, calculationSteps);
 
-    // =========================================================================
-    // STEP 5: Impedance Calculation
-    // =========================================================================
-    const impedance = calculateImpedance(
-      requirements,
-      hvWinding,
-      lvWinding,
-      losses,
-      calculationSteps
-    );
+    for (let iter = 0; iter < maxIterations; iter++) {
+      const deviation = Math.abs(impedance.percentZ - targetZ);
+      if (deviation <= tolerance) break;
 
-    // Check impedance against target
+      // Scale window height proportionally to bring impedance toward target.
+      // Use damped ratio to avoid oscillation (0.7 blending factor).
+      const ratio = impedance.percentX / targetZ;
+      const scaleFactor = 1 + 0.7 * (ratio - 1);
+
+      // Apply limits: window height can range from 2× to 8× core diameter
+      const newWindowHeight = Math.round(
+        Math.max(core.coreDiameter * 2, Math.min(core.coreDiameter * 8, core.windowHeight * scaleFactor))
+      );
+
+      if (newWindowHeight === core.windowHeight) break; // no change possible
+
+      // Update core dimensions
+      core.windowHeight = newWindowHeight;
+      core.limbHeight = newWindowHeight;
+
+      // Clear previous winding/impedance calculation steps for clean recalculation
+      const coreStepIds = new Set(calculationSteps.filter(s => s.category === 'core').map(s => s.id));
+      const keepSteps = calculationSteps.filter(s => coreStepIds.has(s.id));
+      calculationSteps.length = 0;
+      keepSteps.forEach(s => calculationSteps.push(s));
+
+      // Recalculate windings with new window height
+      lvWinding = calculateWindingDesign('LV', requirements, advancedOptions, core, calculationSteps);
+      hvWinding = calculateWindingDesign('HV', requirements, advancedOptions, core, calculationSteps);
+      hvWinding = adjustHVWindingRadii(hvWinding, lvWinding, requirements);
+      losses = calculateLosses(requirements, core, hvWinding, lvWinding, calculationSteps);
+      impedance = calculateImpedance(requirements, hvWinding, lvWinding, losses, calculationSteps);
+    }
+
+    // Recalculate core weight with final window height (limb length changed)
+    {
+      const numLimbs = requirements.phases === 3 ? 3 : 2;
+      const limbVolume = core.netCrossSection * (core.limbHeight / 10) * numLimbs;
+      const coreWidth = Math.sqrt(core.netCrossSection) * 10;
+      const yokeLength = requirements.phases === 3
+        ? 2 * core.windowWidth + 3 * coreWidth
+        : 2 * core.windowWidth + 2 * coreWidth;
+      const yokeVolume = core.netCrossSection * (yokeLength / 10) * 2 / 10;
+      core.coreWeight = Math.round((limbVolume + yokeVolume) * core.steelGrade.density / 1000000);
+    }
+
+    // Check final impedance against target
     const impedanceCheck = checkImpedanceTarget(
       impedance.percentZ,
-      requirements.targetImpedance
+      requirements.targetImpedance,
+      tolerance
     );
 
     if (!impedanceCheck.meets) {
