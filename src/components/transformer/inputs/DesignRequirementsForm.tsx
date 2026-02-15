@@ -475,45 +475,58 @@ export function DesignRequirementsForm({
             </HelpText>
           </div>
 
-          {/* Manufacturing Region */}
-          <div className="space-y-2 md:col-span-2">
-            <Label className="flex items-center justify-between">
-              <span>Manufacturing Region</span>
-              <span className="flex gap-1">
-                <ImpactBadge type="cost" level={
-                  requirements.manufacturingRegion === 'usa' ? 'high'
-                    : requirements.manufacturingRegion === 'china' ? 'low'
-                    : 'medium'
-                } />
-                <ImpactBadge type="leadTime" level={
-                  requirements.manufacturingRegion === 'usa' ? 'high'
-                    : requirements.manufacturingRegion === 'china' ? 'low'
-                    : 'medium'
-                } />
-              </span>
-            </Label>
-            <Select
-              value={requirements.manufacturingRegion || 'usa'}
-              onValueChange={(val) => updateRequirement('manufacturingRegion', val as DesignRequirements['manufacturingRegion'])}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="usa">USA Only — Premium pricing, 26-52 weeks</SelectItem>
-                <SelectItem value="northAmerica">North America (USA/Canada/Mexico) — 20-40 weeks</SelectItem>
-                <SelectItem value="global">Global (excl. China) — Lower pricing, 16-36 weeks</SelectItem>
-                <SelectItem value="china">China — Lowest pricing, 12-24 weeks</SelectItem>
-              </SelectContent>
-            </Select>
-            <HelpText>
-              Where the transformer can be manufactured. Affects pricing and lead time estimates.
-            </HelpText>
-          </div>
+          {/* Manufacturing & Compliance */}
+          <div className="space-y-3 md:col-span-2">
+            <Label>Manufacturing Region & Compliance</Label>
+            <p className="text-xs text-muted-foreground -mt-1">
+              Select all regions you would accept. More regions = wider price and lead time range.
+            </p>
+            <div className="grid gap-2 md:grid-cols-2">
+              {([
+                { id: 'usa' as const, label: 'USA', desc: 'Premium pricing, 26-52 week lead time', feoc: true },
+                { id: 'northAmerica' as const, label: 'North America', desc: 'USA/Canada/Mexico, 20-40 weeks', feoc: true },
+                { id: 'global' as const, label: 'Global (excl. China)', desc: 'Broader supplier pool, 16-36 weeks', feoc: true },
+                { id: 'china' as const, label: 'China', desc: 'Lowest pricing, 12-24 weeks', feoc: false },
+              ]).map((region) => {
+                const regions = requirements.manufacturingRegions || ['usa'];
+                const isChecked = regions.includes(region.id);
+                const toggleRegion = () => {
+                  const next = isChecked
+                    ? regions.filter(r => r !== region.id)
+                    : [...regions, region.id];
+                  if (next.length > 0) updateRequirement('manufacturingRegions', next);
+                };
+                return (
+                  <div
+                    key={region.id}
+                    className={`flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
+                      isChecked
+                        ? 'bg-secondary/50 border-primary/30'
+                        : 'bg-secondary/10 border-transparent opacity-60'
+                    }`}
+                    onClick={toggleRegion}
+                  >
+                    <Checkbox
+                      checked={isChecked}
+                      onCheckedChange={() => toggleRegion()}
+                      className="mt-0.5"
+                    />
+                    <div>
+                      <p className="text-sm font-medium">{region.label}</p>
+                      <p className="text-xs text-muted-foreground">{region.desc}</p>
+                      {!region.feoc && (
+                        <p className="text-xs text-red-600 mt-0.5 flex items-center gap-1">
+                          <AlertTriangle className="w-3 h-3" />
+                          Not FEOC compliant
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
 
-          {/* FEOC Compliance */}
-          <div className="space-y-2 md:col-span-2">
-            <Label>FEOC Compliance</Label>
+            {/* FEOC Compliance */}
             <div
               className={`flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
                 requirements.requireFEOC
@@ -537,20 +550,15 @@ export function DesignRequirementsForm({
                 </p>
               </div>
             </div>
-            {requirements.requireFEOC && requirements.manufacturingRegion === 'china' && (
+            {requirements.requireFEOC && (requirements.manufacturingRegions || ['usa']).includes('china') && (
               <div className="flex items-start gap-2 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
                 <AlertTriangle className="w-4 h-4 text-red-600 mt-0.5 flex-shrink-0" />
                 <p className="text-xs text-red-700 dark:text-red-300">
-                  <strong>Conflict:</strong> China manufacturing does not meet FEOC requirements.
-                  Select a different manufacturing region or uncheck FEOC compliance.
+                  <strong>Conflict:</strong> China is selected but does not meet FEOC requirements.
+                  China will be excluded from your cost estimate while FEOC is required.
                 </p>
               </div>
             )}
-            <HelpText>
-              The IRA Section 45X Advanced Manufacturing Production Credit requires FEOC compliance
-              for tax credit eligibility. China-manufactured transformers do not qualify for 45X credits
-              or federally funded projects.
-            </HelpText>
           </div>
 
         </div>

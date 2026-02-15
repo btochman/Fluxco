@@ -38,7 +38,7 @@ const defaultRequirements: DesignRequirements = {
   oilType: 'mineral',
   oilPreservation: 'conservator',
   includeTAC: false,
-  manufacturingRegion: 'usa',
+  manufacturingRegions: ['usa'],
   requireFEOC: true,
 };
 

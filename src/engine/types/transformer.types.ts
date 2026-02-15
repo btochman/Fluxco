@@ -100,8 +100,8 @@ export interface DesignRequirements {
   oilPreservation?: 'conservator' | 'sealedTank' | 'nitrogen';
   /** Include Transformer Automation Controller (e.g., SEL-2414) */
   includeTAC?: boolean;
-  /** Manufacturing region preference */
-  manufacturingRegion?: 'usa' | 'northAmerica' | 'global' | 'china';
+  /** Manufacturing regions the buyer will accept */
+  manufacturingRegions?: ('usa' | 'northAmerica' | 'global' | 'china')[];
   /** Require FEOC (Foreign Entity of Concern) compliance */
   requireFEOC?: boolean;
 }
