@@ -38,12 +38,6 @@ const formatCurrency = (value: number | null): string => {
   }).format(value);
 };
 
-const formatWeight = (kg: number | null): string => {
-  if (!kg) return "-";
-  const lbs = Math.round(kg * 2.205);
-  return `${lbs.toLocaleString()} lbs`;
-};
-
 export function MarketplaceList() {
   const { data, isLoading, error } = useMarketplace();
   const { supplier, user } = useSupplierAuth();
@@ -115,7 +109,6 @@ export function MarketplaceList() {
                 <TableHead className="text-muted-foreground font-semibold">Phase</TableHead>
                 <TableHead className="text-muted-foreground font-semibold">Vector</TableHead>
                 <TableHead className="text-muted-foreground font-semibold">Cooling</TableHead>
-                <TableHead className="text-muted-foreground font-semibold">Weight</TableHead>
                 <TableHead className="text-muted-foreground font-semibold">Location</TableHead>
                 <TableHead></TableHead>
               </TableRow>
@@ -148,9 +141,6 @@ export function MarketplaceList() {
                   </TableCell>
                   <TableCell className="text-muted-foreground text-sm">
                     {listing.cooling_class || "-"}
-                  </TableCell>
-                  <TableCell className="text-muted-foreground text-sm">
-                    {formatWeight(listing.total_weight_kg)}
                   </TableCell>
                   <TableCell className="text-muted-foreground text-sm">
                     {listing.zipcode ? (
