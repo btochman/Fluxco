@@ -16,10 +16,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { AlertCircle, PackageSearch, Zap, MapPin, CheckCircle, Clock, LogIn } from "lucide-react";
+import { AlertCircle, PackageSearch, Zap, MapPin, CheckCircle, Clock, LogIn, FileText } from "lucide-react";
 import Link from "next/link";
 import { MarketplaceListing } from "@/lib/supabase";
 import { BidDialog } from "./BidDialog";
+import { SpecSheetDialog } from "./SpecSheetDialog";
 
 const formatVoltage = (voltage: number): string => {
   if (voltage >= 1000) {
@@ -48,10 +49,17 @@ export function MarketplaceList() {
   const { supplier, user } = useSupplierAuth();
   const [selectedListing, setSelectedListing] = useState<MarketplaceListing | null>(null);
   const [bidDialogOpen, setBidDialogOpen] = useState(false);
+  const [specSheetListing, setSpecSheetListing] = useState<MarketplaceListing | null>(null);
+  const [specSheetOpen, setSpecSheetOpen] = useState(false);
 
   const handleBidClick = (listing: MarketplaceListing) => {
     setSelectedListing(listing);
     setBidDialogOpen(true);
+  };
+
+  const handleViewSpecs = (listing: MarketplaceListing) => {
+    setSpecSheetListing(listing);
+    setSpecSheetOpen(true);
   };
 
   if (isLoading) {
@@ -155,33 +163,44 @@ export function MarketplaceList() {
                     )}
                   </TableCell>
                   <TableCell>
-                    {isCompleted ? (
-                      <Badge variant="outline" className="bg-green-500/10 text-green-500 border-green-500/30">
-                        <CheckCircle className="w-3 h-3 mr-1" />
-                        Awarded
-                      </Badge>
-                    ) : supplier ? (
+                    <div className="flex items-center gap-2">
                       <Button
                         size="sm"
-                        variant="outline"
-                        className="border-primary/50 text-primary hover:bg-primary hover:text-primary-foreground"
-                        onClick={() => handleBidClick(listing)}
+                        variant="ghost"
+                        className="text-muted-foreground hover:text-primary"
+                        onClick={() => handleViewSpecs(listing)}
                       >
-                        Place Bid
+                        <FileText className="w-3 h-3 mr-1" />
+                        Specs
                       </Button>
-                    ) : (
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="border-primary/50 text-primary hover:bg-primary hover:text-primary-foreground"
-                        asChild
-                      >
-                        <Link href="/portal/login">
-                          <LogIn className="w-3 h-3 mr-1" />
-                          Login to Bid
-                        </Link>
-                      </Button>
-                    )}
+                      {isCompleted ? (
+                        <Badge variant="outline" className="bg-green-500/10 text-green-500 border-green-500/30">
+                          <CheckCircle className="w-3 h-3 mr-1" />
+                          Awarded
+                        </Badge>
+                      ) : supplier ? (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="border-primary/50 text-primary hover:bg-primary hover:text-primary-foreground"
+                          onClick={() => handleBidClick(listing)}
+                        >
+                          Place Bid
+                        </Button>
+                      ) : (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="border-primary/50 text-primary hover:bg-primary hover:text-primary-foreground"
+                          asChild
+                        >
+                          <Link href="/portal/login">
+                            <LogIn className="w-3 h-3 mr-1" />
+                            Login to Bid
+                          </Link>
+                        </Button>
+                      )}
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}
@@ -246,6 +265,13 @@ export function MarketplaceList() {
         onOpenChange={setBidDialogOpen}
         supplier={supplier}
         userEmail={user?.email}
+      />
+
+      {/* Spec Sheet Dialog */}
+      <SpecSheetDialog
+        listing={specSheetListing}
+        open={specSheetOpen}
+        onOpenChange={setSpecSheetOpen}
       />
     </>
   );

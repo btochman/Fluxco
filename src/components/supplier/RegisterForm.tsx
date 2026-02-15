@@ -64,9 +64,9 @@ export function RegisterForm() {
     setSuccess(true);
     setLoading(false);
 
-    // Redirect after brief delay to show success
+    // Redirect to profile setup after brief delay
     setTimeout(() => {
-      router.push("/portal");
+      router.push("/portal/profile");
     }, 1500);
   };
 

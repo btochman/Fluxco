@@ -332,6 +332,39 @@ export function TransformerDesigner() {
       ].filter(Boolean).join('. ') || null,
       zipcode: marketplaceForm.zipcode || null,
       status: 'listed',
+      design_specs: {
+        requirements: {
+          ratedPower: requirements.ratedPower,
+          primaryVoltage: requirements.primaryVoltage,
+          secondaryVoltage: requirements.secondaryVoltage,
+          frequency: requirements.frequency,
+          phases: requirements.phases,
+          vectorGroup: requirements.vectorGroup.name,
+          coolingClass: requirements.coolingClass.name,
+          conductorType: requirements.conductorType.name,
+          steelGrade: requirements.steelGrade.name,
+          altitude: requirements.altitude,
+          ambientTemperature: requirements.ambientTemperature,
+        },
+        performance: {
+          impedancePercent: round2(design.impedance.percentZ),
+          noLoadLossW: round2(design.losses.noLoadLoss),
+          loadLossW: round2(design.losses.loadLoss),
+          efficiencyPercent: round2(efficiency),
+          topOilRiseC: round2(design.thermal.topOilRise),
+          avgWindingRiseC: round2(design.thermal.averageWindingRise),
+          hotSpotTempC: round2(design.thermal.hotSpotRise + (requirements.ambientTemperature || 30)),
+        },
+        physical: {
+          totalWeightKg: round2(design.core.coreWeight + design.hvWinding.conductorWeight + design.lvWinding.conductorWeight),
+          coreWeightKg: round2(design.core.coreWeight),
+        },
+        cost: {
+          totalCost: round2(costBreakdown.totalCost),
+          costPerKVA: round2(costBreakdown.costPerKVA),
+        },
+        powerRating: calculatePowerRatings(requirements.ratedPower, requirements.coolingClass.id).display,
+      },
     };
 
     // Use API route to bypass RLS

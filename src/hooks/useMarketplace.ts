@@ -47,6 +47,26 @@ export function useSupplierBids(supplierId: string | undefined) {
   });
 }
 
+export function useSupplierDashboard(supplierId: string | undefined) {
+  const marketplace = useMarketplace();
+  const bids = useSupplierBids(supplierId);
+
+  const activeOpportunities = marketplace.data?.active?.length || 0;
+  const myBids = bids.data?.length || 0;
+  const wonBids = bids.data?.filter(b => b.status === "accepted").length || 0;
+  const pendingBids = bids.data?.filter(b => b.status === "submitted" || b.status === "under_review").length || 0;
+
+  return {
+    activeOpportunities,
+    myBids,
+    wonBids,
+    pendingBids,
+    recentListings: marketplace.data?.active?.slice(0, 5) || [],
+    recentBids: bids.data?.slice(0, 5) || [],
+    isLoading: marketplace.isLoading || bids.isLoading,
+  };
+}
+
 export function useSubmitBid() {
   const queryClient = useQueryClient();
 

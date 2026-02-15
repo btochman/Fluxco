@@ -101,6 +101,7 @@ export interface MarketplaceListing {
   load_loss_w: number | null;
   efficiency_percent: number | null;
   total_weight_kg: number | null;
+  design_specs: Record<string, unknown> | null;
   contact_name: string;
   contact_email: string;
   contact_phone: string | null;
@@ -121,6 +122,7 @@ export interface SupplierBid {
   bid_price: number;
   lead_time_weeks: number;
   notes: string | null;
+  proposal_url: string | null;
   status: 'submitted' | 'under_review' | 'accepted' | 'rejected' | 'withdrawn';
   interest_expressed_at: string | null;
   created_at: string;

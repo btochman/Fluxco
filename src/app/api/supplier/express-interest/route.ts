@@ -20,6 +20,7 @@ export async function POST(request: NextRequest) {
       bidPrice,
       leadTimeWeeks,
       notes,
+      proposalUrl,
       type
     } = body;
 
@@ -123,6 +124,7 @@ export async function POST(request: NextRequest) {
             bid_price: bidPrice,
             lead_time_weeks: leadTimeWeeks,
             notes: notes || null,
+            proposal_url: proposalUrl || null,
             status: "submitted",
             interest_expressed_at: new Date().toISOString(),
           }, {
@@ -147,6 +149,7 @@ export async function POST(request: NextRequest) {
                 <li><strong>Bid Price:</strong> $${bidPrice?.toLocaleString()}</li>
                 <li><strong>Lead Time:</strong> ${leadTimeWeeks} weeks</li>
                 ${notes ? `<li><strong>Notes:</strong> ${notes}</li>` : ''}
+                ${proposalUrl ? `<li><strong>Proposal:</strong> <a href="${proposalUrl}">View Proposal PDF</a></li>` : ''}
               </ul>
 
               <h3>OEM Details</h3>

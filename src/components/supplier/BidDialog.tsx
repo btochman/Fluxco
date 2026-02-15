@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import {
   Dialog,
   DialogContent,
@@ -14,7 +14,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Zap, DollarSign, Clock, Send, CheckCircle, MapPin, HelpCircle } from "lucide-react";
+import { Zap, DollarSign, Clock, Send, CheckCircle, MapPin, HelpCircle, Upload, FileText, X } from "lucide-react";
 import { MarketplaceListing } from "@/lib/supabase";
 
 interface SupplierInfo {
@@ -30,6 +30,7 @@ interface BidDialogProps {
   onOpenChange: (open: boolean) => void;
   supplier: SupplierInfo | null;
   userEmail?: string | null;
+  onViewSpecs?: () => void;
 }
 
 const formatVoltage = (voltage: number): string => {
@@ -39,13 +40,59 @@ const formatVoltage = (voltage: number): string => {
   return `${voltage} V`;
 };
 
-export function BidDialog({ listing, open, onOpenChange, supplier, userEmail }: BidDialogProps) {
+export function BidDialog({ listing, open, onOpenChange, supplier, userEmail, onViewSpecs }: BidDialogProps) {
   const [bidPrice, setBidPrice] = useState("");
   const [leadTimeWeeks, setLeadTimeWeeks] = useState("");
   const [notes, setNotes] = useState("");
+  const [proposalFile, setProposalFile] = useState<File | null>(null);
+  const [uploadingProposal, setUploadingProposal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitType, setSubmitType] = useState<"bid" | "info" | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.type !== "application/pdf") {
+        setError("Only PDF files are accepted");
+        return;
+      }
+      if (file.size > 10 * 1024 * 1024) {
+        setError("File size must be under 10MB");
+        return;
+      }
+      setProposalFile(file);
+      setError(null);
+    }
+  };
+
+  const uploadProposal = async (): Promise<string | null> => {
+    if (!proposalFile || !supplier || !listing) return null;
+
+    setUploadingProposal(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", proposalFile);
+      formData.append("supplierId", supplier.id);
+      formData.append("listingId", listing.id);
+
+      const res = await fetch("/api/supplier/upload-proposal", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Upload failed");
+
+      return data.url;
+    } catch (err) {
+      console.error("Proposal upload error:", err);
+      throw err;
+    } finally {
+      setUploadingProposal(false);
+    }
+  };
 
   const handleSubmitBid = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -65,6 +112,12 @@ export function BidDialog({ listing, open, onOpenChange, supplier, userEmail }: 
     setError(null);
 
     try {
+      // Upload proposal if one was selected
+      let proposalUrl: string | null = null;
+      if (proposalFile) {
+        proposalUrl = await uploadProposal();
+      }
+
       const response = await fetch("/api/supplier/express-interest", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -78,6 +131,7 @@ export function BidDialog({ listing, open, onOpenChange, supplier, userEmail }: 
           bidPrice: parseFloat(bidPrice.replace(/[^0-9.]/g, "")),
           leadTimeWeeks: parseInt(leadTimeWeeks, 10),
           notes: notes || null,
+          proposalUrl,
           type: "bid",
         }),
       });
@@ -148,6 +202,7 @@ export function BidDialog({ listing, open, onOpenChange, supplier, userEmail }: 
       setBidPrice("");
       setLeadTimeWeeks("");
       setNotes("");
+      setProposalFile(null);
       setSubmitType(null);
       setError(null);
     }, 200);
@@ -200,7 +255,7 @@ export function BidDialog({ listing, open, onOpenChange, supplier, userEmail }: 
             Place Bid
           </DialogTitle>
           <DialogDescription>
-            Submit your pricing and lead time, or request more information
+            Submit your pricing, lead time, and optional proposal document
           </DialogDescription>
         </DialogHeader>
 
@@ -312,6 +367,53 @@ export function BidDialog({ listing, open, onOpenChange, supplier, userEmail }: 
             />
           </div>
 
+          {/* Proposal Upload */}
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2">
+              <Upload className="w-4 h-4" />
+              Formal Proposal (PDF, optional)
+            </Label>
+            {proposalFile ? (
+              <div className="flex items-center gap-2 bg-muted/50 rounded-lg p-3">
+                <FileText className="w-4 h-4 text-primary flex-shrink-0" />
+                <span className="text-sm truncate flex-1">{proposalFile.name}</span>
+                <span className="text-xs text-muted-foreground">
+                  {(proposalFile.size / 1024 / 1024).toFixed(1)} MB
+                </span>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="h-6 w-6 p-0"
+                  onClick={() => {
+                    setProposalFile(null);
+                    if (fileInputRef.current) fileInputRef.current.value = "";
+                  }}
+                >
+                  <X className="w-3 h-3" />
+                </Button>
+              </div>
+            ) : (
+              <div
+                className="border-2 border-dashed border-border rounded-lg p-4 text-center cursor-pointer hover:border-primary/50 transition-colors"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <Upload className="w-6 h-6 text-muted-foreground mx-auto mb-2" />
+                <p className="text-sm text-muted-foreground">
+                  Click to upload proposal PDF
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">Max 10MB</p>
+              </div>
+            )}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".pdf"
+              className="hidden"
+              onChange={handleFileChange}
+            />
+          </div>
+
           <div className="space-y-2">
             <Label htmlFor="notes">Additional Notes (optional)</Label>
             <Textarea
@@ -325,11 +427,15 @@ export function BidDialog({ listing, open, onOpenChange, supplier, userEmail }: 
 
           <Button
             onClick={handleSubmitBid}
-            disabled={isSubmitting || !bidPrice || !leadTimeWeeks}
+            disabled={isSubmitting || uploadingProposal || !bidPrice || !leadTimeWeeks}
             className="w-full"
           >
             <Send className="w-4 h-4 mr-2" />
-            {isSubmitting ? "Submitting..." : "Submit Bid"}
+            {uploadingProposal
+              ? "Uploading proposal..."
+              : isSubmitting
+              ? "Submitting..."
+              : "Submit Bid"}
           </Button>
         </div>
       </DialogContent>
