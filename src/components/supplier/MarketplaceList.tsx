@@ -16,7 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { AlertCircle, PackageSearch, Zap, MapPin, CheckCircle, Clock, LogIn, FileText } from "lucide-react";
+import { AlertCircle, PackageSearch, Zap, MapPin, CheckCircle, Clock, LogIn, FileText, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { MarketplaceListing } from "@/lib/supabase";
 import { BidDialog } from "./BidDialog";
@@ -106,94 +106,165 @@ export function MarketplaceList() {
                 <TableHead className="text-muted-foreground font-semibold">Power</TableHead>
                 <TableHead className="text-muted-foreground font-semibold">Primary</TableHead>
                 <TableHead className="text-muted-foreground font-semibold">Secondary</TableHead>
+                <TableHead className="text-muted-foreground font-semibold">Freq</TableHead>
                 <TableHead className="text-muted-foreground font-semibold">Phase</TableHead>
                 <TableHead className="text-muted-foreground font-semibold">Vector</TableHead>
                 <TableHead className="text-muted-foreground font-semibold">Cooling</TableHead>
+                <TableHead className="text-muted-foreground font-semibold">%Z</TableHead>
+                <TableHead className="text-muted-foreground font-semibold">Conductor</TableHead>
+                <TableHead className="text-muted-foreground font-semibold">Tap</TableHead>
+                <TableHead className="text-muted-foreground font-semibold">Oil</TableHead>
+                <TableHead className="text-muted-foreground font-semibold">Preservation</TableHead>
+                <TableHead className="text-muted-foreground font-semibold">TAC</TableHead>
+                <TableHead className="text-muted-foreground font-semibold">Ambient</TableHead>
+                <TableHead className="text-muted-foreground font-semibold">Region</TableHead>
+                <TableHead className="text-muted-foreground font-semibold">FEOC</TableHead>
                 <TableHead className="text-muted-foreground font-semibold">Location</TableHead>
                 <TableHead></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {listings.map((listing) => (
-                <TableRow key={listing.id} className="border-border hover:bg-secondary/50">
-                  <TableCell className="font-mono text-sm text-primary">
-                    {listing.serial_number || "-"}
-                  </TableCell>
-                  <TableCell className="font-semibold text-primary">
-                    <div className="flex items-center gap-2">
-                      <Zap className="w-4 h-4" />
-                      {listing.rated_power_kva.toLocaleString()} kVA
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-foreground">
-                    {formatVoltage(listing.primary_voltage)}
-                  </TableCell>
-                  <TableCell className="text-foreground">
-                    {formatVoltage(listing.secondary_voltage)}
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="secondary" className="text-xs">
-                      {listing.phases}-Ph
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-muted-foreground text-sm">
-                    {listing.vector_group || "-"}
-                  </TableCell>
-                  <TableCell className="text-muted-foreground text-sm">
-                    {listing.cooling_class || "-"}
-                  </TableCell>
-                  <TableCell className="text-muted-foreground text-sm">
-                    {listing.zipcode ? (
-                      <span className="flex items-center gap-1">
-                        <MapPin className="w-3 h-3" />
-                        {listing.zipcode}
-                      </span>
-                    ) : (
-                      "-"
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="text-muted-foreground hover:text-primary"
-                        onClick={() => handleViewSpecs(listing)}
-                      >
-                        <FileText className="w-3 h-3 mr-1" />
-                        Specs
-                      </Button>
-                      {isCompleted ? (
-                        <Badge variant="outline" className="bg-green-500/10 text-green-500 border-green-500/30">
-                          <CheckCircle className="w-3 h-3 mr-1" />
-                          Awarded
-                        </Badge>
-                      ) : supplier ? (
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="border-primary/50 text-primary hover:bg-primary hover:text-primary-foreground"
-                          onClick={() => handleBidClick(listing)}
-                        >
-                          Place Bid
-                        </Button>
+              {listings.map((listing) => {
+                const specs = listing.design_specs as any;
+                const req = specs?.requirements;
+
+                const oilLabels: Record<string, string> = {
+                  mineral: "Mineral",
+                  naturalEster: "Natural Ester",
+                  syntheticEster: "Synthetic Ester",
+                  silicon: "Silicone",
+                };
+                const preservationLabels: Record<string, string> = {
+                  conservator: "Conservator",
+                  sealedTank: "Sealed Tank",
+                  nitrogen: "Nitrogen",
+                };
+                const regionLabels: Record<string, string> = {
+                  usa: "USA",
+                  northAmerica: "N. America",
+                  global: "Global",
+                  china: "China",
+                };
+
+                return (
+                  <TableRow key={listing.id} className="border-border hover:bg-secondary/50">
+                    <TableCell className="font-mono text-sm text-primary">
+                      {listing.serial_number || "-"}
+                    </TableCell>
+                    <TableCell className="font-semibold text-primary whitespace-nowrap">
+                      <div className="flex items-center gap-2">
+                        <Zap className="w-4 h-4" />
+                        {listing.rated_power_kva.toLocaleString()} kVA
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-foreground whitespace-nowrap">
+                      {formatVoltage(listing.primary_voltage)}
+                    </TableCell>
+                    <TableCell className="text-foreground whitespace-nowrap">
+                      {formatVoltage(listing.secondary_voltage)}
+                    </TableCell>
+                    <TableCell className="text-muted-foreground text-sm">
+                      {listing.frequency} Hz
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="secondary" className="text-xs">
+                        {listing.phases}-Ph
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-muted-foreground text-sm">
+                      {listing.vector_group || "-"}
+                    </TableCell>
+                    <TableCell className="text-muted-foreground text-sm whitespace-nowrap">
+                      {listing.cooling_class || "-"}
+                    </TableCell>
+                    <TableCell className="text-muted-foreground text-sm">
+                      {listing.impedance_percent ? `${listing.impedance_percent}%` : "-"}
+                    </TableCell>
+                    <TableCell className="text-muted-foreground text-sm">
+                      {listing.conductor_type || "-"}
+                    </TableCell>
+                    <TableCell className="text-muted-foreground text-sm whitespace-nowrap">
+                      {req?.tapChangerType === "onLoad" ? "OLTC" : req?.tapChangerType === "noLoad" ? "NLTC" : "-"}
+                    </TableCell>
+                    <TableCell className="text-muted-foreground text-sm whitespace-nowrap">
+                      {req?.oilType ? (oilLabels[req.oilType] || req.oilType) : "-"}
+                    </TableCell>
+                    <TableCell className="text-muted-foreground text-sm whitespace-nowrap">
+                      {req?.oilPreservation ? (preservationLabels[req.oilPreservation] || req.oilPreservation) : "-"}
+                    </TableCell>
+                    <TableCell className="text-muted-foreground text-sm">
+                      {req?.includeTAC ? "Yes" : req ? "No" : "-"}
+                    </TableCell>
+                    <TableCell className="text-muted-foreground text-sm whitespace-nowrap">
+                      {req?.ambientTemperature ? `${req.ambientTemperature}°C` : "-"}
+                    </TableCell>
+                    <TableCell className="text-muted-foreground text-sm whitespace-nowrap">
+                      {req?.manufacturingRegions
+                        ? req.manufacturingRegions.map((r: string) => regionLabels[r] || r).join(", ")
+                        : "-"}
+                    </TableCell>
+                    <TableCell className="text-sm">
+                      {req?.requireFEOC ? (
+                        <ShieldCheck className="w-4 h-4 text-green-500" />
+                      ) : req ? (
+                        <span className="text-muted-foreground">No</span>
                       ) : (
+                        "-"
+                      )}
+                    </TableCell>
+                    <TableCell className="text-muted-foreground text-sm">
+                      {listing.zipcode ? (
+                        <span className="flex items-center gap-1 whitespace-nowrap">
+                          <MapPin className="w-3 h-3" />
+                          {listing.zipcode}
+                        </span>
+                      ) : (
+                        "-"
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
                         <Button
                           size="sm"
-                          variant="outline"
-                          className="border-primary/50 text-primary hover:bg-primary hover:text-primary-foreground"
-                          asChild
+                          variant="ghost"
+                          className="text-muted-foreground hover:text-primary"
+                          onClick={() => handleViewSpecs(listing)}
                         >
-                          <Link href="/portal/login">
-                            <LogIn className="w-3 h-3 mr-1" />
-                            Login to Bid
-                          </Link>
+                          <FileText className="w-3 h-3 mr-1" />
+                          Specs
                         </Button>
-                      )}
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
+                        {isCompleted ? (
+                          <Badge variant="outline" className="bg-green-500/10 text-green-500 border-green-500/30">
+                            <CheckCircle className="w-3 h-3 mr-1" />
+                            Awarded
+                          </Badge>
+                        ) : supplier ? (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="border-primary/50 text-primary hover:bg-primary hover:text-primary-foreground"
+                            onClick={() => handleBidClick(listing)}
+                          >
+                            Place Bid
+                          </Button>
+                        ) : (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="border-primary/50 text-primary hover:bg-primary hover:text-primary-foreground"
+                            asChild
+                          >
+                            <Link href="/portal/login">
+                              <LogIn className="w-3 h-3 mr-1" />
+                              Login to Bid
+                            </Link>
+                          </Button>
+                        )}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
         </div>

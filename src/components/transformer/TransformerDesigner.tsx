@@ -345,6 +345,12 @@ export function TransformerDesigner() {
           steelGrade: requirements.steelGrade.name,
           altitude: requirements.altitude,
           ambientTemperature: requirements.ambientTemperature,
+          tapChangerType: requirements.tapChangerType || 'noLoad',
+          oilType: requirements.oilType || 'mineral',
+          oilPreservation: requirements.oilPreservation || 'conservator',
+          includeTAC: requirements.includeTAC || false,
+          manufacturingRegions: requirements.manufacturingRegions || ['usa'],
+          requireFEOC: requirements.requireFEOC ?? true,
         },
         performance: {
           impedancePercent: round2(design.impedance.percentZ),
