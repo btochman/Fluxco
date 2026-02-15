@@ -20,6 +20,7 @@ export default function QuoteForm() {
     quantity: "",
     timeline: "",
     projectDetails: "",
+    interestedInLeasing: false,
     website: "", // Honeypot
   });
 
@@ -62,7 +63,7 @@ export default function QuoteForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...formData,
-          projectDetails: `[RFQ FROM /get-quote]\nQuantity: ${formData.quantity || "Not specified"}\nTimeline: ${formData.timeline || "Not specified"}\n\n${formData.projectDetails}`,
+          projectDetails: `[RFQ FROM /get-quote]\nQuantity: ${formData.quantity || "Not specified"}\nTimeline: ${formData.timeline || "Not specified"}${formData.interestedInLeasing ? "\n** INTERESTED IN LEASING **" : ""}\n\n${formData.projectDetails}`,
         }),
       });
 
@@ -86,6 +87,7 @@ export default function QuoteForm() {
         quantity: "",
         timeline: "",
         projectDetails: "",
+        interestedInLeasing: false,
         website: "",
       });
     } catch (error: unknown) {
@@ -241,6 +243,24 @@ export default function QuoteForm() {
             placeholder="Voltage, kVA/MVA rating, application (data center, solar farm, utility, etc.), any special requirements (FEOC compliance, domestic content, etc.)..."
           />
         </div>
+
+        {/* Leasing Interest */}
+        <label className="flex items-start gap-3 cursor-pointer group">
+          <input
+            type="checkbox"
+            checked={formData.interestedInLeasing}
+            onChange={(e) =>
+              setFormData((prev) => ({
+                ...prev,
+                interestedInLeasing: e.target.checked,
+              }))
+            }
+            className="mt-1 h-4 w-4 rounded border-border bg-secondary text-primary focus:ring-primary"
+          />
+          <span className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">
+            I&apos;m interested in learning about FluxCo leasing options
+          </span>
+        </label>
 
         {/* Honeypot */}
         <div className="absolute -left-[9999px]" aria-hidden="true">

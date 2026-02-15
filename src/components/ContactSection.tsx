@@ -15,6 +15,7 @@ const ContactSection = () => {
     phone: "",
     productInterest: "",
     projectDetails: "",
+    interestedInLeasing: false,
     website: "", // Honeypot field - should remain empty
   });
 
@@ -70,6 +71,7 @@ const ContactSection = () => {
         phone: "",
         productInterest: "",
         projectDetails: "",
+        interestedInLeasing: false,
         website: "",
       });
     } catch (error: any) {
@@ -194,6 +196,24 @@ const ContactSection = () => {
                   placeholder="Tell us about your project requirements..."
                 />
               </div>
+              {/* Leasing Interest */}
+              <label className="flex items-start gap-3 cursor-pointer group">
+                <input
+                  type="checkbox"
+                  checked={formData.interestedInLeasing}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      interestedInLeasing: e.target.checked,
+                    }))
+                  }
+                  className="mt-1 h-4 w-4 rounded border-border bg-secondary text-primary focus:ring-primary"
+                />
+                <span className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">
+                  I&apos;m interested in learning about FluxCo leasing options
+                </span>
+              </label>
+
               {/* Honeypot field - hidden from users, catches bots */}
               <div className="absolute -left-[9999px]" aria-hidden="true">
                 <label htmlFor="website">Website</label>
