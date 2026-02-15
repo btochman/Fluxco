@@ -161,10 +161,15 @@ export function CostEstimate({ design, requirements }: CostEstimateProps) {
             <p className="text-xs text-orange-600 dark:text-orange-400 mt-0.5">
               {region.label} manufacturing
             </p>
-            {!region.feocCompliant && (
+            {requirements.requireFEOC && !region.feocCompliant && (
               <div className="flex items-center gap-1 mt-1.5 text-xs text-red-600">
                 <AlertTriangle className="h-3 w-3" />
-                <span>Not FEOC compliant</span>
+                <span>Does not meet FEOC requirement</span>
+              </div>
+            )}
+            {requirements.requireFEOC && region.feocCompliant && (
+              <div className="flex items-center gap-1 mt-1.5 text-xs text-green-600">
+                <span>FEOC compliant</span>
               </div>
             )}
           </CardContent>

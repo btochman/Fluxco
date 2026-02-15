@@ -11,7 +11,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import type { DesignRequirements } from '@/engine/types/transformer.types';
-import { AlertTriangle } from 'lucide-react';
+import { AlertTriangle, ShieldCheck } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
 import { CONDUCTOR_TYPES, COOLING_CLASSES, VECTOR_GROUPS, calculatePowerRatings } from '@/engine/constants/materials';
 
 interface DesignRequirementsFormProps {
@@ -475,7 +476,7 @@ export function DesignRequirementsForm({
           </div>
 
           {/* Manufacturing Region */}
-          <div className="space-y-2 md:col-span-2">
+          <div className="space-y-2">
             <Label className="flex items-center justify-between">
               <span>Manufacturing Region</span>
               <span className="flex gap-1">
@@ -499,28 +500,56 @@ export function DesignRequirementsForm({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="usa">USA Only — Premium pricing, 26-52 week lead time</SelectItem>
-                <SelectItem value="northAmerica">North America (USA/Canada/Mexico) — Competitive pricing, 20-40 weeks</SelectItem>
+                <SelectItem value="usa">USA Only — Premium pricing, 26-52 weeks</SelectItem>
+                <SelectItem value="northAmerica">North America (USA/Canada/Mexico) — 20-40 weeks</SelectItem>
                 <SelectItem value="global">Global (excl. China) — Lower pricing, 16-36 weeks</SelectItem>
                 <SelectItem value="china">China — Lowest pricing, 12-24 weeks</SelectItem>
               </SelectContent>
             </Select>
-            {requirements.manufacturingRegion === 'china' && (
+            <HelpText>
+              Where the transformer can be manufactured. Affects pricing and lead time estimates.
+            </HelpText>
+          </div>
+
+          {/* FEOC Compliance */}
+          <div className="space-y-2">
+            <Label>FEOC Compliance</Label>
+            <div
+              className={`flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
+                requirements.requireFEOC
+                  ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800'
+                  : 'bg-secondary/30 border-transparent'
+              }`}
+              onClick={() => updateRequirement('requireFEOC', !requirements.requireFEOC)}
+            >
+              <Checkbox
+                checked={requirements.requireFEOC ?? true}
+                onCheckedChange={(checked) => updateRequirement('requireFEOC', checked === true)}
+                className="mt-0.5"
+              />
+              <div>
+                <p className="text-sm font-medium flex items-center gap-1.5">
+                  <ShieldCheck className="w-4 h-4 text-green-600" />
+                  Require FEOC Compliance
+                </p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Required for federal, state, and critical infrastructure projects.
+                </p>
+              </div>
+            </div>
+            {requirements.requireFEOC && requirements.manufacturingRegion === 'china' && (
               <div className="flex items-start gap-2 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
                 <AlertTriangle className="w-4 h-4 text-red-600 mt-0.5 flex-shrink-0" />
                 <p className="text-xs text-red-700 dark:text-red-300">
-                  <strong>FEOC Warning:</strong> Transformers manufactured in China do not meet
-                  Foreign Entity of Concern (FEOC) compliance requirements. Federal and many state
-                  projects require FEOC-compliant equipment. Consider USA or North America manufacturing
-                  if your project has government funding or critical infrastructure requirements.
+                  <strong>Conflict:</strong> China manufacturing does not meet FEOC requirements.
+                  Select a different manufacturing region or uncheck FEOC compliance.
                 </p>
               </div>
             )}
             <HelpText>
-              <strong>USA</strong> = highest cost but shortest supply chain, fully FEOC compliant.
-              <strong> North America</strong> = competitive pricing, FEOC compliant.
-              <strong> Global (excl. China)</strong> = broader supplier pool, FEOC compliant.
-              <strong> China</strong> = lowest cost but does NOT meet FEOC requirements for federal/state projects.
+              Foreign Entity of Concern (FEOC) rules prohibit equipment from certain countries in
+              federally funded or critical infrastructure projects. China-manufactured transformers
+              do not qualify.
             </HelpText>
           </div>
 

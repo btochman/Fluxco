@@ -39,6 +39,7 @@ const defaultRequirements: DesignRequirements = {
   oilPreservation: 'conservator',
   includeTAC: false,
   manufacturingRegion: 'usa',
+  requireFEOC: true,
 };
 
 export function TransformerDesigner() {

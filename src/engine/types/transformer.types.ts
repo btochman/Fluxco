@@ -102,6 +102,8 @@ export interface DesignRequirements {
   includeTAC?: boolean;
   /** Manufacturing region preference */
   manufacturingRegion?: 'usa' | 'northAmerica' | 'global' | 'china';
+  /** Require FEOC (Foreign Entity of Concern) compliance */
+  requireFEOC?: boolean;
 }
 
 /**
