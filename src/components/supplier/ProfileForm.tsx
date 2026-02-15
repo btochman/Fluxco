@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Loader2, CheckCircle, AlertCircle } from "lucide-react";
+import { Loader2, CheckCircle, AlertCircle, Save } from "lucide-react";
 
 interface SupplierProfile {
   id: string;
@@ -19,11 +19,9 @@ interface SupplierProfile {
   state: string | null;
   country: string;
   certifications: string[];
-  specialties: string[];
   website?: string | null;
   kva_range_min?: number | null;
   kva_range_max?: number | null;
-  voltage_classes?: string[];
 }
 
 interface ProfileFormProps {
@@ -43,25 +41,6 @@ const CERTIFICATION_OPTIONS = [
   "IEC",
 ];
 
-const SPECIALTY_OPTIONS = [
-  "Padmount Transformers",
-  "Substation Transformers",
-  "Distribution Transformers",
-  "Dry-Type Transformers",
-  "Power Transformers",
-  "Step-Up Transformers",
-  "Auto Transformers",
-  "Instrument Transformers",
-  "Custom / Specialty",
-];
-
-const VOLTAGE_CLASS_OPTIONS = [
-  "Low Voltage (< 600V)",
-  "Medium Voltage (2.4kV - 35kV)",
-  "High Voltage (69kV - 161kV)",
-  "Extra High Voltage (230kV+)",
-];
-
 export function ProfileForm({ supplier, onSaved }: ProfileFormProps) {
   const [formData, setFormData] = useState({
     company_name: supplier.company_name || "",
@@ -75,8 +54,6 @@ export function ProfileForm({ supplier, onSaved }: ProfileFormProps) {
     kva_range_min: (supplier as any).kva_range_min || "",
     kva_range_max: (supplier as any).kva_range_max || "",
     certifications: supplier.certifications || [],
-    specialties: supplier.specialties || [],
-    voltage_classes: (supplier as any).voltage_classes || [],
   });
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -87,15 +64,12 @@ export function ProfileForm({ supplier, onSaved }: ProfileFormProps) {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const toggleArrayItem = (
-    field: "certifications" | "specialties" | "voltage_classes",
-    item: string
-  ) => {
+  const toggleCertification = (cert: string) => {
     setFormData((prev) => ({
       ...prev,
-      [field]: prev[field].includes(item)
-        ? prev[field].filter((i: string) => i !== item)
-        : [...prev[field], item],
+      certifications: prev.certifications.includes(cert)
+        ? prev.certifications.filter((c) => c !== cert)
+        : [...prev.certifications, cert],
     }));
   };
 
@@ -277,27 +251,6 @@ export function ProfileForm({ supplier, onSaved }: ProfileFormProps) {
         </div>
       </div>
 
-      {/* Voltage Classes */}
-      <div>
-        <h3 className="text-lg font-semibold mb-4">Voltage Classes</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          {VOLTAGE_CLASS_OPTIONS.map((vc) => (
-            <div key={vc} className="flex items-center space-x-2">
-              <Checkbox
-                id={`vc-${vc}`}
-                checked={formData.voltage_classes.includes(vc)}
-                onCheckedChange={() =>
-                  toggleArrayItem("voltage_classes", vc)
-                }
-              />
-              <Label htmlFor={`vc-${vc}`} className="text-sm font-normal cursor-pointer">
-                {vc}
-              </Label>
-            </div>
-          ))}
-        </div>
-      </div>
-
       {/* Certifications */}
       <div>
         <h3 className="text-lg font-semibold mb-4">Certifications</h3>
@@ -307,9 +260,7 @@ export function ProfileForm({ supplier, onSaved }: ProfileFormProps) {
               <Checkbox
                 id={`cert-${cert}`}
                 checked={formData.certifications.includes(cert)}
-                onCheckedChange={() =>
-                  toggleArrayItem("certifications", cert)
-                }
+                onCheckedChange={() => toggleCertification(cert)}
               />
               <Label
                 htmlFor={`cert-${cert}`}
@@ -322,40 +273,20 @@ export function ProfileForm({ supplier, onSaved }: ProfileFormProps) {
         </div>
       </div>
 
-      {/* Specialties */}
-      <div>
-        <h3 className="text-lg font-semibold mb-4">Transformer Specialties</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          {SPECIALTY_OPTIONS.map((spec) => (
-            <div key={spec} className="flex items-center space-x-2">
-              <Checkbox
-                id={`spec-${spec}`}
-                checked={formData.specialties.includes(spec)}
-                onCheckedChange={() =>
-                  toggleArrayItem("specialties", spec)
-                }
-              />
-              <Label
-                htmlFor={`spec-${spec}`}
-                className="text-sm font-normal cursor-pointer"
-              >
-                {spec}
-              </Label>
-            </div>
-          ))}
-        </div>
+      {/* Sticky Save Button */}
+      <div className="sticky bottom-0 bg-card border-t border-border -mx-6 px-6 py-4 -mb-6 rounded-b-lg">
+        <Button type="submit" disabled={saving} size="lg" className="w-full">
+          <Save className="w-4 h-4 mr-2" />
+          {saving ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Saving...
+            </>
+          ) : (
+            "Save Profile"
+          )}
+        </Button>
       </div>
-
-      <Button type="submit" disabled={saving} className="w-full md:w-auto">
-        {saving ? (
-          <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Saving...
-          </>
-        ) : (
-          "Save Profile"
-        )}
-      </Button>
     </form>
   );
 }
