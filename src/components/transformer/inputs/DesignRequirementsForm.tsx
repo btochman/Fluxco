@@ -1,5 +1,5 @@
 "use client";
-import { Calculator, HelpCircle, Clock, Zap, Info } from 'lucide-react';
+import { Calculator, HelpCircle, Clock, Zap, DollarSign, Info } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -20,14 +20,16 @@ interface DesignRequirementsFormProps {
 }
 
 // Impact indicator component
-function ImpactBadge({ type, level }: { type: 'leadTime' | 'efficiency'; level: 'low' | 'medium' | 'high' }) {
+function ImpactBadge({ type, level }: { type: 'leadTime' | 'efficiency' | 'cost'; level: 'low' | 'medium' | 'high' }) {
   const icons = {
     leadTime: Clock,
     efficiency: Zap,
+    cost: DollarSign,
   };
   const labels = {
     leadTime: 'Lead Time',
     efficiency: 'Efficiency',
+    cost: 'Cost',
   };
   const colors = {
     low: 'text-green-600 bg-green-100 dark:bg-green-900/30',
@@ -378,6 +380,112 @@ export function DesignRequirementsForm({
             <HelpText>
               <strong>Copper</strong> costs more but is more efficient and compact. <strong>Aluminum</strong> saves 30-40% on conductor
               cost but transformer is larger. For high-efficiency requirements, choose copper.
+            </HelpText>
+          </div>
+
+          {/* Tap Changer */}
+          <div className="space-y-2">
+            <Label className="flex items-center justify-between">
+              <span>Tap Changer</span>
+              <span className="flex gap-1">
+                <ImpactBadge type="cost" level={requirements.tapChangerType === 'onLoad' ? 'high' : 'low'} />
+              </span>
+            </Label>
+            <Select
+              value={requirements.tapChangerType || 'noLoad'}
+              onValueChange={(val) => updateRequirement('tapChangerType', val as 'noLoad' | 'onLoad')}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="noLoad">No-Load Tap Changer (NLTC) - Standard</SelectItem>
+                <SelectItem value="onLoad">On-Load Tap Changer (OLTC) - Voltage regulation under load</SelectItem>
+              </SelectContent>
+            </Select>
+            <HelpText>
+              <strong>NLTC</strong> adjusts voltage ratio when de-energized — standard for most applications.
+              <strong> OLTC</strong> allows voltage adjustment under load — required for voltage regulation on feeders
+              or large facilities. OLTC adds significant cost ($15K-$45K).
+            </HelpText>
+          </div>
+
+          {/* Oil Type */}
+          <div className="space-y-2">
+            <Label className="flex items-center justify-between">
+              <span>Insulating Oil Type</span>
+              <span className="flex gap-1">
+                <ImpactBadge type="cost" level={requirements.oilType === 'mineral' ? 'low' : requirements.oilType === 'silicon' ? 'high' : 'medium'} />
+              </span>
+            </Label>
+            <Select
+              value={requirements.oilType || 'mineral'}
+              onValueChange={(val) => updateRequirement('oilType', val as 'mineral' | 'naturalEster' | 'syntheticEster' | 'silicon')}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="mineral">ASTM D5222 Mineral Oil - Industry standard ($2.20/L)</SelectItem>
+                <SelectItem value="naturalEster">Natural Ester (FR3) - Biodegradable, higher fire point ($4.50/L)</SelectItem>
+                <SelectItem value="syntheticEster">Synthetic Ester - Extreme cold performance ($6.80/L)</SelectItem>
+                <SelectItem value="silicon">Silicone Fluid - Fire resistant, indoor applications ($12.00/L)</SelectItem>
+              </SelectContent>
+            </Select>
+            <HelpText>
+              <strong>Mineral oil</strong> is the industry standard for outdoor oil-filled transformers.
+              <strong> Natural ester</strong> offers a higher fire point and is biodegradable — preferred near sensitive environments.
+              <strong> Silicone fluid</strong> is used where fire resistance is critical (indoor, near buildings).
+            </HelpText>
+          </div>
+
+          {/* Oil Preservation System */}
+          <div className="space-y-2">
+            <Label>Oil Preservation System</Label>
+            <Select
+              value={requirements.oilPreservation || 'conservator'}
+              onValueChange={(val) => updateRequirement('oilPreservation', val as 'conservator' | 'sealedTank' | 'nitrogen')}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="conservator">Conservator Tank with Bladder - Standard for outdoor</SelectItem>
+                <SelectItem value="sealedTank">Sealed Tank (Gas Cushion) - No external air contact</SelectItem>
+                <SelectItem value="nitrogen">Nitrogen Blanket - Inert gas protection, premium</SelectItem>
+              </SelectContent>
+            </Select>
+            <HelpText>
+              <strong>Conservator with bladder</strong> is standard — allows oil expansion while preventing moisture ingress.
+              <strong> Sealed tank</strong> eliminates the conservator for a simpler, lower-maintenance design.
+              <strong> Nitrogen blanket</strong> provides inert gas protection for critical applications.
+            </HelpText>
+          </div>
+
+          {/* TAC - Transformer Automation Controller */}
+          <div className="space-y-2">
+            <Label className="flex items-center justify-between">
+              <span>Transformer Automation Controller (TAC)</span>
+              <span className="flex gap-1">
+                <ImpactBadge type="cost" level={requirements.includeTAC ? 'medium' : 'low'} />
+              </span>
+            </Label>
+            <Select
+              value={requirements.includeTAC ? 'yes' : 'no'}
+              onValueChange={(val) => updateRequirement('includeTAC', val === 'yes')}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="no">None - No remote monitoring</SelectItem>
+                <SelectItem value="yes">Yes (e.g., SEL-2414) - Remote monitoring & SCADA integration</SelectItem>
+              </SelectContent>
+            </Select>
+            <HelpText>
+              A <strong>Transformer Automation Controller</strong> like the SEL-2414 provides real-time monitoring,
+              SCADA integration, condition-based alerts, and remote diagnostics. Recommended for critical
+              infrastructure, unmanned substations, and assets requiring predictive maintenance.
             </HelpText>
           </div>
 

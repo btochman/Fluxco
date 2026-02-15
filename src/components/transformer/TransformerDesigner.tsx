@@ -34,6 +34,10 @@ const defaultRequirements: DesignRequirements = {
   conductorType: CONDUCTOR_TYPES.find(c => c.id === 'copper')!,
   coolingClass: COOLING_CLASSES.find(c => c.id === 'onan')!,
   vectorGroup: VECTOR_GROUPS.find(v => v.id === 'dyn11')!,
+  tapChangerType: 'noLoad',
+  oilType: 'mineral',
+  oilPreservation: 'conservator',
+  includeTAC: false,
 };
 
 export function TransformerDesigner() {

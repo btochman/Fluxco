@@ -92,6 +92,14 @@ export interface DesignRequirements {
   ambientTemperature?: number;
   /** Project location zipcode */
   zipcode?: string;
+  /** Tap changer type */
+  tapChangerType?: 'noLoad' | 'onLoad';
+  /** Oil type */
+  oilType?: 'mineral' | 'naturalEster' | 'syntheticEster' | 'silicon';
+  /** Oil preservation system */
+  oilPreservation?: 'conservator' | 'sealedTank' | 'nitrogen';
+  /** Include Transformer Automation Controller (e.g., SEL-2414) */
+  includeTAC?: boolean;
 }
 
 /**
