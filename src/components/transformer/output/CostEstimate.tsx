@@ -1,6 +1,6 @@
 "use client";
 import { useMemo } from 'react';
-import { DollarSign, TrendingUp, Zap, Info, ArrowUpDown } from 'lucide-react';
+import { DollarSign, TrendingUp, Zap, ArrowUpDown } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { TransformerDesign, DesignRequirements } from '@/engine/types/transformer.types';
 import {
@@ -425,18 +425,6 @@ export function CostEstimate({ design, requirements }: CostEstimateProps) {
             </CardContent>
           </Card>
 
-          {/* CAPEX vs OPEX Callout */}
-          <Card className="border-dashed">
-            <CardContent className="pt-4 pb-4">
-              <div className="flex items-start gap-2">
-                <Info className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
-                <div className="text-xs text-muted-foreground space-y-1.5">
-                  <p><span className="font-medium text-foreground">CAPEX</span> &mdash; Tap changer, oil type, conductor material, TAC, and oil preservation affect your upfront purchase price.</p>
-                  <p><span className="font-medium text-foreground">OPEX</span> &mdash; Core steel grade drives no-load losses (24/7). Conductor type drives load losses. These determine your ongoing electricity cost for the life of the unit.</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
         </div>
       </div>
 
