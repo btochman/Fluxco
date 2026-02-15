@@ -2,21 +2,21 @@ import type { Metadata } from "next";
 import { TransformerDesigner } from '@/components/transformer/TransformerDesigner';
 
 export const metadata: Metadata = {
-  title: "Transformer Designer Tool | Spec & Size Your Transformer | FluxCo",
+  title: "Spec Builder | Build & Bid Your Transformer Specs | FluxCo",
   description:
-    "Use FluxCo's interactive transformer designer to spec and size the right transformer for your project. Select voltage, kVA rating, cooling class, and more.",
+    "Use FluxCo's Spec Builder to define your transformer requirements and send them to the market for competitive bids. Select voltage, kVA rating, cooling class, and more.",
   keywords: [
-    "transformer sizing tool",
-    "transformer specification builder",
-    "transformer designer",
+    "transformer spec builder",
+    "transformer specification tool",
+    "transformer RFP builder",
     "what size transformer do I need",
     "transformer kVA calculator",
     "transformer spec sheet",
   ],
   openGraph: {
-    title: "Transformer Designer Tool | FluxCo",
+    title: "Spec Builder | FluxCo",
     description:
-      "Spec and size the right transformer for your project with FluxCo's interactive designer.",
+      "Build your transformer specs and send them to the market for competitive bids with FluxCo's Spec Builder.",
     type: "website",
   },
 };

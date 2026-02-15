@@ -88,7 +88,7 @@ export function TransformerDesigner() {
     // Title page
     pdf.setFontSize(24);
     pdf.setFont('helvetica', 'bold');
-    pdf.text('Fluxco Design Report', pageWidth / 2, 40, { align: 'center' });
+    pdf.text('Fluxco Spec Builder Report', pageWidth / 2, 40, { align: 'center' });
 
     pdf.setFontSize(14);
     pdf.setFont('helvetica', 'normal');
@@ -382,7 +382,7 @@ export function TransformerDesigner() {
             </div>
             <div>
               <h1 className="text-2xl font-bold">Fluxco</h1>
-              <p className="text-sm text-muted-foreground">Transformer Design Tool</p>
+              <p className="text-sm text-muted-foreground">Spec Builder</p>
             </div>
           </Link>
         </div>
@@ -583,7 +583,7 @@ export function TransformerDesigner() {
       <footer className="border-t mt-auto">
         <div className="container mx-auto px-4 py-4 flex flex-col items-center gap-1">
           <p className="text-sm text-muted-foreground text-center">
-            Fluxco transformer design tool. Always verify results with a qualified electrical engineer.
+            Fluxco Spec Builder. Always verify results with a qualified electrical engineer.
           </p>
           <a href="tel:+15125376282" className="text-sm text-muted-foreground hover:text-primary transition-colors">
             (512) 537-6282

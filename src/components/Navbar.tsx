@@ -202,11 +202,11 @@ const Navbar = () => {
               </Link>
             </Button>
 
-            {/* Transformer Designer Button - DO NOT CHANGE THIS TEXT */}
+            {/* Spec Builder Button */}
             <Button asChild variant="hero" className="h-12 px-3">
               <Link href="/design" className="flex flex-col items-center text-xs leading-tight">
-                <span>Transformer</span>
-                <span>Designer</span>
+                <span>Spec</span>
+                <span>Builder</span>
               </Link>
             </Button>
           </div>
@@ -336,7 +336,7 @@ const Navbar = () => {
 
               <Button asChild variant="hero" size="lg">
                 <Link href="/design" onClick={() => setIsOpen(false)}>
-                  Transformer Designer
+                  Spec Builder
                 </Link>
               </Button>
             </div>
