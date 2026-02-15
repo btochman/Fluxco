@@ -17,6 +17,9 @@ interface SupplierProfile {
   country: string;
   certifications: string[];
   specialties: string[];
+  website: string | null;
+  kva_range_min: number | null;
+  kva_range_max: number | null;
   is_verified: boolean;
   notify_new_listings: boolean;
   created_at: string;

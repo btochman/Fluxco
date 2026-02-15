@@ -19,9 +19,9 @@ interface SupplierProfile {
   state: string | null;
   country: string;
   certifications: string[];
-  website?: string | null;
-  kva_range_min?: number | null;
-  kva_range_max?: number | null;
+  website: string | null;
+  kva_range_min: number | null;
+  kva_range_max: number | null;
 }
 
 interface ProfileFormProps {
@@ -50,9 +50,9 @@ export function ProfileForm({ supplier, onSaved }: ProfileFormProps) {
     city: supplier.city || "",
     state: supplier.state || "",
     country: supplier.country || "USA",
-    website: (supplier as any).website || "",
-    kva_range_min: (supplier as any).kva_range_min || "",
-    kva_range_max: (supplier as any).kva_range_max || "",
+    website: supplier.website || "",
+    kva_range_min: supplier.kva_range_min || "",
+    kva_range_max: supplier.kva_range_max || "",
     certifications: supplier.certifications || [],
   });
   const [saving, setSaving] = useState(false);
