@@ -1,5 +1,5 @@
 "use client";
-import { Calculator, HelpCircle, Clock, Zap, DollarSign, Info } from 'lucide-react';
+import { Calculator, Clock, Zap, DollarSign, Info } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -78,20 +78,6 @@ export function DesignRequirementsForm({
 
   return (
     <div className="space-y-6">
-      {/* Quick Guide for Procurement */}
-      <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-        <div className="flex items-start gap-3">
-          <HelpCircle className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
-          <div className="text-sm">
-            <p className="font-medium text-blue-800 dark:text-blue-200">Quick Guide for Procurement</p>
-            <p className="text-blue-700 dark:text-blue-300 mt-1">
-              The fields below define your transformer specifications. Required fields are the <strong>power rating</strong> and <strong>voltages</strong>
-              (from your electrical system requirements). Other choices affect <strong>cost</strong>, <strong>delivery time</strong>, and <strong>energy efficiency</strong>.
-              Look for the impact badges to understand trade-offs.
-            </p>
-          </div>
-        </div>
-      </div>
 
       {/* SECTION 1: Basic Electrical Requirements */}
       <div className="space-y-4">
