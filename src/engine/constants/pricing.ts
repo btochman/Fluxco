@@ -209,21 +209,23 @@ export const OVERHEAD_FACTORS = {
 };
 
 // ============================================================================
-// REGIONAL MULTIPLIERS
+// MANUFACTURING REGION ESTIMATES
 // ============================================================================
 
 /**
- * Regional cost adjustment factors
+ * Manufacturing region cost multipliers, lead time estimates, and FEOC status.
+ * Base pricing (multiplier 1.0) reflects US manufacturing costs.
  */
-export const REGIONAL_MULTIPLIERS: Record<string, number> = {
-  'us-midwest': 1.00,
-  'us-northeast': 1.15,
-  'us-west': 1.12,
-  'us-south': 0.95,
-  'canada': 1.08,
-  'mexico': 0.85,
-  'europe': 1.25,
-  'asia': 0.75,
+export const MANUFACTURING_REGIONS: Record<string, {
+  label: string;
+  multiplier: number;
+  leadTimeWeeks: [number, number];
+  feocCompliant: boolean;
+}> = {
+  usa: { label: 'USA', multiplier: 1.0, leadTimeWeeks: [26, 52], feocCompliant: true },
+  northAmerica: { label: 'North America', multiplier: 0.92, leadTimeWeeks: [20, 40], feocCompliant: true },
+  global: { label: 'Global (excl. China)', multiplier: 0.80, leadTimeWeeks: [16, 36], feocCompliant: true },
+  china: { label: 'China', multiplier: 0.65, leadTimeWeeks: [12, 24], feocCompliant: false },
 };
 
 // ============================================================================

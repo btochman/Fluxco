@@ -9,7 +9,8 @@ import {
   formatCurrency,
   type CostEstimationOptions,
 } from '@/engine/core/costEstimation';
-import { OIL_PRICES, CONDUCTOR_PRICES, getTapChangerCost } from '@/engine/constants/pricing';
+import { OIL_PRICES, CONDUCTOR_PRICES, getTapChangerCost, MANUFACTURING_REGIONS } from '@/engine/constants/pricing';
+import { Clock, AlertTriangle } from 'lucide-react';
 
 const TAC_COST = 8000;
 
@@ -45,9 +46,14 @@ export function CostEstimate({ design, requirements }: CostEstimateProps) {
     });
   }, [design, requirements]);
 
-  // --- CAPEX ---
+  // --- Manufacturing region ---
+  const regionKey = requirements.manufacturingRegion || 'usa';
+  const region = MANUFACTURING_REGIONS[regionKey] || MANUFACTURING_REGIONS.usa;
+
+  // --- CAPEX (adjusted for manufacturing region) ---
   const tacCost = requirements.includeTAC ? TAC_COST : 0;
-  const totalCapex = costBreakdown.totalCost + tacCost;
+  const baseCost = costBreakdown.totalCost + tacCost;
+  const totalCapex = Math.round(baseCost * region.multiplier);
   const capexPerKVA = Math.round(totalCapex / requirements.ratedPower);
 
   // --- Design choice impact calculations ---
@@ -88,16 +94,17 @@ export function CostEstimate({ design, requirements }: CostEstimateProps) {
   // TAC comparison
   const tacDelta = requirements.includeTAC ? -TAC_COST : TAC_COST;
 
-  // Material bar chart data
+  // Material bar chart data (adjusted for manufacturing region)
+  const m = region.multiplier;
   const materialCategories = [
-    { name: 'Core Steel', value: costBreakdown.coreSteel, color: 'bg-blue-500' },
-    { name: 'Conductors', value: costBreakdown.conductors, color: 'bg-orange-500' },
-    { name: 'Oil', value: costBreakdown.oil, color: 'bg-yellow-500' },
-    { name: 'Tank & Structure', value: costBreakdown.tank, color: 'bg-gray-500' },
-    { name: 'Bushings', value: costBreakdown.bushings, color: 'bg-purple-500' },
-    { name: 'Cooling', value: costBreakdown.cooling, color: 'bg-cyan-500' },
-    { name: 'Tap Changer', value: costBreakdown.tapChanger, color: 'bg-green-500' },
-    { name: 'Other', value: costBreakdown.insulation + costBreakdown.accessories + tacCost, color: 'bg-pink-500' },
+    { name: 'Core Steel', value: Math.round(costBreakdown.coreSteel * m), color: 'bg-blue-500' },
+    { name: 'Conductors', value: Math.round(costBreakdown.conductors * m), color: 'bg-orange-500' },
+    { name: 'Oil', value: Math.round(costBreakdown.oil * m), color: 'bg-yellow-500' },
+    { name: 'Tank & Structure', value: Math.round(costBreakdown.tank * m), color: 'bg-gray-500' },
+    { name: 'Bushings', value: Math.round(costBreakdown.bushings * m), color: 'bg-purple-500' },
+    { name: 'Cooling', value: Math.round(costBreakdown.cooling * m), color: 'bg-cyan-500' },
+    { name: 'Tap Changer', value: Math.round(costBreakdown.tapChanger * m), color: 'bg-green-500' },
+    { name: 'Other', value: Math.round((costBreakdown.insulation + costBreakdown.accessories + tacCost) * m), color: 'bg-pink-500' },
   ];
   const maxMaterialValue = Math.max(...materialCategories.map(c => c.value));
 
@@ -122,54 +129,59 @@ export function CostEstimate({ design, requirements }: CostEstimateProps) {
 
   return (
     <div className="space-y-6">
-      {/* Top Summary: CAPEX + 25-Year Total */}
-      <div className="grid gap-4 md:grid-cols-2">
+      {/* Top Summary: CAPEX + Lead Time + 25-Year Total */}
+      <div className="grid gap-4 md:grid-cols-3">
         <Card className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 border-green-200 dark:border-green-800">
           <CardContent className="pt-5 pb-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <DollarSign className="h-5 w-5 text-green-600" />
-                  <span className="text-sm font-medium text-green-700 dark:text-green-300">Total CAPEX</span>
-                  <span className="text-xs px-2 py-0.5 rounded-full bg-green-200 dark:bg-green-800 text-green-800 dark:text-green-200">
-                    Capital Cost
-                  </span>
-                </div>
-                <p className="text-3xl font-bold text-green-800 dark:text-green-200">
-                  {formatCurrency(totalCapex)}
-                </p>
-              </div>
-              <div className="text-right">
-                <p className="text-lg font-semibold text-green-700 dark:text-green-300">
-                  ${capexPerKVA}/kVA
-                </p>
-                <p className="text-xs text-green-600 dark:text-green-400">
-                  {formatCurrency(costBreakdown.totalMaterials)} materials
-                </p>
-              </div>
+            <div className="flex items-center gap-2 mb-1">
+              <DollarSign className="h-5 w-5 text-green-600" />
+              <span className="text-sm font-medium text-green-700 dark:text-green-300">Est. CAPEX</span>
+              <span className="text-xs px-2 py-0.5 rounded-full bg-green-200 dark:bg-green-800 text-green-800 dark:text-green-200">
+                {region.label}
+              </span>
             </div>
+            <p className="text-3xl font-bold text-green-800 dark:text-green-200">
+              {formatCurrency(totalCapex)}
+            </p>
+            <p className="text-xs text-green-600 dark:text-green-400 mt-0.5">
+              ~${capexPerKVA}/kVA
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 border-orange-200 dark:border-orange-800">
+          <CardContent className="pt-5 pb-4">
+            <div className="flex items-center gap-2 mb-1">
+              <Clock className="h-5 w-5 text-orange-600" />
+              <span className="text-sm font-medium text-orange-700 dark:text-orange-300">Est. Lead Time</span>
+            </div>
+            <p className="text-3xl font-bold text-orange-800 dark:text-orange-200">
+              {region.leadTimeWeeks[0]}&ndash;{region.leadTimeWeeks[1]} wks
+            </p>
+            <p className="text-xs text-orange-600 dark:text-orange-400 mt-0.5">
+              {region.label} manufacturing
+            </p>
+            {!region.feocCompliant && (
+              <div className="flex items-center gap-1 mt-1.5 text-xs text-red-600">
+                <AlertTriangle className="h-3 w-3" />
+                <span>Not FEOC compliant</span>
+              </div>
+            )}
           </CardContent>
         </Card>
 
         <Card className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 border-blue-200 dark:border-blue-800">
           <CardContent className="pt-5 pb-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <TrendingUp className="h-5 w-5 text-blue-600" />
-                  <span className="text-sm font-medium text-blue-700 dark:text-blue-300">25-Year Total Cost of Ownership</span>
-                </div>
-                <p className="text-3xl font-bold text-blue-800 dark:text-blue-200">
-                  {formatCurrency(lifecycleCost.totalLifecycleCost + tacCost)}
-                </p>
-              </div>
-              <div className="text-right">
-                <p className="text-sm text-blue-700 dark:text-blue-300">CAPEX + OPEX</p>
-                <p className="text-xs text-blue-600 dark:text-blue-400">
-                  {formatCurrency(lifecycleCost.annualLossCost)}/yr in losses
-                </p>
-              </div>
+            <div className="flex items-center gap-2 mb-1">
+              <TrendingUp className="h-5 w-5 text-blue-600" />
+              <span className="text-sm font-medium text-blue-700 dark:text-blue-300">Est. 25-Year TCO</span>
             </div>
+            <p className="text-3xl font-bold text-blue-800 dark:text-blue-200">
+              {formatCurrency(totalCapex + lifecycleCost.annualLossCost * 25)}
+            </p>
+            <p className="text-xs text-blue-600 dark:text-blue-400 mt-0.5">
+              CAPEX + {formatCurrency(lifecycleCost.annualLossCost)}/yr losses
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -208,18 +220,18 @@ export function CostEstimate({ design, requirements }: CostEstimateProps) {
                 <div className="pt-2 mt-2 border-t">
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Labor (assembly, testing, engineering)</span>
-                    <span className="font-medium">{formatCurrency(costBreakdown.totalLabor)}</span>
+                    <span className="font-medium">{formatCurrency(Math.round(costBreakdown.totalLabor * m))}</span>
                   </div>
                   <div className="flex justify-between text-sm mt-1">
                     <span className="text-muted-foreground">Overhead, QC, shipping & warranty</span>
                     <span className="font-medium">
-                      {formatCurrency(
-                        costBreakdown.facilityOverhead +
+                      {formatCurrency(Math.round(
+                        (costBreakdown.facilityOverhead +
                         costBreakdown.qualityControl +
                         costBreakdown.shipping +
                         costBreakdown.warrantyReserve +
-                        costBreakdown.profitMargin
-                      )}
+                        costBreakdown.profitMargin) * m
+                      ))}
                     </span>
                   </div>
                 </div>
@@ -430,8 +442,8 @@ export function CostEstimate({ design, requirements }: CostEstimateProps) {
 
       {/* Disclaimer */}
       <div className="text-xs text-muted-foreground text-center p-3 bg-muted/30 rounded-lg">
-        Budgetary estimates for planning purposes only. Actual costs vary based on
-        supplier pricing, quantity, specifications, and market conditions. Contact manufacturers for firm quotations.
+        All pricing and lead times are estimates based on {region.label} manufacturing and current market conditions.
+        Actual costs vary by supplier, quantity, and specifications. Contact manufacturers for firm quotations.
       </div>
     </div>
   );
