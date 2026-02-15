@@ -38,6 +38,7 @@ const defaultRequirements: DesignRequirements = {
   oilType: 'mineral',
   oilPreservation: 'conservator',
   includeTAC: false,
+  manufacturingRegion: 'usa',
 };
 
 export function TransformerDesigner() {

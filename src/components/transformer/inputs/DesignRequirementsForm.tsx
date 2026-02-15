@@ -11,6 +11,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import type { DesignRequirements } from '@/engine/types/transformer.types';
+import { AlertTriangle } from 'lucide-react';
 import { CONDUCTOR_TYPES, COOLING_CLASSES, VECTOR_GROUPS, calculatePowerRatings } from '@/engine/constants/materials';
 
 interface DesignRequirementsFormProps {
@@ -327,16 +328,14 @@ export function DesignRequirementsForm({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="onan">ONAN - Self-cooled only (single rating)</SelectItem>
-                <SelectItem value="onan-onaf">ONAN/ONAF - With fans (dual rating, +33% capacity)</SelectItem>
-                <SelectItem value="onan-onaf-ofaf">ONAN/ONAF/OFAF - Fans + pumps (triple rating, +67%)</SelectItem>
+                <SelectItem value="onan">ONAN - {requirements.ratedPower} kVA (self-cooled only)</SelectItem>
+                <SelectItem value="onan-onaf">ONAN/ONAF - {requirements.ratedPower}/{Math.round(requirements.ratedPower * 1.33)} kVA (with fans)</SelectItem>
+                <SelectItem value="onan-onaf-ofaf">ONAN/ONAF/OFAF - {requirements.ratedPower}/{Math.round(requirements.ratedPower * 1.33)}/{Math.round(requirements.ratedPower * 1.67)} kVA (fans + pumps)</SelectItem>
               </SelectContent>
             </Select>
             <HelpText>
-              Transformers can have multiple power ratings based on cooling stages.
-              <strong>ONAN</strong> = base self-cooled rating.
-              <strong>ONAF</strong> = fans add ~33% capacity.
-              <strong>OFAF</strong> = forced oil + fans add ~67%. Example: a 1500 kVA base becomes 1500/2000/2500 kVA.
+              Cooling stages add power capacity. <strong>ONAN</strong> = base self-cooled rating.
+              <strong>ONAF</strong> adds fans for +33%. <strong>OFAF</strong> adds forced oil circulation for +67%.
             </HelpText>
           </div>
 
@@ -472,6 +471,56 @@ export function DesignRequirementsForm({
               A <strong>Transformer Automation Controller</strong> like the SEL-2414 provides real-time monitoring,
               SCADA integration, condition-based alerts, and remote diagnostics. Recommended for critical
               infrastructure, unmanned substations, and assets requiring predictive maintenance.
+            </HelpText>
+          </div>
+
+          {/* Manufacturing Region */}
+          <div className="space-y-2 md:col-span-2">
+            <Label className="flex items-center justify-between">
+              <span>Manufacturing Region</span>
+              <span className="flex gap-1">
+                <ImpactBadge type="cost" level={
+                  requirements.manufacturingRegion === 'usa' ? 'high'
+                    : requirements.manufacturingRegion === 'china' ? 'low'
+                    : 'medium'
+                } />
+                <ImpactBadge type="leadTime" level={
+                  requirements.manufacturingRegion === 'usa' ? 'high'
+                    : requirements.manufacturingRegion === 'china' ? 'low'
+                    : 'medium'
+                } />
+              </span>
+            </Label>
+            <Select
+              value={requirements.manufacturingRegion || 'usa'}
+              onValueChange={(val) => updateRequirement('manufacturingRegion', val as DesignRequirements['manufacturingRegion'])}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="usa">USA Only — Premium pricing, 26-52 week lead time</SelectItem>
+                <SelectItem value="northAmerica">North America (USA/Canada/Mexico) — Competitive pricing, 20-40 weeks</SelectItem>
+                <SelectItem value="global">Global (excl. China) — Lower pricing, 16-36 weeks</SelectItem>
+                <SelectItem value="china">China — Lowest pricing, 12-24 weeks</SelectItem>
+              </SelectContent>
+            </Select>
+            {requirements.manufacturingRegion === 'china' && (
+              <div className="flex items-start gap-2 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                <AlertTriangle className="w-4 h-4 text-red-600 mt-0.5 flex-shrink-0" />
+                <p className="text-xs text-red-700 dark:text-red-300">
+                  <strong>FEOC Warning:</strong> Transformers manufactured in China do not meet
+                  Foreign Entity of Concern (FEOC) compliance requirements. Federal and many state
+                  projects require FEOC-compliant equipment. Consider USA or North America manufacturing
+                  if your project has government funding or critical infrastructure requirements.
+                </p>
+              </div>
+            )}
+            <HelpText>
+              <strong>USA</strong> = highest cost but shortest supply chain, fully FEOC compliant.
+              <strong> North America</strong> = competitive pricing, FEOC compliant.
+              <strong> Global (excl. China)</strong> = broader supplier pool, FEOC compliant.
+              <strong> China</strong> = lowest cost but does NOT meet FEOC requirements for federal/state projects.
             </HelpText>
           </div>
 
