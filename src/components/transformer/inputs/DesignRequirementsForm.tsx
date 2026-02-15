@@ -476,7 +476,7 @@ export function DesignRequirementsForm({
           </div>
 
           {/* Manufacturing Region */}
-          <div className="space-y-2">
+          <div className="space-y-2 md:col-span-2">
             <Label className="flex items-center justify-between">
               <span>Manufacturing Region</span>
               <span className="flex gap-1">
@@ -512,7 +512,7 @@ export function DesignRequirementsForm({
           </div>
 
           {/* FEOC Compliance */}
-          <div className="space-y-2">
+          <div className="space-y-2 md:col-span-2">
             <Label>FEOC Compliance</Label>
             <div
               className={`flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
@@ -533,7 +533,7 @@ export function DesignRequirementsForm({
                   Require FEOC Compliance
                 </p>
                 <p className="text-xs text-muted-foreground mt-0.5">
-                  Required for federal, state, and critical infrastructure projects.
+                  Required for IRA Section 45X tax credits, federal/state projects, and critical infrastructure.
                 </p>
               </div>
             </div>
@@ -547,9 +547,9 @@ export function DesignRequirementsForm({
               </div>
             )}
             <HelpText>
-              Foreign Entity of Concern (FEOC) rules prohibit equipment from certain countries in
-              federally funded or critical infrastructure projects. China-manufactured transformers
-              do not qualify.
+              The IRA Section 45X Advanced Manufacturing Production Credit requires FEOC compliance
+              for tax credit eligibility. China-manufactured transformers do not qualify for 45X credits
+              or federally funded projects.
             </HelpText>
           </div>
 

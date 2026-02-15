@@ -445,6 +445,46 @@ export function CostEstimate({ design, requirements }: CostEstimateProps) {
         </div>
       </div>
 
+      {/* FluxCo Leasing */}
+      <Card className="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 border-indigo-200 dark:border-indigo-800">
+        <CardContent className="pt-5 pb-5">
+          <div className="flex items-start gap-4">
+            <div className="flex-shrink-0 w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-900/40 flex items-center justify-center">
+              <DollarSign className="h-5 w-5 text-indigo-600" />
+            </div>
+            <div>
+              <h3 className="text-sm font-semibold text-indigo-900 dark:text-indigo-200">
+                FluxCo Transformer Leasing
+              </h3>
+              <p className="text-sm text-indigo-800 dark:text-indigo-300 mt-1">
+                Don&apos;t want to buy? FluxCo offers transformer leasing programs that spread the capital
+                cost over time, improving cash flow and project economics.
+              </p>
+              {!requirements.requireFEOC && !region.feocCompliant && (
+                <p className="text-sm text-indigo-800 dark:text-indigo-300 mt-2">
+                  <strong>Tax credit flexibility:</strong> Leasing through FluxCo can help navigate
+                  IRA 45X tax credit constraints for non-FEOC equipment. Because FluxCo owns the asset,
+                  leasing structures may allow projects to benefit from lower-cost global manufacturing
+                  while the tax credit eligibility flows through the lessor.
+                </p>
+              )}
+              {requirements.requireFEOC && region.feocCompliant && (
+                <p className="text-sm text-indigo-800 dark:text-indigo-300 mt-2">
+                  <strong>45X eligible:</strong> Your current configuration is FEOC compliant and may
+                  qualify for IRA Section 45X Advanced Manufacturing Production Credits.
+                </p>
+              )}
+              <a
+                href="/get-quote"
+                className="inline-flex items-center gap-1 mt-3 text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:underline"
+              >
+                Contact FluxCo for leasing options &rarr;
+              </a>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Disclaimer */}
       <div className="text-xs text-muted-foreground text-center p-3 bg-muted/30 rounded-lg">
         All pricing and lead times are estimates based on {region.label} manufacturing and current market conditions.
