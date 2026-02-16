@@ -216,14 +216,14 @@ export default function DeckPage() {
             <div className="source-row">
               <p className="source-citation" style={{ margin: 0, border: "none", padding: 0 }}>Sources: Wood Mackenzie, EIA, Grid Strategies, S&amp;P Global, NREL</p>
               <div className="quotes-row">
-                <div className="vance-quote">
+                <a href="https://x.com/oguzerkan/status/2016480187790065829" target="_blank" rel="noopener noreferrer" className="vance-quote">
                   <div className="vance-label">Elon Musk</div>
                   <div className="vance-text">&ldquo;The voltage transformer shortage is the main bottleneck for scaling AI right now.&rdquo;</div>
-                </div>
-                <div className="vance-quote">
+                </a>
+                <a href="https://www.google.com/search?q=JD+Vance+strategic+transformer+reserve" target="_blank" rel="noopener noreferrer" className="vance-quote">
                   <div className="vance-label">VP JD Vance</div>
                   <div className="vance-text">&ldquo;We need to invest in a strategic transformer reserve for the United States.&rdquo;</div>
-                </div>
+                </a>
               </div>
             </div>
           </div>
@@ -787,6 +787,13 @@ const deckStyles = `
     background: rgba(196,30,58,0.04);
     border-radius: 4px;
     flex: 1; max-width: 360px;
+    text-decoration: none;
+    transition: background 0.2s, border-color 0.2s;
+    cursor: pointer;
+  }
+  .vance-quote:hover {
+    background: rgba(196,30,58,0.1);
+    border-color: rgba(196,30,58,0.5);
   }
   .vance-label {
     font-family: 'Inter', sans-serif; font-size: 11px;
