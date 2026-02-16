@@ -133,14 +133,9 @@ export default function DeckPage() {
                   </div>
                 </div>
 
-                <div className="chart-legend-inline" style={{ marginTop: 16 }}>
-                  <div className="legend-item"><div className="legend-color" style={{ background: "var(--flux-blue)" }} />New Demand (GW)</div>
-                  <div className="legend-item"><div className="legend-color" style={{ background: "#7a8494", border: "1px solid #9aa3b0" }} />Existing / Replacement (GW)</div>
-                  <div className="legend-item"><div className="legend-color legend-line" style={{ background: "var(--flux-red)" }} />Market Value ($B)</div>
-                </div>
               </div>
 
-              {/* Chart — green → red */}
+              <div className="chart-with-legend">
               <div className="chart-container">
                 <svg viewBox="0 0 600 400" preserveAspectRatio="xMidYMid meet" className="w-full h-full">
                   <line x1="60" y1="350" x2="540" y2="350" stroke="#333" strokeWidth="2" />
@@ -210,6 +205,12 @@ export default function DeckPage() {
                     );
                   })()}
                 </svg>
+              </div>
+              <div className="chart-legend-below">
+                <div className="legend-item"><div className="legend-color" style={{ background: "var(--flux-blue)" }} />New Demand (GW)</div>
+                <div className="legend-item"><div className="legend-color" style={{ background: "#7a8494", border: "1px solid #9aa3b0" }} />Existing / Replacement (GW)</div>
+                <div className="legend-item"><div className="legend-color legend-line" style={{ background: "var(--flux-red)" }} />Market Value ($B)</div>
+              </div>
               </div>
             </div>
 
@@ -851,7 +852,17 @@ const deckStyles = `
     padding: 20px; aspect-ratio: 3 / 2;
     display: flex; align-items: center; justify-content: center;
   }
-  .chart-legend-inline { display: flex; flex-direction: column; gap: 6px; }
+  .chart-with-legend { display: flex; flex-direction: column; }
+  .chart-legend-below {
+    display: flex; justify-content: center; gap: 24px;
+    padding: 10px 0 0; border-top: 1px solid #333;
+    margin-top: -1px;
+    background: #151515;
+    border: 1px solid #333; border-top: 1px solid #292929;
+    border-radius: 0 0 4px 4px;
+    padding: 10px 20px;
+  }
+  .chart-container { border-radius: 4px 4px 0 0; }
   .legend-item {
     font-family: 'Inter', sans-serif; font-size: 11px; color: #888;
     text-transform: uppercase; font-weight: 600;
