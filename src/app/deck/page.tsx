@@ -220,9 +220,13 @@ export default function DeckPage() {
                   <div className="vance-label">Elon Musk</div>
                   <div className="vance-text">&ldquo;The voltage transformer shortage is the main bottleneck for scaling AI right now.&rdquo;</div>
                 </a>
-                <a href="https://www.google.com/search?q=JD+Vance+strategic+transformer+reserve" target="_blank" rel="noopener noreferrer" className="vance-quote">
-                  <div className="vance-label">VP JD Vance</div>
-                  <div className="vance-text">&ldquo;We need to invest in a strategic transformer reserve for the United States.&rdquo;</div>
+                <a href="https://x.com/MarioNawfal/status/1852185875611791550" target="_blank" rel="noopener noreferrer" className="vance-quote vance-with-img">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src="https://pbs.twimg.com/ext_tw_video_thumb/1852181052753612800/pu/img/z4CG1GiIUOZcziC6.jpg" alt="JD Vance on Joe Rogan" className="vance-thumb" />
+                  <div>
+                    <div className="vance-label">VP JD Vance <span style={{ opacity: 0.5, fontWeight: 400 }}>on Joe Rogan</span></div>
+                    <div className="vance-text">&ldquo;We should have a backup power transformer for every major system in the United States.&rdquo;</div>
+                  </div>
                 </a>
               </div>
             </div>
@@ -794,6 +798,14 @@ const deckStyles = `
   .vance-quote:hover {
     background: rgba(196,30,58,0.1);
     border-color: rgba(196,30,58,0.5);
+  }
+  .vance-with-img {
+    flex-direction: row; align-items: center; gap: 14px;
+  }
+  .vance-thumb {
+    width: 56px; height: 56px; border-radius: 4px;
+    object-fit: cover; flex-shrink: 0;
+    border: 1px solid #333;
   }
   .vance-label {
     font-family: 'Inter', sans-serif; font-size: 11px;
