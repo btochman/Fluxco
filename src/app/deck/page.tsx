@@ -215,9 +215,15 @@ export default function DeckPage() {
 
             <div className="source-row">
               <p className="source-citation" style={{ margin: 0, border: "none", padding: 0 }}>Sources: Wood Mackenzie, EIA, Grid Strategies, S&amp;P Global, NREL</p>
-              <div className="vance-quote">
-                <div className="vance-label">VP JD Vance</div>
-                <div className="vance-text">&ldquo;We need to invest in a strategic transformer reserve for the United States.&rdquo;</div>
+              <div className="quotes-row">
+                <div className="vance-quote">
+                  <div className="vance-label">Elon Musk</div>
+                  <div className="vance-text">&ldquo;The voltage transformer shortage is the main bottleneck for scaling AI right now.&rdquo;</div>
+                </div>
+                <div className="vance-quote">
+                  <div className="vance-label">VP JD Vance</div>
+                  <div className="vance-text">&ldquo;We need to invest in a strategic transformer reserve for the United States.&rdquo;</div>
+                </div>
               </div>
             </div>
           </div>
@@ -770,6 +776,9 @@ const deckStyles = `
     margin-top: 15px; border-top: 1px solid #222; padding-top: 12px; width: 100%;
   }
   .source-row .source-citation { margin: 0; border: none; padding: 0; }
+  .quotes-row {
+    display: flex; gap: 16px;
+  }
   .vance-quote {
     display: flex; flex-direction: column; gap: 4px;
     padding: 12px 20px;
@@ -777,7 +786,7 @@ const deckStyles = `
     border-left: 3px solid var(--flux-red);
     background: rgba(196,30,58,0.04);
     border-radius: 4px;
-    max-width: 420px;
+    flex: 1; max-width: 360px;
   }
   .vance-label {
     font-family: 'Inter', sans-serif; font-size: 11px;
