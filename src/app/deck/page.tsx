@@ -135,7 +135,7 @@ export default function DeckPage() {
 
                 <div className="chart-legend-inline" style={{ marginTop: 16 }}>
                   <div className="legend-item"><div className="legend-color" style={{ background: "var(--flux-blue)" }} />New Demand (GW)</div>
-                  <div className="legend-item"><div className="legend-color" style={{ background: "#444" }} />Replacement (GW)</div>
+                  <div className="legend-item"><div className="legend-color" style={{ background: "#7a8494", border: "1px solid #9aa3b0" }} />Existing / Replacement (GW)</div>
                   <div className="legend-item"><div className="legend-color legend-line" style={{ background: "var(--flux-red)" }} />Market Value ($B)</div>
                 </div>
               </div>
@@ -158,7 +158,7 @@ export default function DeckPage() {
                   ))}
                   <text x="580" y="200" fill="var(--flux-red)" fontFamily="Inter" fontSize="12" textAnchor="middle" transform="rotate(90 580,200)">MARKET VALUE ($)</text>
 
-                  {/* Bars */}
+                  {/* Bars — bottom = existing/replacement (visible gray), top = new demand (blue) */}
                   {[
                     { x: 80, rh: 24, ry: 326, nh: 2, ny: 324, label: "2005", lf: "#666" },
                     { x: 145, rh: 22, ry: 324, nh: 4, ny: 320, label: "2010", lf: "#666" },
@@ -169,7 +169,7 @@ export default function DeckPage() {
                     { x: 470, rh: 48, ry: 270, nh: 228, ny: 42, label: "2035", lf: "#fff" },
                   ].map((b) => (
                     <g key={b.label} transform={`translate(${b.x},0)`}>
-                      <rect x="0" y={b.ry} width="30" height={b.rh} fill="#444" />
+                      <rect x="0" y={b.ry} width="30" height={b.rh} fill="#7a8494" stroke="#9aa3b0" strokeWidth="0.5" />
                       <rect x="0" y={b.ny} width="30" height={b.nh} fill="var(--flux-blue)" />
                       <text x="15" y="370" fill={b.lf} fontFamily="JetBrains Mono, monospace" fontSize="10" textAnchor="middle">{b.label}</text>
                     </g>
@@ -190,7 +190,10 @@ export default function DeckPage() {
 
             <div className="source-row">
               <p className="source-citation" style={{ margin: 0, border: "none", padding: 0 }}>Sources: Wood Mackenzie, EIA, Grid Strategies, S&amp;P Global, NREL</p>
-              <span className="vance-link">VP JD Vance: &ldquo;Invest in strategic transformer reserve.&rdquo;</span>
+              <div className="vance-quote">
+                <div className="vance-label">VP JD Vance</div>
+                <div className="vance-text">&ldquo;We need to invest in a strategic transformer reserve for the United States.&rdquo;</div>
+              </div>
             </div>
           </div>
         </section>
@@ -742,11 +745,23 @@ const deckStyles = `
     margin-top: 15px; border-top: 1px solid #222; padding-top: 12px; width: 100%;
   }
   .source-row .source-citation { margin: 0; border: none; padding: 0; }
-  .vance-link {
-    font-family: 'Inter', sans-serif; font-size: 11px; color: var(--flux-blue);
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 8px 14px; border: 1px solid #333;
-    background: rgba(45,140,255,0.05); border-radius: 4px; white-space: nowrap;
+  .vance-quote {
+    display: flex; flex-direction: column; gap: 4px;
+    padding: 12px 20px;
+    border: 1px solid rgba(196,30,58,0.3);
+    border-left: 3px solid var(--flux-red);
+    background: rgba(196,30,58,0.04);
+    border-radius: 4px;
+    max-width: 420px;
+  }
+  .vance-label {
+    font-family: 'Inter', sans-serif; font-size: 11px;
+    color: var(--flux-red); text-transform: uppercase;
+    letter-spacing: 1.5px; font-weight: 700;
+  }
+  .vance-text {
+    font-family: 'Inter', sans-serif; font-size: 15px;
+    color: #ddd; font-style: italic; line-height: 1.4;
   }
 
   /* ---- LAYOUTS ---- */
