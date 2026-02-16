@@ -158,32 +158,57 @@ export default function DeckPage() {
                   ))}
                   <text x="580" y="200" fill="var(--flux-red)" fontFamily="Inter" fontSize="12" textAnchor="middle" transform="rotate(90 580,200)">MARKET VALUE ($)</text>
 
-                  {/* Bars — bottom = existing/replacement (visible gray), top = new demand (blue) */}
+                  {/* Bars — gray (existing/replacement) anchored to x-axis, blue (new demand) stacked on top */}
+                  {/* Scale: y=350 is 0 GW, y=50 is 250 GW → 1.2 px per GW */}
                   {[
-                    { x: 80, rh: 24, ry: 326, nh: 2, ny: 324, label: "2005", lf: "#666" },
-                    { x: 145, rh: 22, ry: 324, nh: 4, ny: 320, label: "2010", lf: "#666" },
-                    { x: 210, rh: 25, ry: 321, nh: 4, ny: 317, label: "2015", lf: "#666" },
-                    { x: 275, rh: 27, ry: 317, nh: 6, ny: 311, label: "2020", lf: "#fff" },
-                    { x: 340, rh: 36, ry: 295, nh: 30, ny: 265, label: "2025", lf: "#fff" },
-                    { x: 405, rh: 42, ry: 280, nh: 132, ny: 148, label: "2030", lf: "#fff" },
-                    { x: 470, rh: 48, ry: 270, nh: 228, ny: 42, label: "2035", lf: "#fff" },
-                  ].map((b) => (
-                    <g key={b.label} transform={`translate(${b.x},0)`}>
-                      <rect x="0" y={b.ry} width="30" height={b.rh} fill="#7a8494" stroke="#9aa3b0" strokeWidth="0.5" />
-                      <rect x="0" y={b.ny} width="30" height={b.nh} fill="var(--flux-blue)" />
-                      <text x="15" y="370" fill={b.lf} fontFamily="JetBrains Mono, monospace" fontSize="10" textAnchor="middle">{b.label}</text>
-                    </g>
-                  ))}
+                    { x: 80,  repl: 20, newD: 2,   label: "2005", lf: "#666" },
+                    { x: 145, repl: 18, newD: 3,   label: "2010", lf: "#666" },
+                    { x: 210, repl: 21, newD: 4,   label: "2015", lf: "#666" },
+                    { x: 275, repl: 23, newD: 5,   label: "2020", lf: "#fff" },
+                    { x: 340, repl: 30, newD: 25,  label: "2025", lf: "#fff" },
+                    { x: 405, repl: 35, newD: 110, label: "2030", lf: "#fff" },
+                    { x: 470, repl: 40, newD: 190, label: "2035", lf: "#fff" },
+                  ].map((b) => {
+                    const pxPerGW = 300 / 250; // 1.2 px per GW
+                    const replH = b.repl * pxPerGW;
+                    const newH = b.newD * pxPerGW;
+                    const replY = 350 - replH;       // gray anchored to baseline
+                    const newY = replY - newH;        // blue stacked on top
+                    return (
+                      <g key={b.label} transform={`translate(${b.x},0)`}>
+                        <rect x="0" y={replY} width="30" height={replH} fill="#7a8494" stroke="#9aa3b0" strokeWidth="0.5" />
+                        <rect x="0" y={newY} width="30" height={newH} fill="var(--flux-blue)" />
+                        <text x="15" y="370" fill={b.lf} fontFamily="JetBrains Mono, monospace" fontSize="10" textAnchor="middle">{b.label}</text>
+                      </g>
+                    );
+                  })}
 
-                  {/* Trend line — RED */}
-                  <polyline
-                    points="95,341 160,338 225,335 290,330 355,275 420,190 485,75"
-                    fill="none" stroke="var(--flux-red)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"
-                    filter="drop-shadow(0 0 4px rgba(200, 30, 30, 0.5))"
-                  />
-                  {[[95,341],[160,338],[225,335],[290,330],[355,275],[420,190],[485,75]].map(([cx,cy],i) => (
-                    <circle key={i} cx={cx} cy={cy} r={i > 3 ? 4 : 3} fill="#000" stroke="var(--flux-red)" strokeWidth="2" />
-                  ))}
+                  {/* Trend line — RED (market value on right axis) */}
+                  {/* Right axis: y=355 = $0, y=55 = $80B → 3.75 px per $1B */}
+                  {(() => {
+                    const pxPerB = 300 / 80; // 3.75 px per $B
+                    const pts: [number, number][] = [
+                      [95,  5],    // 2005: ~$5B
+                      [160, 7],    // 2010: ~$7B
+                      [225, 8],    // 2015: ~$8B
+                      [290, 12],   // 2020: ~$12B
+                      [355, 22],   // 2025: ~$22B
+                      [420, 45],   // 2030: ~$45B
+                      [485, 75],   // 2035: ~$75B
+                    ].map(([cx, valB]) => [cx, 355 - valB * pxPerB] as [number, number]);
+                    return (
+                      <>
+                        <polyline
+                          points={pts.map(([x,y]) => `${x},${y}`).join(" ")}
+                          fill="none" stroke="var(--flux-red)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"
+                          filter="drop-shadow(0 0 4px rgba(200, 30, 30, 0.5))"
+                        />
+                        {pts.map(([cx,cy], i) => (
+                          <circle key={i} cx={cx} cy={cy} r={i > 3 ? 4 : 3} fill="#000" stroke="var(--flux-red)" strokeWidth="2" />
+                        ))}
+                      </>
+                    );
+                  })()}
                 </svg>
               </div>
             </div>
