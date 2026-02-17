@@ -151,7 +151,7 @@ export default function DeckPage() {
                   {["$0", "$20B", "$40B", "$60B", "$80B"].map((v, i) => (
                     <text key={v} x="550" y={355 - i * 75} fill="var(--flux-red)" fontFamily="Inter" fontSize="10" textAnchor="start">{v}</text>
                   ))}
-                  <text x="580" y="200" fill="var(--flux-red)" fontFamily="Inter" fontSize="12" textAnchor="middle" transform="rotate(90 580,200)">MARKET VALUE ($)</text>
+                  <text x="580" y="200" fill="var(--flux-red)" fontFamily="Inter" fontSize="11" textAnchor="middle" transform="rotate(90 580,200)">US TRANSFORMER MARKET VALUE ($)</text>
 
                   {/* Bars — gray (existing/replacement) anchored to x-axis, blue (new demand) stacked on top */}
                   {/* Scale: y=350 is 0 GW, y=50 is 250 GW → 1.2 px per GW */}
@@ -160,7 +160,7 @@ export default function DeckPage() {
                     { x: 145, repl: 18, newD: 3,   label: "2010", lf: "#666" },
                     { x: 210, repl: 21, newD: 4,   label: "2015", lf: "#666" },
                     { x: 275, repl: 23, newD: 5,   label: "2020", lf: "#fff" },
-                    { x: 340, repl: 30, newD: 25,  label: "2025", lf: "#fff" },
+                    { x: 340, repl: 25, newD: 10,  label: "2025", lf: "#fff" },
                     { x: 405, repl: 35, newD: 110, label: "2030", lf: "#fff" },
                     { x: 470, repl: 40, newD: 190, label: "2035", lf: "#fff" },
                   ].map((b) => {
@@ -443,10 +443,6 @@ export default function DeckPage() {
               </div>
             </div>
             <div className="slide6-bottom-row">
-              <div className="process-callout-inline">
-                <Factory className="w-6 h-6 text-[var(--flux-blue)]" />
-                <span>&ldquo;The product is great. The <em>process</em> makes it greater.&rdquo;</span>
-              </div>
               <div className="stat-row-inline">
                 {[
                   { value: "-60%", label: "Production Time" },
@@ -481,7 +477,7 @@ export default function DeckPage() {
               manufacturing everywhere else.
             </p>
             <p className="deck-p">
-              <strong>FluxCo starts from zero.</strong> No legacy tooling.
+              <strong>FluxCo starts unencumbered.</strong> No legacy tooling.
               We ask: &ldquo;What is the best way to <em>process</em> this
               product using today&apos;s automation?&rdquo; The result is a
               company that builds <strong>any custom spec</strong> with the
