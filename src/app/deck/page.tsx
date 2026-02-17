@@ -85,8 +85,9 @@ export default function DeckPage() {
               <span style={{ color: "var(--flux-blue)" }}>American Power.</span>
             </h1>
             <p className="subtitle">
-              Transformers are good. We&apos;re going to make them great
-              &mdash; starting with the process.
+              The US electrical grid is undergoing its largest expansion of all
+              time, and transformers are its backbone. We&apos;re building the
+              company to supply it.
             </p>
           </div>
         </section>
