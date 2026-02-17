@@ -664,24 +664,35 @@ const deckStyles = `
     --flux-dark: #0f0f0f;
   }
 
-  body {
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html, body {
     background: #080808 !important;
-    overflow: hidden !important;
+    overflow-x: hidden !important;
+    max-width: 100vw;
+  }
+
+  body {
+    overflow-y: hidden !important;
   }
 
   .deck-scroll-container {
     position: fixed;
     inset: 0;
     overflow-y: scroll;
+    overflow-x: hidden;
     scroll-snap-type: y mandatory;
     -webkit-overflow-scrolling: touch;
     z-index: 1;
     overscroll-behavior: contain;
+    max-width: 100vw;
   }
 
   .deck-section {
     min-height: 100vh;
+    min-height: 100dvh;
     width: 100%;
+    max-width: 100vw;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -866,14 +877,23 @@ const deckStyles = `
 
   /* ---- MOBILE ---- */
   @media (max-width: 768px) {
-    /* Disable scroll snap on mobile — let content flow naturally */
+    /* Kill fixed positioning — normal scrolling page on mobile */
+    body { overflow-y: auto !important; }
     .deck-scroll-container {
-      scroll-snap-type: none;
+      position: relative !important;
+      inset: auto !important;
+      overflow-y: visible !important;
+      scroll-snap-type: none !important;
+      max-width: 100vw;
+      width: 100%;
     }
     .deck-section {
       min-height: auto;
-      padding: 50px 0;
+      padding: 40px 0;
       scroll-snap-align: none;
+      width: 100%;
+      max-width: 100vw;
+      overflow-x: hidden;
     }
     /* First and last slides keep full height */
     .deck-section.title-section,
@@ -883,7 +903,7 @@ const deckStyles = `
       padding: 0;
     }
 
-    .content-area { padding: 24px 18px; }
+    .content-area { padding: 24px 16px; width: 100%; max-width: 100vw; }
     .title-overlay { padding: 30px 20px; }
 
     /* Typography scale down */
@@ -896,10 +916,9 @@ const deckStyles = `
     .flux-logo-large { font-size: 32px; gap: 10px; margin-bottom: 20px; }
     .flux-logo-large svg { width: 36px !important; height: 36px !important; }
 
-    /* Nav controls smaller */
-    .deck-controls { bottom: 12px; right: 12px; padding: 6px; gap: 6px; }
-    .control-btn { width: 34px; height: 34px; }
-    .slide-counter { font-size: 12px; padding: 0 6px; }
+    /* Hide desktop nav controls on mobile — it's a normal scroll page */
+    .deck-controls { display: none; }
+    .scroll-hint { display: none; }
 
     /* Two-col stacks */
     .two-col { grid-template-columns: 1fr !important; gap: 20px; }
@@ -913,7 +932,8 @@ const deckStyles = `
     .vance-thumb { width: 44px; height: 44px; }
 
     /* Chart */
-    .chart-container { padding: 10px; }
+    .chart-with-legend { max-width: 100%; overflow: hidden; }
+    .chart-container { padding: 10px; max-width: 100%; }
     .chart-legend-below { flex-wrap: wrap; gap: 10px 16px; padding: 8px 12px; }
     .legend-item { font-size: 9px; }
 
@@ -940,6 +960,11 @@ const deckStyles = `
     .mp-flow svg.flex-shrink-0 { transform: rotate(90deg); }
     .mp-step { min-width: 0; width: 100%; padding: 14px; }
     .mp-secret { padding: 14px; }
+
+    /* All visuals constrain width */
+    .crisis-visual, .opportunity-visual, .marketplace-visual, .vision-visual {
+      max-width: 100%; overflow: hidden;
+    }
 
     /* Vision / Tech stack */
     .vision-visual { padding: 20px; }
