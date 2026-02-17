@@ -408,77 +408,57 @@ export default function DeckPage() {
             SLIDE 6 — THE VISION: AMERICAN MANUFACTURING (CENTERPIECE)
         ================================================================ */}
         <section className="deck-section vision-section has-bg" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1619885067109-e1dbec4e7cd0?w=1920&q=80)' }}>
-          <div className="content-area">
+          <div className="content-area slide6-compact">
             <h2 className="slide-title">The Product is Good. We&apos;re Making it Great.</h2>
-            <div className="two-col" style={{ gridTemplateColumns: "1.2fr 1fr" }}>
-              <div className="text-col">
-                <h3 className="section-h3">It Starts With the Process.</h3>
-                <p className="deck-p">
-                  The transformer itself is proven technology &mdash; the physics
-                  haven&apos;t changed in a century. What&apos;s broken is{" "}
-                  <strong>how they&apos;re built</strong>. Traditional manufacturers
-                  treat every unit as a one-off craft project &mdash; hand-cut steel,
-                  hand-stacked cores, hand-wound coils. Our approach:{" "}
-                  <strong>non-deterministic automation</strong> &mdash; robotics guided
-                  by AI vision and adaptive control &mdash; so a custom product flows
-                  through the line like a repetitive one.
-                </p>
-                <p className="deck-p" style={{ color: "var(--flux-blue)", fontWeight: 500 }}>
-                  Perfect the process, and you can build infinite variations of a
-                  great product with the same speed and cost as mass production.
-                </p>
-                <div className="tech-stack">
-                  <div className="tech-item">
-                    <div className="tech-icon"><Cpu className="w-5 h-5" /></div>
-                    <div>
-                      <strong>CNC Laser Cutting</strong>
-                      <span>GEORG-grade precision cutting of grain-oriented electrical steel. Sub-mm tolerances on every lamination &mdash; no manual die changes between specs.</span>
-                    </div>
-                  </div>
-                  <div className="tech-item">
-                    <div className="tech-icon"><Bot className="w-5 h-5" /></div>
-                    <div>
-                      <strong>Vision-Guided Core Stacking</strong>
-                      <span>Robotic arms with real-time machine vision adapt to any core geometry. Stack thousands of razor-sharp laminations with sub-mm precision &mdash; no reprogramming between designs.</span>
-                    </div>
-                  </div>
-                  <div className="tech-item">
-                    <div className="tech-icon"><Wrench className="w-5 h-5" /></div>
-                    <div>
-                      <strong>Adaptive CNC Winding</strong>
-                      <span>Computer-controlled winding handles any coil spec &mdash; copper or aluminum, round or rectangular &mdash; without retooling. Recipe-driven, not jig-driven.</span>
-                    </div>
-                  </div>
-                  <div className="tech-item">
-                    <div className="tech-icon"><Eye className="w-5 h-5" /></div>
-                    <div>
-                      <strong>AI Quality at Line Speed</strong>
-                      <span>Machine vision inspects every lamination and winding turn. Defects caught in milliseconds, not at final test. Automated partial-discharge and impedance testing on every unit.</span>
-                    </div>
-                  </div>
-                </div>
+            <p className="deck-p" style={{ maxWidth: 800, marginBottom: 8 }}>
+              The transformer is proven technology. What&apos;s broken is{" "}
+              <strong>how they&apos;re built</strong> &mdash; hand-cut steel,
+              hand-stacked cores, hand-wound coils. We use{" "}
+              <strong>non-deterministic automation</strong> so a custom product
+              flows through the line like a repetitive one.{" "}
+              <span style={{ color: "var(--flux-blue)", fontWeight: 500 }}>
+                Perfect the process, build infinite variations at mass-production cost.
+              </span>
+            </p>
+            <div className="tech-grid-4">
+              <div className="tech-card-compact">
+                <Cpu className="w-5 h-5 text-[var(--flux-blue)]" />
+                <strong>CNC Laser Cutting</strong>
+                <span>Precision electrical steel cutting. Sub-mm tolerances, no die changes between specs.</span>
               </div>
-              <div className="vision-visual">
-                <div className="process-callout">
-                  <Factory className="w-8 h-8 text-[var(--flux-blue)]" />
-                  <div className="process-callout-text">
-                    &ldquo;The product is great. The <em>process</em> makes it greater.&rdquo;
+              <div className="tech-card-compact">
+                <Bot className="w-5 h-5 text-[var(--flux-blue)]" />
+                <strong>Vision-Guided Stacking</strong>
+                <span>Robotic arms adapt to any core geometry. Thousands of laminations, sub-mm precision.</span>
+              </div>
+              <div className="tech-card-compact">
+                <Wrench className="w-5 h-5 text-[var(--flux-blue)]" />
+                <strong>Adaptive CNC Winding</strong>
+                <span>Any coil spec without retooling. Recipe-driven, not jig-driven.</span>
+              </div>
+              <div className="tech-card-compact">
+                <Eye className="w-5 h-5 text-[var(--flux-blue)]" />
+                <strong>AI Quality at Line Speed</strong>
+                <span>Machine vision on every part. Automated PD and impedance testing on every unit.</span>
+              </div>
+            </div>
+            <div className="slide6-bottom-row">
+              <div className="process-callout-inline">
+                <Factory className="w-6 h-6 text-[var(--flux-blue)]" />
+                <span>&ldquo;The product is great. The <em>process</em> makes it greater.&rdquo;</span>
+              </div>
+              <div className="stat-row-inline">
+                {[
+                  { value: "-60%", label: "Production Time" },
+                  { value: "-40%", label: "Labor Cost" },
+                  { value: "\u221E", label: "Variants" },
+                  { value: "100%", label: "Inspected" },
+                ].map((s) => (
+                  <div key={s.label} className="stat-inline">
+                    <div className="stat-inline-val">{s.value}</div>
+                    <div className="stat-inline-label">{s.label}</div>
                   </div>
-                </div>
-                <div className="vision-stat-grid">
-                  {[
-                    { icon: <Bot className="w-7 h-7" />, value: "-60%", label: "Production Time" },
-                    { icon: <DollarSign className="w-7 h-7" />, value: "-40%", label: "Labor Cost" },
-                    { icon: <TrendingUp className="w-7 h-7" />, value: "\u221E", label: "Product Variants" },
-                    { icon: <Shield className="w-7 h-7" />, value: "100%", label: "Inspected" },
-                  ].map((s) => (
-                    <div key={s.label} className="vision-stat-card">
-                      <div className="vsc-icon">{s.icon}</div>
-                      <div className="vsc-value">{s.value}</div>
-                      <div className="vsc-label">{s.label}</div>
-                    </div>
-                  ))}
-                </div>
+                ))}
               </div>
             </div>
           </div>
@@ -966,18 +946,15 @@ const deckStyles = `
       max-width: 100%; overflow: hidden;
     }
 
-    /* Vision / Tech stack */
-    .vision-visual { padding: 20px; }
-    .tech-item { padding: 10px 12px; gap: 10px; }
-    .tech-item strong { font-size: 13px; }
-    .tech-item span { font-size: 11px; }
-    .tech-icon { width: 28px; height: 28px; }
-    .process-callout { padding: 16px; gap: 12px; }
-    .process-callout-text { font-size: 18px; }
-    .vision-stat-grid { gap: 10px; }
-    .vision-stat-card { padding: 16px 10px; }
-    .vsc-value { font-size: 26px; }
-    .vsc-label { font-size: 10px; }
+    /* Slide 6 compact */
+    .tech-grid-4 { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .tech-card-compact { padding: 12px; }
+    .tech-card-compact strong { font-size: 12px; }
+    .tech-card-compact span { font-size: 10px; }
+    .slide6-bottom-row { flex-direction: column; gap: 12px; }
+    .process-callout-inline span { font-size: 15px; }
+    .stat-row-inline { width: 100%; }
+    .stat-inline-val { font-size: 22px; }
 
     /* Split / Leapfrog */
     .split-section { flex-direction: column !important; }
@@ -1288,41 +1265,66 @@ const deckStyles = `
     z-index: 1;
   }
 
-  /* ---- TECH STACK (slide 6) ---- */
-  .tech-stack { display: flex; flex-direction: column; gap: 12px; margin-top: 16px; }
-  .tech-item {
-    display: flex; gap: 14px; align-items: flex-start;
-    padding: 14px 16px;
+  /* ---- SLIDE 6 COMPACT LAYOUT ---- */
+  .slide6-compact { padding-top: 40px; padding-bottom: 30px; }
+  .slide6-compact .slide-title { margin-bottom: 12px; }
+
+  .tech-grid-4 {
+    display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 14px;
+    margin: 16px 0;
+  }
+  .tech-card-compact {
+    display: flex; flex-direction: column; gap: 6px;
+    padding: 16px;
     border: 1px solid #222; border-radius: 4px;
     background: rgba(45,140,255,0.03);
   }
-  .tech-icon {
-    color: var(--flux-blue); flex-shrink: 0;
-    width: 32px; height: 32px;
-    display: flex; align-items: center; justify-content: center;
-    border: 1px solid rgba(45,140,255,0.2); border-radius: 4px;
-    background: rgba(45,140,255,0.06);
+  .tech-card-compact svg { flex-shrink: 0; }
+  .tech-card-compact strong {
+    color: #fff; font-family: 'Inter', sans-serif; font-size: 13px;
+    font-weight: 600;
   }
-  .tech-item strong {
-    color: #fff; font-family: 'Inter', sans-serif; font-size: 14px;
-    display: block; font-weight: 600; margin-bottom: 3px;
-  }
-  .tech-item span {
-    color: #888; font-family: 'Inter', sans-serif; font-size: 12px;
+  .tech-card-compact span {
+    color: #888; font-family: 'Inter', sans-serif; font-size: 11px;
     line-height: 1.5;
   }
 
-  /* ---- PROCESS CALLOUT (slide 6) ---- */
-  .process-callout {
-    display: flex; align-items: center; gap: 16px;
-    padding: 24px;
+  .slide6-bottom-row {
+    display: flex; align-items: center; gap: 20px;
+    margin-top: 16px;
+  }
+  .process-callout-inline {
+    display: flex; align-items: center; gap: 12px;
+    padding: 16px 20px;
     border: 1px solid rgba(45,140,255,0.3); border-radius: 4px;
     background: rgba(45,140,255,0.05);
-    margin-bottom: 20px;
+    flex-shrink: 0;
   }
-  .process-callout-text {
-    font-family: 'Oswald', sans-serif; font-size: 22px;
+  .process-callout-inline span {
+    font-family: 'Oswald', sans-serif; font-size: 17px;
     color: #fff; font-weight: 500; font-style: italic;
   }
-  .process-callout-text em { color: var(--flux-blue); font-style: normal; }
+  .process-callout-inline em { color: var(--flux-blue); font-style: normal; }
+
+  .stat-row-inline {
+    display: flex; gap: 14px; flex: 1;
+  }
+  .stat-inline {
+    flex: 1; text-align: center;
+    padding: 12px 8px;
+    border: 1px solid #333; border-radius: 4px;
+    background: rgba(45,140,255,0.03);
+  }
+  .stat-inline-val {
+    font-family: 'Oswald', sans-serif; font-size: 26px; font-weight: 700;
+    color: #fff; line-height: 1;
+  }
+  .stat-inline-label {
+    font-family: 'Inter', sans-serif; font-size: 10px; color: #888;
+    text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px;
+  }
+
+  @media (max-width: 1100px) {
+    .tech-grid-4 { grid-template-columns: 1fr 1fr; }
+  }
 `;
