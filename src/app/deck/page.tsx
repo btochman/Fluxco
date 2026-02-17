@@ -239,10 +239,9 @@ export default function DeckPage() {
         ================================================================ */}
         <section className="deck-section has-bg" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1619033476025-71cc6bd8c3f5?w=1920&q=80)' }}>
           <div className="content-area">
-            <h2 className="slide-title">We Have No Capacity</h2>
+            <h2 className="slide-title">85% of Production. 99% of Capabilities. Offshore.</h2>
             <div className="two-col" style={{ gridTemplateColumns: "1.3fr 1fr" }}>
               <div className="text-col">
-                <h3 className="section-h3">85% of Production. 99% of Capabilities. Offshore.</h3>
                 <p className="deck-p">
                   Over decades, the US outsourced virtually all transformer
                   manufacturing knowledge and capacity to India, China, and
