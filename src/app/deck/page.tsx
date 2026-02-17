@@ -95,7 +95,7 @@ export default function DeckPage() {
         {/* ================================================================
             SLIDE 2 — THE MARKET EXPLOSION (merged old 2 + 4)
         ================================================================ */}
-        <section className="deck-section">
+        <section className="deck-section has-bg" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1753907537890-f20de9e116cc?w=1920&q=80)' }}>
           <div className="content-area">
             <h2 className="slide-title">The Market Explosion</h2>
             <div className="two-col">
@@ -237,7 +237,7 @@ export default function DeckPage() {
         {/* ================================================================
             SLIDE 3 — THE CRISIS: WE OUTSOURCED EVERYTHING
         ================================================================ */}
-        <section className="deck-section">
+        <section className="deck-section has-bg" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1619033476025-71cc6bd8c3f5?w=1920&q=80)' }}>
           <div className="content-area">
             <h2 className="slide-title">We Have No Capacity</h2>
             <div className="two-col" style={{ gridTemplateColumns: "1.3fr 1fr" }}>
@@ -408,38 +408,69 @@ export default function DeckPage() {
         {/* ================================================================
             SLIDE 6 — THE VISION: AMERICAN MANUFACTURING (CENTERPIECE)
         ================================================================ */}
-        <section className="deck-section vision-section">
+        <section className="deck-section vision-section has-bg" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1619885067109-e1dbec4e7cd0?w=1920&q=80)' }}>
           <div className="content-area">
-            <h2 className="slide-title">The Vision: America&apos;s Transformer Gigafactory</h2>
-            <div className="two-col" style={{ gridTemplateColumns: "1.4fr 1fr" }}>
+            <h2 className="slide-title">Process Innovation, Not Product Innovation</h2>
+            <div className="two-col" style={{ gridTemplateColumns: "1.2fr 1fr" }}>
               <div className="text-col">
-                <h3 className="section-h3">Automation-First. Built Like Tesla.</h3>
+                <h3 className="section-h3">Perfect the Process. Build Anything.</h3>
                 <p className="deck-p">
-                  The marketplace gives us perfect market intelligence: what to
-                  build, what it sells for, and where the margin is. Armed with
-                  that data, we&apos;re building the first <strong>fully
-                  automated, amorphous-native transformer factory</strong> in
-                  the United States.
+                  We&apos;re not building a better transformer. We&apos;re building a
+                  better <strong>process</strong>. Traditional manufacturers treat every
+                  custom transformer as a one-off project &mdash; manual engineering,
+                  manual fabrication, manual test. Our approach:{" "}
+                  <strong>non-deterministic automation</strong> &mdash; robotics guided
+                  by AI vision and adaptive control &mdash; so a custom product flows
+                  through the line like a repetitive one.
                 </p>
-                <p className="deck-p">
-                  <strong>Start with the highest-margin products.</strong> Large
-                  power transformers have years of lead time and massive margins.
-                  Then scale to become the largest domestic manufacturer.
+                <p className="deck-p" style={{ color: "var(--flux-blue)", fontWeight: 500 }}>
+                  Perfect the process, and you can build infinite variations of a
+                  product with the same speed and cost as mass production.
                 </p>
-                <ul className="deck-ul">
-                  <li><strong>Robotics-first:</strong> Modern automation replaces manual labor, reducing cost by 40% and production time by 60%.</li>
-                  <li><strong>Amorphous-native:</strong> Built for next-gen steel from day one &mdash; no legacy retooling.</li>
-                  <li><strong>Vertically integrated:</strong> Own the supply chain from raw amorphous steel to finished unit.</li>
-                  <li><strong>Modular platform:</strong> Standardized designs instead of bespoke snowflakes. Scale through repeatability.</li>
-                </ul>
+                <div className="tech-stack">
+                  <div className="tech-item">
+                    <div className="tech-icon"><Cpu className="w-5 h-5" /></div>
+                    <div>
+                      <strong>CNC Laser Cutting</strong>
+                      <span>GEORG-grade precision cutting of grain-oriented electrical steel. Sub-mm tolerances on every lamination &mdash; no manual die changes between specs.</span>
+                    </div>
+                  </div>
+                  <div className="tech-item">
+                    <div className="tech-icon"><Bot className="w-5 h-5" /></div>
+                    <div>
+                      <strong>Vision-Guided Core Stacking</strong>
+                      <span>Robotic arms with real-time machine vision adapt to any core geometry. Stack thousands of razor-sharp laminations with sub-mm precision &mdash; no reprogramming between designs.</span>
+                    </div>
+                  </div>
+                  <div className="tech-item">
+                    <div className="tech-icon"><Wrench className="w-5 h-5" /></div>
+                    <div>
+                      <strong>Adaptive CNC Winding</strong>
+                      <span>Computer-controlled winding handles any coil spec &mdash; copper or aluminum, round or rectangular &mdash; without retooling. Recipe-driven, not jig-driven.</span>
+                    </div>
+                  </div>
+                  <div className="tech-item">
+                    <div className="tech-icon"><Eye className="w-5 h-5" /></div>
+                    <div>
+                      <strong>AI Quality at Line Speed</strong>
+                      <span>Machine vision inspects every lamination and winding turn. Defects caught in milliseconds, not at final test. Automated partial-discharge and impedance testing on every unit.</span>
+                    </div>
+                  </div>
+                </div>
               </div>
               <div className="vision-visual">
+                <div className="process-callout">
+                  <Factory className="w-8 h-8 text-[var(--flux-blue)]" />
+                  <div className="process-callout-text">
+                    &ldquo;The factory <em>is</em> the product.&rdquo;
+                  </div>
+                </div>
                 <div className="vision-stat-grid">
                   {[
                     { icon: <Bot className="w-7 h-7" />, value: "-60%", label: "Production Time" },
                     { icon: <DollarSign className="w-7 h-7" />, value: "-40%", label: "Labor Cost" },
-                    { icon: <TrendingUp className="w-7 h-7" />, value: "1,000+", label: "Units / Year" },
-                    { icon: <Shield className="w-7 h-7" />, value: "100%", label: "FEOC Compliant" },
+                    { icon: <TrendingUp className="w-7 h-7" />, value: "\u221E", label: "Product Variants" },
+                    { icon: <Shield className="w-7 h-7" />, value: "100%", label: "Inspected" },
                   ].map((s) => (
                     <div key={s.label} className="vision-stat-card">
                       <div className="vsc-icon">{s.icon}</div>
@@ -456,36 +487,39 @@ export default function DeckPage() {
         {/* ================================================================
             SLIDE 7 — THE INDUSTRIAL LEAPFROG
         ================================================================ */}
-        <section className="deck-section split-section">
+        <section className="deck-section split-section has-bg" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1647427060118-4911c9821b82?w=1920&q=80)' }}>
           <div className="split-text">
             <h2 className="slide-title">The Industrial Leapfrog</h2>
             <h3 className="section-h3">Why Incumbents Can&apos;t Compete</h3>
             <p className="deck-p">
-              Current US manufacturers invested billions in <strong>overbuilt,
-              non-automated CapEx</strong> that they can&apos;t walk away from.
-              Their product hasn&apos;t fundamentally changed in nearly a
-              century. That means they can&apos;t attract top talent &mdash;
-              not in product design, not in manufacturing, not in supply chain.
+              Incumbent manufacturers invested billions in <strong>manual-labor
+              factories</strong> they can&apos;t walk away from. Their process
+              hasn&apos;t fundamentally changed in decades: hand-cut steel,
+              hand-stacked cores, hand-wound coils. Every unit is a craft
+              project. That means they can&apos;t scale, can&apos;t cut costs,
+              and can&apos;t attract the talent that&apos;s redefining
+              manufacturing everywhere else.
             </p>
             <p className="deck-p">
-              <strong>FluxCo starts from zero.</strong> No legacy baggage. We
-              ask: &ldquo;What is the best way to build this product using the
-              latest technology?&rdquo; &mdash; and build only that. The result is
-              a company that&apos;s faster, cheaper, and{" "}
+              <strong>FluxCo starts from zero.</strong> No legacy tooling.
+              We ask: &ldquo;What is the best way to <em>process</em> this
+              product using today&apos;s automation?&rdquo; The result is a
+              company that builds <strong>any custom spec</strong> with the
+              economics of mass production &mdash; and that&apos;s{" "}
               <strong>magnetically attractive to talent</strong> who want to
-              build the future, not maintain the past.
+              build the future.
             </p>
           </div>
           <div className="split-visual">
             <div className="leapfrog-visual">
               <div className="leap-box legacy">
-                <div className="leap-label">Legacy OEMs</div>
+                <div className="leap-label">Legacy Process</div>
                 <div className="leap-items">
-                  <span>Manual labor workforce</span>
-                  <span>GOES steel only</span>
-                  <span>50+ year-old tooling</span>
-                  <span>Bespoke one-off designs</span>
-                  <span>Can&apos;t attract talent</span>
+                  <span>Manual die cutting &amp; hand stacking</span>
+                  <span>Fixed tooling per design</span>
+                  <span>One-off engineering per order</span>
+                  <span>Human visual inspection</span>
+                  <span>Weeks-long test cycles</span>
                   <span>Billions in sunk CapEx</span>
                 </div>
               </div>
@@ -493,13 +527,13 @@ export default function DeckPage() {
                 <ArrowRight className="w-8 h-8 text-[var(--flux-blue)]" />
               </div>
               <div className="leap-box fluxco">
-                <div className="leap-label">FluxCo</div>
+                <div className="leap-label">FluxCo Process</div>
                 <div className="leap-items">
-                  <span>Robotic winding &amp; assembly</span>
-                  <span>Amorphous steel native</span>
-                  <span>Purpose-built smart factory</span>
-                  <span>Modular platform design</span>
-                  <span>Tesla-caliber talent</span>
+                  <span>CNC laser cut + robotic stacking</span>
+                  <span>Vision-guided adaptive automation</span>
+                  <span>Recipe-driven, infinite variations</span>
+                  <span>AI inspection at line speed</span>
+                  <span>Automated test in hours</span>
                   <span>Zero legacy baggage</span>
                 </div>
               </div>
@@ -562,7 +596,7 @@ export default function DeckPage() {
         {/* ================================================================
             SLIDE 9 — ROADMAP
         ================================================================ */}
-        <section className="deck-section">
+        <section className="deck-section has-bg" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1745448797901-2a4c9d9af1c1?w=1920&q=80)' }}>
           <div className="content-area">
             <h2 className="slide-title">Roadmap to Independence</h2>
             <div className="timeline">
@@ -598,7 +632,7 @@ export default function DeckPage() {
         {/* ================================================================
             SLIDE 10 — CLOSING
         ================================================================ */}
-        <section className="deck-section closing-section">
+        <section className="deck-section closing-section has-bg" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1641618640134-fd5a58f1d225?w=1920&q=80)' }}>
           <div className="closing-content">
             <Zap className="w-16 h-16 text-[var(--flux-blue)] mb-6 opacity-60" />
             <h2 className="closing-headline">Powering the Renaissance</h2>
@@ -1083,4 +1117,63 @@ const deckStyles = `
     font-family: 'Inter', sans-serif; font-size: 16px; color: #666;
     margin-bottom: 5px;
   }
+
+  /* ---- BACKGROUND IMAGE SECTIONS ---- */
+  .has-bg {
+    background-size: cover !important;
+    background-position: center !important;
+  }
+  .has-bg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(10, 10, 10, 0.84);
+    z-index: 0;
+  }
+  .has-bg .content-area,
+  .has-bg .title-overlay,
+  .has-bg .split-text,
+  .has-bg .split-visual,
+  .has-bg .closing-content {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ---- TECH STACK (slide 6) ---- */
+  .tech-stack { display: flex; flex-direction: column; gap: 12px; margin-top: 16px; }
+  .tech-item {
+    display: flex; gap: 14px; align-items: flex-start;
+    padding: 14px 16px;
+    border: 1px solid #222; border-radius: 4px;
+    background: rgba(45,140,255,0.03);
+  }
+  .tech-icon {
+    color: var(--flux-blue); flex-shrink: 0;
+    width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+    border: 1px solid rgba(45,140,255,0.2); border-radius: 4px;
+    background: rgba(45,140,255,0.06);
+  }
+  .tech-item strong {
+    color: #fff; font-family: 'Inter', sans-serif; font-size: 14px;
+    display: block; font-weight: 600; margin-bottom: 3px;
+  }
+  .tech-item span {
+    color: #888; font-family: 'Inter', sans-serif; font-size: 12px;
+    line-height: 1.5;
+  }
+
+  /* ---- PROCESS CALLOUT (slide 6) ---- */
+  .process-callout {
+    display: flex; align-items: center; gap: 16px;
+    padding: 24px;
+    border: 1px solid rgba(45,140,255,0.3); border-radius: 4px;
+    background: rgba(45,140,255,0.05);
+    margin-bottom: 20px;
+  }
+  .process-callout-text {
+    font-family: 'Oswald', sans-serif; font-size: 22px;
+    color: #fff; font-weight: 500; font-style: italic;
+  }
+  .process-callout-text em { color: var(--flux-blue); font-style: normal; }
 `;
