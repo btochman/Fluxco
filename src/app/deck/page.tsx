@@ -85,9 +85,8 @@ export default function DeckPage() {
               <span style={{ color: "var(--flux-blue)" }}>American Power.</span>
             </h1>
             <p className="subtitle">
-              The US electrical grid is undergoing its largest expansion of all
-              time, and transformers are its backbone. We&apos;re building the
-              company to supply it.
+              Transformers are good. We&apos;re going to make them great
+              &mdash; starting with the process.
             </p>
           </div>
         </section>
@@ -410,22 +409,23 @@ export default function DeckPage() {
         ================================================================ */}
         <section className="deck-section vision-section has-bg" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1619885067109-e1dbec4e7cd0?w=1920&q=80)' }}>
           <div className="content-area">
-            <h2 className="slide-title">Process Innovation, Not Product Innovation</h2>
+            <h2 className="slide-title">The Product is Good. We&apos;re Making it Great.</h2>
             <div className="two-col" style={{ gridTemplateColumns: "1.2fr 1fr" }}>
               <div className="text-col">
-                <h3 className="section-h3">Perfect the Process. Build Anything.</h3>
+                <h3 className="section-h3">It Starts With the Process.</h3>
                 <p className="deck-p">
-                  We&apos;re not building a better transformer. We&apos;re building a
-                  better <strong>process</strong>. Traditional manufacturers treat every
-                  custom transformer as a one-off project &mdash; manual engineering,
-                  manual fabrication, manual test. Our approach:{" "}
+                  The transformer itself is proven technology &mdash; the physics
+                  haven&apos;t changed in a century. What&apos;s broken is{" "}
+                  <strong>how they&apos;re built</strong>. Traditional manufacturers
+                  treat every unit as a one-off craft project &mdash; hand-cut steel,
+                  hand-stacked cores, hand-wound coils. Our approach:{" "}
                   <strong>non-deterministic automation</strong> &mdash; robotics guided
                   by AI vision and adaptive control &mdash; so a custom product flows
                   through the line like a repetitive one.
                 </p>
                 <p className="deck-p" style={{ color: "var(--flux-blue)", fontWeight: 500 }}>
                   Perfect the process, and you can build infinite variations of a
-                  product with the same speed and cost as mass production.
+                  great product with the same speed and cost as mass production.
                 </p>
                 <div className="tech-stack">
                   <div className="tech-item">
@@ -462,7 +462,7 @@ export default function DeckPage() {
                 <div className="process-callout">
                   <Factory className="w-8 h-8 text-[var(--flux-blue)]" />
                   <div className="process-callout-text">
-                    &ldquo;The factory <em>is</em> the product.&rdquo;
+                    &ldquo;The product is great. The <em>process</em> makes it greater.&rdquo;
                   </div>
                 </div>
                 <div className="vision-stat-grid">
@@ -492,12 +492,12 @@ export default function DeckPage() {
             <h2 className="slide-title">The Industrial Leapfrog</h2>
             <h3 className="section-h3">Why Incumbents Can&apos;t Compete</h3>
             <p className="deck-p">
-              Incumbent manufacturers invested billions in <strong>manual-labor
+              The transformer is a great product held back by a terrible
+              process. Incumbents invested billions in <strong>manual-labor
               factories</strong> they can&apos;t walk away from. Their process
-              hasn&apos;t fundamentally changed in decades: hand-cut steel,
-              hand-stacked cores, hand-wound coils. Every unit is a craft
-              project. That means they can&apos;t scale, can&apos;t cut costs,
-              and can&apos;t attract the talent that&apos;s redefining
+              hasn&apos;t fundamentally changed in decades. Every unit is a
+              craft project. That means they can&apos;t scale, can&apos;t cut
+              costs, and can&apos;t attract the talent that&apos;s redefining
               manufacturing everywhere else.
             </p>
             <p className="deck-p">
@@ -637,10 +637,10 @@ export default function DeckPage() {
             <Zap className="w-16 h-16 text-[var(--flux-blue)] mb-6 opacity-60" />
             <h2 className="closing-headline">Powering the Renaissance</h2>
             <p className="closing-sub">
-              The grid is the backbone of the American economy. FluxCo is
-              building the next-generation manufacturing company to power the
-              next century &mdash; starting with the smartest marketplace in
-              the industry.
+              Transformers are the backbone of the American grid. The product
+              is proven. We&apos;re making it great &mdash; by building the
+              most advanced manufacturing process the industry has ever seen,
+              starting with the smartest marketplace.
             </p>
             <div className="closing-cta">INVEST IN SOVEREIGNTY</div>
             <div className="closing-contact">
