@@ -625,8 +625,8 @@ export function TransformerDesigner() {
           <p className="text-sm text-muted-foreground text-center">
             Fluxco Spec Builder. Always verify results with a qualified electrical engineer.
           </p>
-          <a href="tel:+15125376282" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-            (512) 537-6282
+          <a href="tel:+15128593335" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+            (512) 859-3335
           </a>
         </div>
       </footer>

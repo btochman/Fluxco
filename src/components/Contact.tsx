@@ -44,8 +44,8 @@ export default function Contact() {
                 </div>
                 <div>
                   <div className="text-gray-400 text-sm">Call us</div>
-                  <a href="tel:+15125376282" className="text-white font-semibold hover:text-[#0ea5e9]">
-                    (512) 537-6282
+                  <a href="tel:+15128593335" className="text-white font-semibold hover:text-[#0ea5e9]">
+                    (512) 859-3335
                   </a>
                 </div>
               </div>
