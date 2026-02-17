@@ -676,6 +676,7 @@ const deckStyles = `
     scroll-snap-type: y mandatory;
     -webkit-overflow-scrolling: touch;
     z-index: 1;
+    overscroll-behavior: contain;
   }
 
   .deck-section {
@@ -858,9 +859,132 @@ const deckStyles = `
     gap: 50px; width: 100%; align-items: center;
   }
   @media (max-width: 900px) {
-    .two-col { grid-template-columns: 1fr; gap: 30px; }
-    .content-area { padding: 40px 24px; }
+    .two-col { grid-template-columns: 1fr !important; gap: 24px; }
+    .content-area { padding: 30px 20px; }
     .title-overlay { padding: 40px 24px; }
+  }
+
+  /* ---- MOBILE ---- */
+  @media (max-width: 768px) {
+    /* Disable scroll snap on mobile — let content flow naturally */
+    .deck-scroll-container {
+      scroll-snap-type: none;
+    }
+    .deck-section {
+      min-height: auto;
+      padding: 50px 0;
+      scroll-snap-align: none;
+    }
+    /* First and last slides keep full height */
+    .deck-section.title-section,
+    .deck-section.closing-section {
+      min-height: 100vh;
+      min-height: 100svh;
+      padding: 0;
+    }
+
+    .content-area { padding: 24px 18px; }
+    .title-overlay { padding: 30px 20px; }
+
+    /* Typography scale down */
+    .slide-title { font-size: 28px; margin-bottom: 20px; padding-left: 16px; }
+    .slide-title::before { width: 4px; }
+    .section-h3 { font-size: 18px; margin-bottom: 10px; }
+    .deck-p { font-size: 14px; line-height: 1.6; margin-bottom: 10px; }
+    .deck-ul li { font-size: 13px; padding-left: 22px; margin-bottom: 8px; }
+    .deck-ul li::before { width: 11px; height: 11px; top: 5px; }
+    .flux-logo-large { font-size: 32px; gap: 10px; margin-bottom: 20px; }
+    .flux-logo-large svg { width: 36px !important; height: 36px !important; }
+
+    /* Nav controls smaller */
+    .deck-controls { bottom: 12px; right: 12px; padding: 6px; gap: 6px; }
+    .control-btn { width: 34px; height: 34px; }
+    .slide-counter { font-size: 12px; padding: 0 6px; }
+
+    /* Two-col stacks */
+    .two-col { grid-template-columns: 1fr !important; gap: 20px; }
+
+    /* Source row + quotes stack */
+    .source-row { flex-direction: column; gap: 12px; align-items: flex-start; }
+    .quotes-row { flex-direction: column; gap: 10px; width: 100%; }
+    .vance-quote { max-width: 100%; padding: 10px 14px; }
+    .vance-text { font-size: 13px; }
+    .vance-label { font-size: 10px; }
+    .vance-thumb { width: 44px; height: 44px; }
+
+    /* Chart */
+    .chart-container { padding: 10px; }
+    .chart-legend-below { flex-wrap: wrap; gap: 10px 16px; padding: 8px 12px; }
+    .legend-item { font-size: 9px; }
+
+    /* Driver cards */
+    .driver-card { padding: 10px 12px; gap: 10px; }
+    .driver-card strong { font-size: 13px; }
+    .driver-stat { font-size: 12px; }
+
+    /* Crisis visual */
+    .crisis-visual { padding: 20px; }
+    .crisis-num { font-size: 52px; }
+    .crisis-pct { font-size: 26px; }
+    .crisis-label { font-size: 11px; }
+    .crisis-stat { padding: 16px 0; }
+
+    /* Opportunity visual */
+    .opportunity-visual { padding: 20px; }
+    .opp-item { padding: 10px 12px; font-size: 13px; }
+    .opp-headline { font-size: 17px; }
+
+    /* Marketplace visual */
+    .marketplace-visual { padding: 20px; gap: 20px; }
+    .mp-flow { flex-direction: column; gap: 10px; }
+    .mp-flow svg.flex-shrink-0 { transform: rotate(90deg); }
+    .mp-step { min-width: 0; width: 100%; padding: 14px; }
+    .mp-secret { padding: 14px; }
+
+    /* Vision / Tech stack */
+    .vision-visual { padding: 20px; }
+    .tech-item { padding: 10px 12px; gap: 10px; }
+    .tech-item strong { font-size: 13px; }
+    .tech-item span { font-size: 11px; }
+    .tech-icon { width: 28px; height: 28px; }
+    .process-callout { padding: 16px; gap: 12px; }
+    .process-callout-text { font-size: 18px; }
+    .vision-stat-grid { gap: 10px; }
+    .vision-stat-card { padding: 16px 10px; }
+    .vsc-value { font-size: 26px; }
+    .vsc-label { font-size: 10px; }
+
+    /* Split / Leapfrog */
+    .split-section { flex-direction: column !important; }
+    .split-text { padding: 30px 20px; border-right: none; border-bottom: 1px solid #222; }
+    .split-visual { padding: 20px; }
+    .leapfrog-visual { flex-direction: column; gap: 16px; }
+    .leap-box { padding: 18px; }
+    .leap-arrow { transform: rotate(90deg); justify-content: center; }
+
+    /* Moats */
+    .moats-grid { grid-template-columns: 1fr; gap: 14px; }
+    .moat-card { padding: 20px; }
+    .moat-card svg { width: 24px !important; height: 24px !important; margin-bottom: 10px; }
+    .moat-card .section-h3 { font-size: 16px; }
+
+    /* Timeline — vertical on mobile */
+    .timeline { flex-direction: column; gap: 30px; padding-top: 20px; margin-top: 20px; }
+    .timeline-line-h { display: none; }
+    .timeline-item { width: 100%; text-align: left; padding-top: 0; padding-left: 30px; border-left: 2px solid #333; }
+    .timeline-dot {
+      top: 4px; left: -9px; transform: none;
+      width: 14px; height: 14px;
+    }
+    .timeline-year { font-size: 32px; margin-bottom: 6px; }
+    .timeline-title { font-size: 14px; }
+    .timeline-desc { font-size: 12px; }
+
+    /* Closing */
+    .closing-content { padding: 40px 24px; }
+    .closing-sub { font-size: 15px; }
+    .closing-cta { font-size: 12px; padding: 12px 28px; letter-spacing: 2px; }
+    .closing-contact p { font-size: 14px; }
   }
 
   /* ---- DRIVER CARDS (slide 2) ---- */
@@ -1017,7 +1141,7 @@ const deckStyles = `
     flex: 1; display: flex; align-items: center; justify-content: center;
     padding: 50px; background: #0a0a0a;
   }
-  @media (max-width: 900px) {
+  @media (max-width: 900px) and (min-width: 769px) {
     .split-section { flex-direction: column !important; }
     .split-text { border-right: none; border-bottom: 1px solid #222; padding: 40px 24px; }
     .split-visual { padding: 24px; }
