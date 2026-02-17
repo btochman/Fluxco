@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 120" width="520" height="120">
+  <rect width="520" height="120" fill="#ffffff"/>
+  <!-- Lightning bolt (Lucide Zap) — filled blue -->
+  <g transform="translate(30, 15) scale(3.75)">
+    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" fill="#2d8cff" stroke="#2d8cff" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <!-- FLUXCO text -->
+  <text x="145" y="80" font-family="'Oswald', 'Arial Black', 'Impact', sans-serif" font-weight="700" font-size="66" fill="#111111" letter-spacing="3">FLUXCO</text>
+</svg>
