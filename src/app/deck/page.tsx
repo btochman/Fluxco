@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import {
   Zap, ArrowRight, ArrowLeft, ChevronDown, Shield, Factory, Cpu, Building2,
   Globe, Clock, DollarSign, CheckCircle, TrendingUp, Search, BarChart3,
@@ -9,7 +9,73 @@ import {
 
 const TOTAL_SECTIONS = 10;
 
-export default function DeckPage() {
+/* ------------------------------------------------------------------ */
+/*  Hook: animate numbers counting up                                  */
+/* ------------------------------------------------------------------ */
+function useCountUp(end: number, duration = 2000, trigger = false) {
+  const [value, setValue] = useState(0);
+  useEffect(() => {
+    if (!trigger) { setValue(0); return; }
+    let start = 0;
+    const step = end / (duration / 16);
+    const timer = setInterval(() => {
+      start += step;
+      if (start >= end) { setValue(end); clearInterval(timer); }
+      else setValue(Math.floor(start));
+    }, 16);
+    return () => clearInterval(timer);
+  }, [trigger, end, duration]);
+  return value;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Hook: intersection observer for scroll-triggered animations        */
+/* ------------------------------------------------------------------ */
+function useInView(threshold = 0.3) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [inView, setInView] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) setInView(true); },
+      { threshold, root: null }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [threshold]);
+  return { ref, inView };
+}
+
+/* ------------------------------------------------------------------ */
+/*  Animated grid background for title slide                           */
+/* ------------------------------------------------------------------ */
+function GridBackground() {
+  return (
+    <div className="grid-bg">
+      <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse">
+            <path d="M 60 0 L 0 0 0 60" fill="none" stroke="rgba(45,140,255,0.06)" strokeWidth="0.5" />
+          </pattern>
+          <radialGradient id="grid-fade" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="white" stopOpacity="1" />
+            <stop offset="100%" stopColor="white" stopOpacity="0" />
+          </radialGradient>
+          <mask id="grid-mask">
+            <rect width="100%" height="100%" fill="url(#grid-fade)" />
+          </mask>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#grid)" mask="url(#grid-mask)" />
+      </svg>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  Main deck component                                                */
+/* ------------------------------------------------------------------ */
+export default function Deck2Page() {
   const [currentSection, setCurrentSection] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -39,52 +105,86 @@ export default function DeckPage() {
     return () => window.removeEventListener("keydown", handleKey);
   }, [currentSection]);
 
-  const goTo = (index: number) => {
+  const goTo = useCallback((index: number) => {
     containerRef.current?.scrollTo({
       top: index * window.innerHeight,
       behavior: "smooth",
     });
-  };
+  }, []);
+
+  /* Slide in-view trackers */
+  const s1 = useInView(0.3);
+  const s2 = useInView(0.2);
+  const s3 = useInView(0.2);
+  const s4 = useInView(0.2);
+  const s5 = useInView(0.2);
+  const s6 = useInView(0.2);
+  const s7 = useInView(0.2);
+  const s8 = useInView(0.2);
+  const s9 = useInView(0.2);
+  const s10 = useInView(0.2);
+
+  /* Animated counters */
+  const c85 = useCountUp(85, 1800, s3.inView);
+  const c48 = useCountUp(48, 1800, s3.inView);
+  const c6 = useCountUp(6, 1200, s3.inView);
+  const c60 = useCountUp(60, 1600, s6.inView);
+  const c40 = useCountUp(40, 1600, s6.inView);
 
   return (
     <>
       <link
-        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Oswald:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap"
         rel="stylesheet"
       />
-      <style>{deckStyles}</style>
+      <style>{deck2Styles}</style>
 
-      {/* Nav Controls */}
-      <div className="deck-controls">
-        <button className="control-btn" onClick={() => goTo(Math.max(currentSection - 1, 0))} aria-label="Previous"><ArrowLeft className="w-4 h-4" /></button>
-        <div className="slide-counter">{currentSection + 1} / {TOTAL_SECTIONS}</div>
-        <button className="control-btn" onClick={() => goTo(Math.min(currentSection + 1, TOTAL_SECTIONS - 1))} aria-label="Next"><ArrowRight className="w-4 h-4" /></button>
+      {/* ---- PROGRESS BAR ---- */}
+      <div className="d2-progress">
+        {Array.from({ length: TOTAL_SECTIONS }).map((_, i) => (
+          <button
+            key={i}
+            className={`d2-progress-dot ${i === currentSection ? "active" : ""} ${i < currentSection ? "past" : ""}`}
+            onClick={() => goTo(i)}
+            aria-label={`Go to slide ${i + 1}`}
+          />
+        ))}
+      </div>
+
+      {/* ---- NAV ---- */}
+      <div className="d2-nav">
+        <button className="d2-nav-btn" onClick={() => goTo(Math.max(currentSection - 1, 0))} aria-label="Previous">
+          <ArrowLeft className="w-4 h-4" />
+        </button>
+        <span className="d2-nav-count">{String(currentSection + 1).padStart(2, "0")} / {TOTAL_SECTIONS}</span>
+        <button className="d2-nav-btn" onClick={() => goTo(Math.min(currentSection + 1, TOTAL_SECTIONS - 1))} aria-label="Next">
+          <ArrowRight className="w-4 h-4" />
+        </button>
       </div>
 
       {currentSection === 0 && (
-        <div className="scroll-hint" onClick={() => goTo(1)}>
-          <ChevronDown className="w-5 h-5 animate-bounce" />
-          <span>Scroll</span>
+        <div className="d2-scroll-hint" onClick={() => goTo(1)}>
+          <ChevronDown className="w-5 h-5" />
         </div>
       )}
 
-      <div ref={containerRef} className="deck-scroll-container">
+      <div ref={containerRef} className="d2-container">
 
-        {/* ================================================================
-            SLIDE 1 — TITLE
-        ================================================================ */}
-        <section className="deck-section title-section">
-          <div className="title-bg" />
-          <div className="title-overlay">
-            <div className="flux-logo-large">
-              <Zap className="w-14 h-14 text-[var(--flux-blue)]" />
+        {/* ========== SLIDE 1 — TITLE ========== */}
+        <section className="d2-slide" ref={s1.ref}>
+          <GridBackground />
+          <div className="d2-glow d2-glow-1" />
+          <div className="d2-glow d2-glow-2" />
+          <div className={`d2-title-content ${s1.inView ? "in" : ""}`}>
+            <div className="d2-logo">
+              <div className="d2-logo-icon"><Zap className="w-8 h-8" /></div>
               <span>FLUXCO</span>
             </div>
-            <h1 className="title-headline">
-              Rebuilding.<br />
-              <span style={{ color: "var(--flux-blue)" }}>American Power.</span>
+            <h1 className="d2-h1">
+              <span className="d2-h1-line d2-h1-1">Rebuilding.</span>
+              <span className="d2-h1-line d2-h1-2">American Power.</span>
             </h1>
-            <p className="subtitle">
+            <p className="d2-subtitle">
               The US electrical grid is undergoing its largest expansion of all
               time, and transformers are its backbone. We&apos;re building the
               company to supply it.
@@ -92,310 +192,238 @@ export default function DeckPage() {
           </div>
         </section>
 
-        {/* ================================================================
-            SLIDE 2 — THE MARKET EXPLOSION (merged old 2 + 4)
-        ================================================================ */}
-        <section className="deck-section has-bg" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1753907537890-f20de9e116cc?w=1920&q=80)' }}>
-          <div className="content-area">
-            <h2 className="slide-title">The Market Explosion</h2>
-            <div className="two-col">
-              <div className="text-col">
-                <h3 className="section-h3">20 Years Flat. Now Vertical.</h3>
-                <p className="deck-p">
-                  For two decades, US electricity demand was{" "}
-                  <strong>stagnant</strong> &mdash; the country simply got more
-                  efficient. Now, three massive forces are converging into the
-                  largest demand shock since rural electrification.
+        {/* ========== SLIDE 2 — MARKET EXPLOSION ========== */}
+        <section className="d2-slide d2-slide-dark" ref={s2.ref}>
+          <div className="d2-bg-img" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1753907537890-f20de9e116cc?w=1920&q=80)' }} />
+          <div className={`d2-content ${s2.inView ? "in" : ""}`}>
+            <div className="d2-slide-label">THE OPPORTUNITY</div>
+            <h2 className="d2-h2">The Market Explosion</h2>
+            <div className="d2-grid-2">
+              <div className="d2-text-col">
+                <p className="d2-p">
+                  For two decades, US electricity demand was <strong>stagnant</strong>. Now, three massive forces are converging into the largest demand shock since rural electrification.
                 </p>
-
-                {/* Demand drivers — exploded out with stats */}
-                <div className="driver-cards">
-                  <div className="driver-card">
-                    <Cpu className="w-6 h-6 text-[var(--flux-blue)]" />
-                    <div>
-                      <strong>AI &amp; Data Centers</strong>
-                      <span className="driver-stat">+450,000 GWh</span>
-                    </div>
-                  </div>
-                  <div className="driver-card">
-                    <Building2 className="w-6 h-6 text-[var(--flux-blue)]" />
-                    <div>
-                      <strong>Industrial Onshoring</strong>
-                      <span className="driver-stat">+1,050,000 GWh</span>
-                    </div>
-                  </div>
-                  <div className="driver-card">
-                    <Zap className="w-5 h-5 text-[var(--flux-blue)]" />
-                    <div>
-                      <strong>EV &amp; Electrification</strong>
-                      <span className="driver-stat">+1,200,000 GWh</span>
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-
-              <div className="chart-with-legend">
-              <div className="chart-container">
-                <svg viewBox="0 0 600 400" preserveAspectRatio="xMidYMid meet" className="w-full h-full">
-                  <line x1="60" y1="350" x2="540" y2="350" stroke="#333" strokeWidth="2" />
-                  <line x1="60" y1="50" x2="540" y2="50" stroke="#333" strokeWidth="1" strokeDasharray="2" />
-
-                  {/* Y Left (GW) */}
-                  {[0, 50, 100, 150, 200, 250].map((v, i) => (
-                    <text key={v} x="50" y={355 - i * 60} fill="#888" fontFamily="Inter" fontSize="10" textAnchor="end">{v}</text>
-                  ))}
-                  <text x="25" y="200" fill="#888" fontFamily="Inter" fontSize="12" textAnchor="middle" transform="rotate(-90 25,200)">CAPACITY (GW)</text>
-
-                  {/* Y Right ($) — red */}
-                  {["$0", "$20B", "$40B", "$60B", "$80B"].map((v, i) => (
-                    <text key={v} x="550" y={355 - i * 75} fill="var(--flux-red)" fontFamily="Inter" fontSize="10" textAnchor="start">{v}</text>
-                  ))}
-                  <text x="580" y="200" fill="var(--flux-red)" fontFamily="Inter" fontSize="11" textAnchor="middle" transform="rotate(90 580,200)">US TRANSFORMER MARKET VALUE ($)</text>
-
-                  {/* Bars — gray (existing/replacement) anchored to x-axis, blue (new demand) stacked on top */}
-                  {/* Scale: y=350 is 0 GW, y=50 is 250 GW → 1.2 px per GW */}
+                <div className="d2-drivers">
                   {[
-                    { x: 80,  repl: 20, newD: 2,   label: "2005", lf: "#666" },
-                    { x: 145, repl: 18, newD: 3,   label: "2010", lf: "#666" },
-                    { x: 210, repl: 21, newD: 4,   label: "2015", lf: "#666" },
-                    { x: 275, repl: 23, newD: 5,   label: "2020", lf: "#fff" },
-                    { x: 340, repl: 25, newD: 10,  label: "2025", lf: "#fff" },
-                    { x: 405, repl: 35, newD: 110, label: "2030", lf: "#fff" },
-                    { x: 470, repl: 40, newD: 190, label: "2035", lf: "#fff" },
-                  ].map((b) => {
-                    const pxPerGW = 300 / 250; // 1.2 px per GW
-                    const replH = b.repl * pxPerGW;
-                    const newH = b.newD * pxPerGW;
-                    const replY = 350 - replH;       // gray anchored to baseline
-                    const newY = replY - newH;        // blue stacked on top
-                    return (
-                      <g key={b.label} transform={`translate(${b.x},0)`}>
-                        <rect x="0" y={replY} width="30" height={replH} fill="#7a8494" stroke="#9aa3b0" strokeWidth="0.5" />
-                        <rect x="0" y={newY} width="30" height={newH} fill="var(--flux-blue)" />
-                        <text x="15" y="370" fill={b.lf} fontFamily="JetBrains Mono, monospace" fontSize="10" textAnchor="middle">{b.label}</text>
-                      </g>
-                    );
-                  })}
+                    { icon: <Cpu className="w-5 h-5" />, name: "AI & Data Centers", stat: "+450,000 GWh" },
+                    { icon: <Building2 className="w-5 h-5" />, name: "Industrial Onshoring", stat: "+1,050,000 GWh" },
+                    { icon: <Zap className="w-5 h-5" />, name: "EV & Electrification", stat: "+1,200,000 GWh" },
+                  ].map((d, i) => (
+                    <div key={d.name} className="d2-driver" style={{ animationDelay: `${0.3 + i * 0.15}s` }}>
+                      <div className="d2-driver-icon">{d.icon}</div>
+                      <div className="d2-driver-info">
+                        <span className="d2-driver-name">{d.name}</span>
+                        <span className="d2-driver-stat">{d.stat}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
 
-                  {/* Trend line — RED (market value on right axis) */}
-                  {/* Right axis: y=355 = $0, y=55 = $80B → 3.75 px per $1B */}
-                  {(() => {
-                    const pxPerB = 300 / 80; // 3.75 px per $B
-                    const pts: [number, number][] = [
-                      [95,  5],    // 2005: ~$5B
-                      [160, 7],    // 2010: ~$7B
-                      [225, 8],    // 2015: ~$8B
-                      [290, 12],   // 2020: ~$12B
-                      [355, 22],   // 2025: ~$22B
-                      [420, 45],   // 2030: ~$45B
-                      [485, 75],   // 2035: ~$75B
-                    ].map(([cx, valB]) => [cx, 355 - valB * pxPerB] as [number, number]);
-                    return (
-                      <>
-                        <polyline
-                          points={pts.map(([x,y]) => `${x},${y}`).join(" ")}
-                          fill="none" stroke="var(--flux-red)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"
-                          filter="drop-shadow(0 0 4px rgba(200, 30, 30, 0.5))"
-                        />
-                        {pts.map(([cx,cy], i) => (
-                          <circle key={i} cx={cx} cy={cy} r={i > 3 ? 4 : 3} fill="#000" stroke="var(--flux-red)" strokeWidth="2" />
-                        ))}
-                      </>
-                    );
-                  })()}
-                </svg>
-              </div>
-              <div className="chart-legend-below">
-                <div className="legend-item"><div className="legend-color" style={{ background: "var(--flux-blue)" }} />New Demand (GW)</div>
-                <div className="legend-item"><div className="legend-color" style={{ background: "#7a8494", border: "1px solid #9aa3b0" }} />Existing / Replacement (GW)</div>
-                <div className="legend-item"><div className="legend-color legend-line" style={{ background: "var(--flux-red)" }} />Market Value ($B)</div>
-              </div>
+              <div className="d2-chart-wrap">
+                <div className="d2-chart">
+                  <svg viewBox="0 0 600 380" preserveAspectRatio="xMidYMid meet" className="w-full h-full">
+                    {/* Grid lines */}
+                    {[0, 1, 2, 3, 4, 5].map((i) => (
+                      <line key={i} x1="70" y1={340 - i * 56} x2="540" y2={340 - i * 56} stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
+                    ))}
+                    {/* Y labels */}
+                    {[0, 50, 100, 150, 200, 250].map((v, i) => (
+                      <text key={v} x="60" y={344 - i * 56} fill="rgba(255,255,255,0.35)" fontFamily="Inter" fontSize="10" textAnchor="end">{v}</text>
+                    ))}
+                    <text x="20" y="200" fill="rgba(255,255,255,0.35)" fontFamily="Inter" fontSize="10" textAnchor="middle" transform="rotate(-90 20,200)">CAPACITY (GW)</text>
+                    {/* Right Y */}
+                    {["$0", "$20B", "$40B", "$60B", "$80B"].map((v, i) => (
+                      <text key={v} x="550" y={344 - i * 70} fill="rgba(196,30,58,0.6)" fontFamily="Inter" fontSize="10" textAnchor="start">{v}</text>
+                    ))}
+                    <text x="585" y="200" fill="rgba(196,30,58,0.5)" fontFamily="Inter" fontSize="10" textAnchor="middle" transform="rotate(90 585,200)">MARKET VALUE ($)</text>
+                    {/* Bars */}
+                    {[
+                      { x: 85,  repl: 20, newD: 2,   label: "2005" },
+                      { x: 150, repl: 18, newD: 3,   label: "2010" },
+                      { x: 215, repl: 21, newD: 4,   label: "2015" },
+                      { x: 280, repl: 23, newD: 5,   label: "2020" },
+                      { x: 345, repl: 25, newD: 10,  label: "2025" },
+                      { x: 410, repl: 35, newD: 110, label: "2030" },
+                      { x: 475, repl: 40, newD: 190, label: "2035" },
+                    ].map((b, i) => {
+                      const pxPerGW = 280 / 250;
+                      const replH = b.repl * pxPerGW;
+                      const newH = b.newD * pxPerGW;
+                      const replY = 340 - replH;
+                      const newY = replY - newH;
+                      return (
+                        <g key={b.label}>
+                          <rect x={b.x} y={replY} width="36" height={replH} rx="2" fill="rgba(255,255,255,0.15)" className={s2.inView ? "d2-bar-anim" : ""} style={{ animationDelay: `${0.5 + i * 0.1}s` }} />
+                          <rect x={b.x} y={newY} width="36" height={newH} rx="2" fill="url(#barGrad)" className={s2.inView ? "d2-bar-anim" : ""} style={{ animationDelay: `${0.6 + i * 0.1}s` }} />
+                          <text x={b.x + 18} y="360" fill="rgba(255,255,255,0.5)" fontFamily="JetBrains Mono, monospace" fontSize="10" textAnchor="middle">{b.label}</text>
+                        </g>
+                      );
+                    })}
+                    {/* Trend line */}
+                    {(() => {
+                      const pxPerB = 280 / 80;
+                      const pts: [number, number][] = [
+                        [103, 5], [168, 7], [233, 8], [298, 12], [363, 22], [428, 45], [493, 75],
+                      ].map(([cx, valB]) => [cx, 340 - valB * pxPerB] as [number, number]);
+                      return (
+                        <>
+                          <polyline points={pts.map(([x, y]) => `${x},${y}`).join(" ")} fill="none" stroke="var(--d2-red)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" strokeDasharray="500" strokeDashoffset={s2.inView ? "0" : "500"} style={{ transition: "stroke-dashoffset 2s ease-out 0.8s" }} />
+                          {pts.map(([cx, cy], i) => (
+                            <circle key={i} cx={cx} cy={cy} r={3} fill="#0a0a0a" stroke="var(--d2-red)" strokeWidth="2" opacity={s2.inView ? 1 : 0} style={{ transition: `opacity 0.3s ease ${1.2 + i * 0.1}s` }} />
+                          ))}
+                        </>
+                      );
+                    })()}
+                    <defs>
+                      <linearGradient id="barGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="var(--d2-blue)" />
+                        <stop offset="100%" stopColor="rgba(45,140,255,0.4)" />
+                      </linearGradient>
+                    </defs>
+                  </svg>
+                </div>
+                <div className="d2-chart-legend">
+                  <div className="d2-legend"><div className="d2-legend-swatch" style={{ background: "var(--d2-blue)" }} />New Demand</div>
+                  <div className="d2-legend"><div className="d2-legend-swatch" style={{ background: "rgba(255,255,255,0.15)" }} />Replacement</div>
+                  <div className="d2-legend"><div className="d2-legend-swatch d2-legend-line" style={{ background: "var(--d2-red)" }} />Market Value</div>
+                </div>
               </div>
             </div>
 
-            <div className="source-row">
-              <p className="source-citation" style={{ margin: 0, border: "none", padding: 0 }}>Sources: Wood Mackenzie, EIA, Grid Strategies, S&amp;P Global, NREL</p>
-              <div className="quotes-row">
-                <a href="https://x.com/oguzerkan/status/2016480187790065829" target="_blank" rel="noopener noreferrer" className="vance-quote">
-                  <div className="vance-label">Elon Musk</div>
-                  <div className="vance-text">&ldquo;The voltage transformer shortage is the main bottleneck for scaling AI right now.&rdquo;</div>
-                </a>
-                <a href="https://x.com/MarioNawfal/status/1852185875611791550" target="_blank" rel="noopener noreferrer" className="vance-quote vance-with-img">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="https://pbs.twimg.com/ext_tw_video_thumb/1852181052753612800/pu/img/z4CG1GiIUOZcziC6.jpg" alt="JD Vance on Joe Rogan" className="vance-thumb" />
-                  <div>
-                    <div className="vance-label">VP JD Vance <span style={{ opacity: 0.5, fontWeight: 400 }}>on Joe Rogan</span></div>
-                    <div className="vance-text">&ldquo;We should have a backup power transformer for every major system in the United States.&rdquo;</div>
-                  </div>
-                </a>
-              </div>
+            <div className="d2-quotes-row">
+              <a href="https://x.com/oguzerkan/status/2016480187790065829" target="_blank" rel="noopener noreferrer" className="d2-quote">
+                <div className="d2-quote-who">Elon Musk</div>
+                <div className="d2-quote-text">&ldquo;The voltage transformer shortage is the main bottleneck for scaling AI right now.&rdquo;</div>
+              </a>
+              <a href="https://x.com/MarioNawfal/status/1852185875611791550" target="_blank" rel="noopener noreferrer" className="d2-quote">
+                <div className="d2-quote-who">VP JD Vance <span style={{ opacity: 0.4 }}>on Joe Rogan</span></div>
+                <div className="d2-quote-text">&ldquo;We should have a backup power transformer for every major system in the United States.&rdquo;</div>
+              </a>
             </div>
+            <p className="d2-source">Sources: Wood Mackenzie, EIA, Grid Strategies, S&amp;P Global, NREL</p>
           </div>
         </section>
 
-        {/* ================================================================
-            SLIDE 3 — THE CRISIS: WE OUTSOURCED EVERYTHING
-        ================================================================ */}
-        <section className="deck-section has-bg" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1619033476025-71cc6bd8c3f5?w=1920&q=80)' }}>
-          <div className="content-area">
-            <h2 className="slide-title">85% of Production. 99% of Capabilities. Offshore.</h2>
-            <div className="two-col" style={{ gridTemplateColumns: "1.3fr 1fr" }}>
-              <div className="text-col">
-                <p className="deck-p">
-                  Over decades, the US outsourced virtually all transformer
-                  manufacturing knowledge and capacity to India, China, and
-                  Southeast Asia. What little &ldquo;domestic&rdquo; supply
-                  remains is largely Mexican assembly operations.
+        {/* ========== SLIDE 3 — THE CRISIS ========== */}
+        <section className="d2-slide d2-slide-dark" ref={s3.ref}>
+          <div className="d2-bg-img" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1619033476025-71cc6bd8c3f5?w=1920&q=80)' }} />
+          <div className={`d2-content ${s3.inView ? "in" : ""}`}>
+            <div className="d2-slide-label">THE CRISIS</div>
+            <h2 className="d2-h2">Everything Is Offshore</h2>
+            <div className="d2-grid-2">
+              <div className="d2-text-col">
+                <p className="d2-p">
+                  Over decades, the US outsourced virtually all transformer manufacturing to India, China, and Southeast Asia. What little &ldquo;domestic&rdquo; supply remains is largely Mexican assembly.
                 </p>
-                <p className="deck-p">
-                  Meanwhile, demand has exploded. Lead times have gone from{" "}
-                  <strong>12 months to 48+ months</strong>. Pricing continues
-                  to climb. Every utility and data center operator in the
-                  country is desperate for supply.
+                <p className="d2-p">
+                  Demand has exploded. Lead times have gone from <strong>12 months to 48+ months</strong>. Every utility and data center operator in the country is desperate for supply.
                 </p>
-                <ul className="deck-ul">
+                <ul className="d2-checklist">
                   <li><strong>Tariffs:</strong> 25%+ on imported units, rising under every administration.</li>
-                  <li><strong>IRA Tax Credits (45X):</strong> Only available for domestically manufactured, FEOC-compliant equipment.</li>
-                  <li><strong>National Security:</strong> Executive orders now classify transformers as critical infrastructure.</li>
+                  <li><strong>IRA 45X Credits:</strong> Only for domestically manufactured, FEOC-compliant equipment.</li>
+                  <li><strong>National Security:</strong> Executive orders classify transformers as critical infrastructure.</li>
                 </ul>
-                <p className="deck-p" style={{ marginTop: 10 }}>
-                  Everyone wants American-made. It barely exists.
-                </p>
+                <p className="d2-p d2-highlight">Everyone wants American-made. It barely exists.</p>
               </div>
-              <div className="crisis-visual">
-                <div className="crisis-stat">
-                  <div className="crisis-num">85<span className="crisis-pct">%</span></div>
-                  <div className="crisis-label">Production Offshore</div>
-                </div>
-                <div className="crisis-divider" />
-                <div className="crisis-stat">
-                  <div className="crisis-num">48<span className="crisis-pct">mo</span></div>
-                  <div className="crisis-label">Average Lead Time</div>
-                </div>
-                <div className="crisis-divider" />
-                <div className="crisis-stat">
-                  <div className="crisis-num">6x</div>
-                  <div className="crisis-label">Price Spread on Same Unit</div>
-                </div>
+              <div className="d2-stats-col">
+                {[
+                  { value: c85, suffix: "%", label: "Production Offshore" },
+                  { value: c48, suffix: "mo", label: "Average Lead Time" },
+                  { value: c6, suffix: "x", label: "Price Spread, Same Unit" },
+                ].map((s, i) => (
+                  <div key={s.label} className="d2-big-stat" style={{ animationDelay: `${0.4 + i * 0.2}s` }}>
+                    <div className="d2-big-stat-num">{s.value}<span className="d2-big-stat-suffix">{s.suffix}</span></div>
+                    <div className="d2-big-stat-label">{s.label}</div>
+                  </div>
+                ))}
               </div>
             </div>
-            <p className="source-citation">Sources: DOE, U.S. Treasury (IRA 30D/45X), ACORE, T&amp;D World</p>
+            <p className="d2-source">Sources: DOE, U.S. Treasury (IRA 30D/45X), ACORE, T&amp;D World</p>
           </div>
         </section>
 
-        {/* ================================================================
-            SLIDE 4 — THE OPPORTUNITY: AN OPAQUE MARKET
-        ================================================================ */}
-        <section className="deck-section">
-          <div className="content-area">
-            <h2 className="slide-title">A $20B+ Opaque Market</h2>
-            <div className="two-col">
-              <div className="text-col">
-                <h3 className="section-h3">A New Buyer, An Impossible Process</h3>
-                <p className="deck-p">
-                  Historically, transformers were bought by utilities. Now,
-                  <strong> commercial and industrial buyers</strong> &mdash;
-                  data centers, manufacturers, developers &mdash; are
-                  circumventing utilities and buying directly. They&apos;re
-                  spending tens of millions on equipment they barely understand.
+        {/* ========== SLIDE 4 — OPAQUE MARKET ========== */}
+        <section className="d2-slide" ref={s4.ref}>
+          <div className="d2-glow d2-glow-3" />
+          <div className={`d2-content ${s4.inView ? "in" : ""}`}>
+            <div className="d2-slide-label">THE PROBLEM</div>
+            <h2 className="d2-h2">A $20B+ Opaque Market</h2>
+            <div className="d2-grid-2">
+              <div className="d2-text-col">
+                <p className="d2-p">
+                  Historically, transformers were bought by utilities. Now, <strong>commercial and industrial buyers</strong> &mdash; data centers, manufacturers, developers &mdash; are buying directly. They&apos;re spending tens of millions on equipment they barely understand.
                 </p>
-                <p className="deck-p">
-                  The market is wildly inefficient: hundreds of OEMs worldwide,
-                  all with terrible websites and a &ldquo;contact us&rdquo;
-                  form. No pricing transparency. No way to compare. A single
-                  procurement person might manage to get 5&ndash;10 bids &mdash;
-                  uneducated bids, because they lack market expertise.
+                <p className="d2-p">
+                  The market is wildly inefficient: hundreds of OEMs worldwide, all with terrible websites and a &ldquo;contact us&rdquo; form. No pricing transparency. No way to compare.
                 </p>
-                <p className="deck-p">
-                  <strong>Real example:</strong> We bid a 20 MVA unit. One
-                  supplier quoted <strong>$200,000</strong>. Another quoted{" "}
-                  <strong>$1.3 million</strong>. Same spec. <strong>6x price spread.</strong>
-                </p>
-                <p className="deck-p" style={{ color: "var(--flux-blue)", fontWeight: 500 }}>
-                  Inefficient markets are where new entrants win.
-                </p>
+                <div className="d2-callout">
+                  <DollarSign className="w-5 h-5" />
+                  <div>
+                    <strong>Real example:</strong> We bid a 20 MVA unit. One supplier quoted <strong>$200K</strong>. Another quoted <strong>$1.3M</strong>. Same spec. <strong>6x price spread.</strong>
+                  </div>
+                </div>
               </div>
-              <div className="opportunity-visual">
-                <div className="opp-icon-row">
-                  <AlertTriangle className="w-10 h-10 text-[var(--flux-red)] opacity-60" />
-                  <span className="opp-headline">The Buyer&apos;s Problem</span>
-                </div>
-                <div className="opp-items">
-                  <div className="opp-item">
-                    <Search className="w-5 h-5" />
-                    <span>100s of OEMs, impossible to find &amp; compare</span>
+              <div className="d2-problem-cards">
+                {[
+                  { icon: <Search className="w-5 h-5" />, text: "100s of OEMs, impossible to find & compare" },
+                  { icon: <DollarSign className="w-5 h-5" />, text: "Zero pricing transparency — 6x spreads" },
+                  { icon: <Users className="w-5 h-5" />, text: "Procurement staff are not transformer experts" },
+                  { icon: <Globe className="w-5 h-5" />, text: "No visibility on origin, compliance, or quality" },
+                ].map((item, i) => (
+                  <div key={i} className="d2-problem-card" style={{ animationDelay: `${0.3 + i * 0.12}s` }}>
+                    <div className="d2-problem-icon">{item.icon}</div>
+                    <span>{item.text}</span>
                   </div>
-                  <div className="opp-item">
-                    <DollarSign className="w-5 h-5" />
-                    <span>Zero pricing transparency &mdash; 6x spreads</span>
-                  </div>
-                  <div className="opp-item">
-                    <Users className="w-5 h-5" />
-                    <span>Procurement staff are not transformer experts</span>
-                  </div>
-                  <div className="opp-item">
-                    <Globe className="w-5 h-5" />
-                    <span>No visibility on origin, compliance, or quality</span>
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
           </div>
         </section>
 
-        {/* ================================================================
-            SLIDE 5 — THE WEDGE: FLUXCO MARKETPLACE
-        ================================================================ */}
-        <section className="deck-section">
-          <div className="content-area">
-            <h2 className="slide-title">Our Wedge: The FluxCo Marketplace</h2>
-            <div className="two-col">
-              <div className="text-col">
-                <h3 className="section-h3">The Chief Transformer Officer</h3>
-                <p className="deck-p">
-                  It will never make sense for a procurement person to become a
-                  transformer expert. It&apos;s one of many things they buy
-                  &mdash; but one of the most expensive.
+        {/* ========== SLIDE 5 — MARKETPLACE WEDGE ========== */}
+        <section className="d2-slide" ref={s5.ref}>
+          <div className="d2-glow d2-glow-4" />
+          <div className={`d2-content ${s5.inView ? "in" : ""}`}>
+            <div className="d2-slide-label">THE WEDGE</div>
+            <h2 className="d2-h2">The FluxCo Marketplace</h2>
+            <div className="d2-grid-2">
+              <div className="d2-text-col">
+                <h3 className="d2-h3">The Chief Transformer Officer</h3>
+                <p className="d2-p">
+                  It will never make sense for a procurement person to become a transformer expert. It&apos;s one of many things they buy &mdash; but one of the most expensive.
                 </p>
-                <p className="deck-p">
-                  <strong>FluxCo becomes their CTO</strong> (Chief Transformer
-                  Officer). Customers give us their spec. Our{" "}
-                  <strong>free proprietary Spec Builder</strong> automates the
-                  design, then we bid it across dozens &mdash; even hundreds
-                  &mdash; of global suppliers.
+                <p className="d2-p">
+                  <strong>FluxCo becomes their CTO</strong> (Chief Transformer Officer). Our <strong>free Spec Builder</strong> automates the design, then we bid it across dozens of global suppliers.
                 </p>
-                <ul className="deck-ul">
-                  <li><strong>Full visibility:</strong> price, lead time, quality, certifications, FEOC compliance &mdash; all side-by-side.</li>
-                  <li><strong>Impossible otherwise:</strong> what takes a buyer weeks of calls, we do in hours.</li>
-                  <li><strong>Revenue model:</strong> transaction fees on every unit sourced through the platform.</li>
+                <ul className="d2-checklist">
+                  <li><strong>Full visibility:</strong> price, lead time, quality, certifications &mdash; side-by-side.</li>
+                  <li><strong>Speed:</strong> What takes buyers weeks of calls, we do in hours.</li>
+                  <li><strong>Revenue:</strong> Transaction fees on every unit sourced through the platform.</li>
                 </ul>
               </div>
-              <div className="marketplace-visual">
-                <div className="mp-flow">
-                  <div className="mp-step">
-                    <div className="mp-step-icon"><Target className="w-6 h-6" /></div>
-                    <div className="mp-step-label">Customer Spec</div>
-                  </div>
-                  <ArrowRight className="w-5 h-5 text-[#444] flex-shrink-0" />
-                  <div className="mp-step active">
-                    <div className="mp-step-icon"><Zap className="w-6 h-6" /></div>
-                    <div className="mp-step-label">FluxCo Spec Builder</div>
-                  </div>
-                  <ArrowRight className="w-5 h-5 text-[#444] flex-shrink-0" />
-                  <div className="mp-step">
-                    <div className="mp-step-icon"><BarChart3 className="w-6 h-6" /></div>
-                    <div className="mp-step-label">100+ OEM Bids</div>
-                  </div>
+              <div className="d2-flow-col">
+                <div className="d2-flow">
+                  {[
+                    { icon: <Target className="w-7 h-7" />, label: "Customer Spec", active: false },
+                    { icon: <Zap className="w-7 h-7" />, label: "FluxCo Spec Builder", active: true },
+                    { icon: <BarChart3 className="w-7 h-7" />, label: "100+ OEM Bids", active: false },
+                  ].map((step, i) => (
+                    <div key={step.label} className="d2-flow-group" style={{ animationDelay: `${0.3 + i * 0.25}s` }}>
+                      {i > 0 && <div className="d2-flow-arrow"><ArrowRight className="w-5 h-5" /></div>}
+                      <div className={`d2-flow-step ${step.active ? "active" : ""}`}>
+                        <div className="d2-flow-icon">{step.icon}</div>
+                        <div className="d2-flow-label">{step.label}</div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-                <div className="mp-secret">
-                  <Eye className="w-5 h-5 text-[var(--flux-blue)]" />
+                <div className="d2-intel-card">
+                  <Eye className="w-5 h-5 flex-shrink-0" />
                   <div>
                     <strong>The Secret Weapon</strong>
-                    <p className="deck-p" style={{ fontSize: 13, marginBottom: 0 }}>
-                      Every bid teaches us who supplies what, at what price, at
-                      what lead time. We&apos;re building the most comprehensive
-                      market intelligence engine in the industry.
+                    <p className="d2-p" style={{ fontSize: 13, marginBottom: 0, marginTop: 4 }}>
+                      Every bid teaches us who supplies what, at what price, at what lead time. We&apos;re building the most comprehensive market intelligence engine in the industry.
                     </p>
                   </div>
                 </div>
@@ -404,923 +432,789 @@ export default function DeckPage() {
           </div>
         </section>
 
-        {/* ================================================================
-            SLIDE 6 — THE VISION: AMERICAN MANUFACTURING (CENTERPIECE)
-        ================================================================ */}
-        <section className="deck-section vision-section has-bg" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1619885067109-e1dbec4e7cd0?w=1920&q=80)' }}>
-          <div className="content-area slide6-compact">
-            <h2 className="slide-title">The Product is Good. We&apos;re Making it Great.</h2>
-            <p className="deck-p" style={{ maxWidth: 800, marginBottom: 8 }}>
-              The transformer is proven technology. What&apos;s broken is{" "}
-              <strong>how they&apos;re built</strong> &mdash; hand-cut steel,
-              hand-stacked cores, hand-wound coils. We use{" "}
-              <strong>non-deterministic automation</strong> so a custom product
-              flows through the line like a repetitive one.{" "}
-              <span style={{ color: "var(--flux-blue)", fontWeight: 500 }}>
-                Perfect the process, build infinite variations at mass-production cost.
-              </span>
+        {/* ========== SLIDE 6 — MANUFACTURING VISION ========== */}
+        <section className="d2-slide d2-slide-dark" ref={s6.ref}>
+          <div className="d2-bg-img" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1619885067109-e1dbec4e7cd0?w=1920&q=80)' }} />
+          <div className={`d2-content ${s6.inView ? "in" : ""}`}>
+            <div className="d2-slide-label">THE PRODUCT</div>
+            <h2 className="d2-h2">Perfect the Process</h2>
+            <p className="d2-p" style={{ maxWidth: 800, marginBottom: 24 }}>
+              The transformer is proven technology. What&apos;s broken is <strong>how they&apos;re built</strong> &mdash; hand-cut steel, hand-stacked cores, hand-wound coils. We use <strong>non-deterministic automation</strong> so a custom product flows through the line like a repetitive one.
             </p>
-            <div className="tech-grid-4">
-              <div className="tech-card-compact">
-                <Cpu className="w-5 h-5 text-[var(--flux-blue)]" />
-                <strong>CNC Laser Cutting</strong>
-                <span>Precision electrical steel cutting. Sub-mm tolerances, no die changes between specs.</span>
-              </div>
-              <div className="tech-card-compact">
-                <Bot className="w-5 h-5 text-[var(--flux-blue)]" />
-                <strong>Vision-Guided Stacking</strong>
-                <span>Robotic arms adapt to any core geometry. Thousands of laminations, sub-mm precision.</span>
-              </div>
-              <div className="tech-card-compact">
-                <Wrench className="w-5 h-5 text-[var(--flux-blue)]" />
-                <strong>Adaptive CNC Winding</strong>
-                <span>Any coil spec without retooling. Recipe-driven, not jig-driven.</span>
-              </div>
-              <div className="tech-card-compact">
-                <Eye className="w-5 h-5 text-[var(--flux-blue)]" />
-                <strong>AI Quality at Line Speed</strong>
-                <span>Machine vision on every part. Automated PD and impedance testing on every unit.</span>
-              </div>
-            </div>
-            <div className="slide6-bottom-row">
-              <div className="stat-row-inline">
-                {[
-                  { value: "-60%", label: "Production Time" },
-                  { value: "-40%", label: "Labor Cost" },
-                  { value: "\u221E", label: "Variants" },
-                  { value: "100%", label: "Inspected" },
-                ].map((s) => (
-                  <div key={s.label} className="stat-inline">
-                    <div className="stat-inline-val">{s.value}</div>
-                    <div className="stat-inline-label">{s.label}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ================================================================
-            SLIDE 7 — THE INDUSTRIAL LEAPFROG
-        ================================================================ */}
-        <section className="deck-section split-section has-bg" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1647427060118-4911c9821b82?w=1920&q=80)' }}>
-          <div className="split-text">
-            <h2 className="slide-title">The Industrial Leapfrog</h2>
-            <h3 className="section-h3">Why Incumbents Can&apos;t Compete</h3>
-            <p className="deck-p">
-              The transformer is a great product held back by a terrible
-              process. Incumbents invested billions in <strong>manual-labor
-              factories</strong> they can&apos;t walk away from. Their process
-              hasn&apos;t fundamentally changed in decades. Every unit is a
-              craft project. That means they can&apos;t scale, can&apos;t cut
-              costs, and can&apos;t attract the talent that&apos;s redefining
-              manufacturing everywhere else.
-            </p>
-            <p className="deck-p">
-              <strong>FluxCo starts unencumbered.</strong> No legacy tooling.
-              We ask: &ldquo;What is the best way to <em>process</em> this
-              product using today&apos;s automation?&rdquo; The result is a
-              company that builds <strong>any custom spec</strong> with the
-              economics of mass production &mdash; and that&apos;s{" "}
-              <strong>magnetically attractive to talent</strong> who want to
-              build the future.
-            </p>
-          </div>
-          <div className="split-visual">
-            <div className="leapfrog-visual">
-              <div className="leap-box legacy">
-                <div className="leap-label">Legacy Process</div>
-                <div className="leap-items">
-                  <span>Manual die cutting &amp; hand stacking</span>
-                  <span>Fixed tooling per design</span>
-                  <span>One-off engineering per order</span>
-                  <span>Human visual inspection</span>
-                  <span>Weeks-long test cycles</span>
-                  <span>Billions in sunk CapEx</span>
-                </div>
-              </div>
-              <div className="leap-arrow">
-                <ArrowRight className="w-8 h-8 text-[var(--flux-blue)]" />
-              </div>
-              <div className="leap-box fluxco">
-                <div className="leap-label">FluxCo Process</div>
-                <div className="leap-items">
-                  <span>CNC laser cut + robotic stacking</span>
-                  <span>Vision-guided adaptive automation</span>
-                  <span>Recipe-driven, infinite variations</span>
-                  <span>AI inspection at line speed</span>
-                  <span>Automated test in hours</span>
-                  <span>Zero legacy baggage</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ================================================================
-            SLIDE 8 — OUR MOATS (regulatory + technical combined)
-        ================================================================ */}
-        <section className="deck-section">
-          <div className="content-area">
-            <h2 className="slide-title">Structural Moats</h2>
-            <div className="moats-grid">
-              {/* Moat 1: Compliance */}
-              <div className="moat-card">
-                <Shield className="w-8 h-8 text-[var(--flux-blue)]" />
-                <h3 className="section-h3">Industrial Security</h3>
-                <ul className="deck-ul">
-                  <li>100% domestic, FEOC-free &mdash; the <em>only</em> safe choice for tax-credit projects.</li>
-                  <li>IRA 45X credits strip 30&ndash;50% from FEOC-tainted projects. We&apos;re immune.</li>
-                  <li>Zero tariff exposure. Zero trade war risk.</li>
-                </ul>
-              </div>
-              {/* Moat 2: Efficiency */}
-              <div className="moat-card">
-                <Sparkles className="w-8 h-8 text-[var(--flux-blue)]" />
-                <h3 className="section-h3">Efficiency Mandate</h3>
-                <ul className="deck-ul">
-                  <li>DOE 2029 standards require efficiency leaps that legacy GOES steel cannot meet.</li>
-                  <li>Industry must shift to <strong>amorphous steel</strong>. Incumbents can&apos;t retool.</li>
-                  <li>Smart bolt-on technologies (monitoring, SCADA) add further differentiation.</li>
-                </ul>
-              </div>
-              {/* Moat 3: Automation */}
-              <div className="moat-card">
-                <Bot className="w-8 h-8 text-[var(--flux-blue)]" />
-                <h3 className="section-h3">Automation Advantage</h3>
-                <ul className="deck-ul">
-                  <li>Robotics neutralize Asian labor arbitrage.</li>
-                  <li>Building locally saves ~20% on shipping massive steel units.</li>
-                  <li>Vertical integration from raw amorphous steel to finished product.</li>
-                </ul>
-              </div>
-              {/* Moat 4: Intelligence */}
-              <div className="moat-card">
-                <BarChart3 className="w-8 h-8 text-[var(--flux-blue)]" />
-                <h3 className="section-h3">Market Intelligence</h3>
-                <ul className="deck-ul">
-                  <li>Marketplace generates real-time pricing, lead time, and capacity data across 100+ OEMs.</li>
-                  <li>We know exactly what to build, where the margin is, and who can&apos;t deliver.</li>
-                  <li>No other manufacturer has this data advantage.</li>
-                </ul>
-              </div>
-            </div>
-            <p className="source-citation">Sources: U.S. Treasury (IRA 45X), DOE Efficiency Standards (2024), NIST MEP</p>
-          </div>
-        </section>
-
-        {/* ================================================================
-            SLIDE 9 — ROADMAP
-        ================================================================ */}
-        <section className="deck-section has-bg" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1745448797901-2a4c9d9af1c1?w=1920&q=80)' }}>
-          <div className="content-area">
-            <h2 className="slide-title">Roadmap to Independence</h2>
-            <div className="timeline">
-              <div className="timeline-line-h" />
+            <div className="d2-tech-grid">
               {[
-                {
-                  year: "2026",
-                  title: "Marketplace & Assembly",
-                  desc: "Launch marketplace to aggregate demand and collect intelligence. First US assembly lines for immediate FEOC-compliant delivery. Generate revenue from day one.",
-                },
-                {
-                  year: "2027",
-                  title: "Vertical Integration",
-                  desc: "Break ground on automated factory. Begin domestic amorphous steel production. Eliminate foreign feedstock dependency.",
-                },
-                {
-                  year: "2028+",
-                  title: "Gigafactory Scale",
-                  desc: "Full robotic production. Raw material independence. Largest domestic transformer manufacturer delivering thousands of units annually.",
-                },
-              ].map((item) => (
-                <div key={item.year} className="timeline-item">
-                  <div className="timeline-dot" />
-                  <h3 className="timeline-year">{item.year}</h3>
-                  <strong className="timeline-title">{item.title}</strong>
-                  <p className="timeline-desc">{item.desc}</p>
+                { icon: <Cpu className="w-5 h-5" />, title: "CNC Laser Cutting", desc: "Precision electrical steel. Sub-mm tolerances, no die changes." },
+                { icon: <Bot className="w-5 h-5" />, title: "Vision-Guided Stacking", desc: "Robotic arms adapt to any core geometry. Thousands of laminations." },
+                { icon: <Wrench className="w-5 h-5" />, title: "Adaptive CNC Winding", desc: "Any coil spec without retooling. Recipe-driven, not jig-driven." },
+                { icon: <Eye className="w-5 h-5" />, title: "AI Quality Control", desc: "Machine vision on every part. Automated PD and impedance testing." },
+              ].map((t, i) => (
+                <div key={t.title} className="d2-tech-card" style={{ animationDelay: `${0.3 + i * 0.12}s` }}>
+                  <div className="d2-tech-icon">{t.icon}</div>
+                  <strong>{t.title}</strong>
+                  <span>{t.desc}</span>
+                </div>
+              ))}
+            </div>
+            <div className="d2-metric-row">
+              {[
+                { value: `-${c60}%`, label: "Production Time" },
+                { value: `-${c40}%`, label: "Labor Cost" },
+                { value: "\u221E", label: "Variants" },
+                { value: "100%", label: "Inspected" },
+              ].map((m, i) => (
+                <div key={m.label} className="d2-metric" style={{ animationDelay: `${0.6 + i * 0.1}s` }}>
+                  <div className="d2-metric-val">{m.value}</div>
+                  <div className="d2-metric-label">{m.label}</div>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* ================================================================
-            SLIDE 10 — CLOSING
-        ================================================================ */}
-        <section className="deck-section closing-section has-bg" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1641618640134-fd5a58f1d225?w=1920&q=80)' }}>
-          <div className="closing-content">
-            <Zap className="w-16 h-16 text-[var(--flux-blue)] mb-6 opacity-60" />
-            <h2 className="closing-headline">Powering the Renaissance</h2>
-            <p className="closing-sub">
-              Transformers are the backbone of the American grid. The product
-              is proven. We&apos;re making it great &mdash; by building the
-              most advanced manufacturing process the industry has ever seen,
-              starting with the smartest marketplace.
+        {/* ========== SLIDE 7 — LEAPFROG ========== */}
+        <section className="d2-slide d2-slide-dark" ref={s7.ref}>
+          <div className="d2-bg-img" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1647427060118-4911c9821b82?w=1920&q=80)' }} />
+          <div className={`d2-content ${s7.inView ? "in" : ""}`}>
+            <div className="d2-slide-label">THE ADVANTAGE</div>
+            <h2 className="d2-h2">The Industrial Leapfrog</h2>
+            <p className="d2-p" style={{ maxWidth: 800, marginBottom: 32 }}>
+              Incumbents invested billions in <strong>manual-labor factories</strong> they can&apos;t walk away from. Their process hasn&apos;t changed in decades. <strong>FluxCo starts unencumbered.</strong>
             </p>
-            <div className="closing-cta">INVEST IN SOVEREIGNTY</div>
-            <div className="closing-contact">
-              <p>brian@fluxco.com</p>
-              <p>fluxco.com</p>
+            <div className="d2-compare">
+              <div className="d2-compare-box d2-compare-legacy">
+                <div className="d2-compare-header">Legacy Process</div>
+                {["Manual die cutting & hand stacking", "Fixed tooling per design", "One-off engineering per order", "Human visual inspection", "Weeks-long test cycles", "Billions in sunk CapEx"].map((item, i) => (
+                  <div key={i} className="d2-compare-item" style={{ animationDelay: `${0.4 + i * 0.08}s` }}>{item}</div>
+                ))}
+              </div>
+              <div className="d2-compare-arrow">
+                <ArrowRight className="w-8 h-8" />
+              </div>
+              <div className="d2-compare-box d2-compare-flux">
+                <div className="d2-compare-header">FluxCo Process</div>
+                {["CNC laser cut + robotic stacking", "Vision-guided adaptive automation", "Recipe-driven, infinite variations", "AI inspection at line speed", "Automated test in hours", "Zero legacy baggage"].map((item, i) => (
+                  <div key={i} className="d2-compare-item" style={{ animationDelay: `${0.5 + i * 0.08}s` }}>{item}</div>
+                ))}
+              </div>
             </div>
           </div>
         </section>
+
+        {/* ========== SLIDE 8 — MOATS ========== */}
+        <section className="d2-slide" ref={s8.ref}>
+          <div className="d2-glow d2-glow-5" />
+          <div className={`d2-content ${s8.inView ? "in" : ""}`}>
+            <div className="d2-slide-label">DEFENSIBILITY</div>
+            <h2 className="d2-h2">Structural Moats</h2>
+            <div className="d2-moats">
+              {[
+                { icon: <Shield className="w-6 h-6" />, title: "Industrial Security", points: ["100% domestic, FEOC-free — the only safe choice for tax-credit projects.", "IRA 45X credits strip 30–50% from FEOC-tainted projects. We're immune.", "Zero tariff exposure. Zero trade war risk."] },
+                { icon: <Sparkles className="w-6 h-6" />, title: "Efficiency Mandate", points: ["DOE 2029 standards require leaps legacy GOES steel can't meet.", "Industry must shift to amorphous steel. Incumbents can't retool.", "Smart bolt-on tech (monitoring, SCADA) adds differentiation."] },
+                { icon: <Bot className="w-6 h-6" />, title: "Automation Advantage", points: ["Robotics neutralize Asian labor arbitrage.", "Building locally saves ~20% on shipping massive steel units.", "Vertical integration from raw amorphous steel to finished product."] },
+                { icon: <BarChart3 className="w-6 h-6" />, title: "Market Intelligence", points: ["Real-time pricing, lead time, and capacity data across 100+ OEMs.", "We know exactly what to build and where the margin is.", "No other manufacturer has this data advantage."] },
+              ].map((moat, i) => (
+                <div key={moat.title} className="d2-moat" style={{ animationDelay: `${0.2 + i * 0.15}s` }}>
+                  <div className="d2-moat-icon">{moat.icon}</div>
+                  <h3 className="d2-moat-title">{moat.title}</h3>
+                  <ul className="d2-moat-list">
+                    {moat.points.map((p, j) => <li key={j}>{p}</li>)}
+                  </ul>
+                </div>
+              ))}
+            </div>
+            <p className="d2-source">Sources: U.S. Treasury (IRA 45X), DOE Efficiency Standards (2024), NIST MEP</p>
+          </div>
+        </section>
+
+        {/* ========== SLIDE 9 — ROADMAP ========== */}
+        <section className="d2-slide d2-slide-dark" ref={s9.ref}>
+          <div className="d2-bg-img" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1745448797901-2a4c9d9af1c1?w=1920&q=80)' }} />
+          <div className={`d2-content ${s9.inView ? "in" : ""}`}>
+            <div className="d2-slide-label">THE PLAN</div>
+            <h2 className="d2-h2">Roadmap to Independence</h2>
+            <div className="d2-timeline">
+              {[
+                { year: "2026", title: "Marketplace & Assembly", desc: "Launch marketplace to aggregate demand and collect intelligence. First US assembly lines for immediate FEOC-compliant delivery. Revenue from day one." },
+                { year: "2027", title: "Vertical Integration", desc: "Break ground on automated factory. Begin domestic amorphous steel production. Eliminate foreign feedstock dependency." },
+                { year: "2028+", title: "Gigafactory Scale", desc: "Full robotic production. Raw material independence. Largest domestic transformer manufacturer delivering thousands of units annually." },
+              ].map((item, i) => (
+                <div key={item.year} className="d2-tl-item" style={{ animationDelay: `${0.3 + i * 0.25}s` }}>
+                  <div className="d2-tl-dot" />
+                  <div className="d2-tl-year">{item.year}</div>
+                  <div className="d2-tl-title">{item.title}</div>
+                  <div className="d2-tl-desc">{item.desc}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ========== SLIDE 10 — CLOSING ========== */}
+        <section className="d2-slide d2-slide-dark" ref={s10.ref}>
+          <div className="d2-bg-img" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1641618640134-fd5a58f1d225?w=1920&q=80)' }} />
+          <div className={`d2-closing ${s10.inView ? "in" : ""}`}>
+            <div className="d2-logo-icon d2-closing-logo"><Zap className="w-10 h-10" /></div>
+            <h2 className="d2-closing-h2">Powering the Renaissance</h2>
+            <p className="d2-closing-p">
+              Transformers are the backbone of the American grid. The product is proven. We&apos;re making it great &mdash; by building the most advanced manufacturing process the industry has ever seen, starting with the smartest marketplace.
+            </p>
+            <a href="mailto:brian@fluxco.com" className="d2-cta">
+              Let&apos;s Talk <ArrowRight className="w-4 h-4" />
+            </a>
+            <div className="d2-closing-contact">
+              <span>brian@fluxco.com</span>
+              <span className="d2-dot" />
+              <span>fluxco.com</span>
+            </div>
+          </div>
+        </section>
+
       </div>
     </>
   );
 }
 
 /* =====================================================================
-   ALL STYLES
+   STYLES
    ===================================================================== */
-const deckStyles = `
+const deck2Styles = `
   :root {
-    --flux-blue: #2d8cff;
-    --flux-red: #c41e3a;
-    --flux-dark: #0f0f0f;
+    --d2-blue: #2d8cff;
+    --d2-red: #e63946;
+    --d2-bg: #08090a;
+    --d2-surface: rgba(255,255,255,0.04);
+    --d2-border: rgba(255,255,255,0.08);
+    --d2-text: rgba(255,255,255,0.7);
+    --d2-text-dim: rgba(255,255,255,0.4);
+    --d2-radius: 12px;
   }
 
   *, *::before, *::after { box-sizing: border-box; }
+  html, body { background: var(--d2-bg) !important; overflow: hidden !important; max-width: 100vw; }
 
-  html, body {
-    background: #080808 !important;
-    overflow-x: hidden !important;
-    max-width: 100vw;
-  }
-
-  body {
-    overflow-y: hidden !important;
-  }
-
-  .deck-scroll-container {
-    position: fixed;
-    inset: 0;
-    overflow-y: scroll;
-    overflow-x: hidden;
+  /* ---- SCROLL CONTAINER ---- */
+  .d2-container {
+    position: fixed; inset: 0;
+    overflow-y: scroll; overflow-x: hidden;
     scroll-snap-type: y mandatory;
     -webkit-overflow-scrolling: touch;
     z-index: 1;
-    overscroll-behavior: contain;
-    max-width: 100vw;
   }
 
-  .deck-section {
-    min-height: 100vh;
-    min-height: 100dvh;
-    width: 100%;
-    max-width: 100vw;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+  .d2-slide {
+    min-height: 100vh; min-height: 100dvh;
+    width: 100%; display: flex;
+    flex-direction: column; justify-content: center; align-items: center;
     scroll-snap-align: start;
-    position: relative;
-    background: #0f0f0f;
-    overflow: hidden;
-  }
-  .deck-section::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(circle at 80% 20%, rgba(45, 140, 255, 0.04), transparent 50%);
-    pointer-events: none;
+    position: relative; overflow: hidden;
+    background: var(--d2-bg);
   }
 
-  /* Navigation */
-  .deck-controls {
-    position: fixed;
-    bottom: 20px; right: 20px;
-    z-index: 1000;
-    display: flex; gap: 10px;
-    background: rgba(0,0,0,0.6);
-    padding: 10px;
-    border-radius: 8px;
-    backdrop-filter: blur(10px);
-    border: 1px solid #333;
+  /* ---- BACKGROUNDS ---- */
+  .d2-bg-img {
+    position: absolute; inset: 0;
+    background-size: cover; background-position: center;
+    opacity: 0.15;
   }
-  .control-btn {
-    background: transparent;
-    border: 1px solid #444;
-    color: #fff;
-    width: 40px; height: 40px;
-    border-radius: 4px;
-    cursor: pointer;
+  .d2-slide-dark::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(8,9,10,0.6) 0%, rgba(8,9,10,0.92) 100%);
+    z-index: 0;
+  }
+  .d2-slide-dark .d2-content,
+  .d2-slide-dark .d2-closing { position: relative; z-index: 1; }
+
+  .grid-bg {
+    position: absolute; inset: 0; z-index: 0;
+    opacity: 0.8;
+  }
+
+  /* Glowing orbs */
+  .d2-glow {
+    position: absolute; border-radius: 50%;
+    filter: blur(120px); pointer-events: none; z-index: 0;
+  }
+  .d2-glow-1 {
+    width: 600px; height: 600px; top: -100px; right: -100px;
+    background: rgba(45,140,255,0.08);
+    animation: d2-float 8s ease-in-out infinite;
+  }
+  .d2-glow-2 {
+    width: 400px; height: 400px; bottom: -50px; left: 10%;
+    background: rgba(230,57,70,0.05);
+    animation: d2-float 10s ease-in-out infinite reverse;
+  }
+  .d2-glow-3 {
+    width: 500px; height: 500px; top: 20%; right: -100px;
+    background: rgba(45,140,255,0.06);
+    animation: d2-float 9s ease-in-out infinite;
+  }
+  .d2-glow-4 {
+    width: 500px; height: 500px; bottom: 10%; left: -100px;
+    background: rgba(45,140,255,0.05);
+    animation: d2-float 11s ease-in-out infinite reverse;
+  }
+  .d2-glow-5 {
+    width: 600px; height: 600px; top: 30%; left: 30%;
+    background: rgba(45,140,255,0.04);
+    animation: d2-float 12s ease-in-out infinite;
+  }
+
+  @keyframes d2-float {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(30px, -20px) scale(1.05); }
+  }
+
+  /* ---- PROGRESS BAR ---- */
+  .d2-progress {
+    position: fixed; right: 24px; top: 50%; transform: translateY(-50%);
+    z-index: 100; display: flex; flex-direction: column; gap: 8px;
+  }
+  .d2-progress-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: rgba(255,255,255,0.15); border: none;
+    cursor: pointer; padding: 0;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .d2-progress-dot.active {
+    background: var(--d2-blue);
+    height: 24px; border-radius: 4px;
+    box-shadow: 0 0 12px rgba(45,140,255,0.4);
+  }
+  .d2-progress-dot.past { background: rgba(45,140,255,0.3); }
+  .d2-progress-dot:hover { background: rgba(255,255,255,0.4); }
+
+  /* ---- NAV ---- */
+  .d2-nav {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    z-index: 100; display: flex; align-items: center; gap: 12px;
+    background: rgba(0,0,0,0.5); backdrop-filter: blur(20px);
+    border: 1px solid var(--d2-border); border-radius: 100px;
+    padding: 8px 8px 8px 8px;
+  }
+  .d2-nav-btn {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: transparent; border: 1px solid var(--d2-border);
+    color: #fff; cursor: pointer;
     display: flex; align-items: center; justify-content: center;
     transition: all 0.2s;
   }
-  .control-btn:hover { background: var(--flux-blue); border-color: var(--flux-blue); }
-  .slide-counter {
-    font-family: 'JetBrains Mono', monospace;
-    color: #888;
-    display: flex; align-items: center;
-    padding: 0 10px; font-size: 14px;
-  }
-  .scroll-hint {
-    position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
-    z-index: 100;
-    display: flex; flex-direction: column; align-items: center; gap: 4px;
-    color: #666;
-    font-family: 'Inter', sans-serif; font-size: 12px;
-    text-transform: uppercase; letter-spacing: 2px;
-    cursor: pointer;
+  .d2-nav-btn:hover { background: var(--d2-blue); border-color: var(--d2-blue); }
+  .d2-nav-count {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px;
+    color: var(--d2-text-dim); padding: 0 8px;
+    letter-spacing: 1px;
   }
 
-  /* ---- TITLE ---- */
-  .title-section { background: #050505; }
-  .title-bg {
-    position: absolute; inset: 0;
-    background:
-      radial-gradient(ellipse at 70% 30%, rgba(45,140,255,0.08) 0%, transparent 60%),
-      radial-gradient(ellipse at 30% 70%, rgba(196,30,58,0.04) 0%, transparent 50%);
+  .d2-scroll-hint {
+    position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
+    z-index: 100; color: var(--d2-text-dim); cursor: pointer;
+    animation: d2-bounce 2s ease-in-out infinite;
   }
-  .title-overlay { position: relative; z-index: 2; padding: 80px; max-width: 900px; }
-  .flux-logo-large {
-    font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 48px;
-    letter-spacing: 2px; color: #fff;
-    display: flex; align-items: center; gap: 15px;
-    text-transform: uppercase; margin-bottom: 30px;
-  }
-  .title-headline {
-    font-family: 'Oswald', sans-serif; color: #fff;
-    font-size: clamp(60px, 10vw, 110px); font-weight: 700;
-    line-height: 0.9; text-transform: uppercase; margin: 0 0 30px 0;
-  }
-  .subtitle {
-    font-family: 'Inter', sans-serif; font-size: clamp(16px, 2vw, 22px);
-    color: #ccc; max-width: 700px; font-weight: 400; line-height: 1.5;
+  @keyframes d2-bounce {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(8px); }
   }
 
-  /* ---- CONTENT ---- */
-  .content-area {
-    padding: 60px 80px; width: 100%; max-width: 1400px;
-    margin: 0 auto;
-    display: flex; flex-direction: column; justify-content: center;
-    flex: 1; z-index: 1;
+  /* ---- CONTENT WRAPPER ---- */
+  .d2-content {
+    padding: 60px 80px; width: 100%; max-width: 1300px;
+    margin: 0 auto; z-index: 1;
+  }
+
+  /* ---- ANIMATIONS ---- */
+  .d2-content.in .d2-slide-label,
+  .d2-content.in .d2-h2,
+  .d2-content.in .d2-grid-2,
+  .d2-content.in .d2-quotes-row,
+  .d2-content.in .d2-source,
+  .d2-content.in .d2-tech-grid,
+  .d2-content.in .d2-metric-row,
+  .d2-content.in .d2-compare,
+  .d2-content.in .d2-moats,
+  .d2-content.in .d2-timeline,
+  .d2-content.in > .d2-p {
+    animation: d2-fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  .d2-content .d2-slide-label { opacity: 0; animation-delay: 0s; }
+  .d2-content .d2-h2 { opacity: 0; animation-delay: 0.1s; }
+  .d2-content > .d2-p { opacity: 0; animation-delay: 0.2s; }
+  .d2-content .d2-grid-2 { opacity: 0; animation-delay: 0.15s; }
+  .d2-content .d2-quotes-row { opacity: 0; animation-delay: 0.3s; }
+  .d2-content .d2-source { opacity: 0; animation-delay: 0.35s; }
+  .d2-content .d2-tech-grid { opacity: 0; animation-delay: 0.2s; }
+  .d2-content .d2-metric-row { opacity: 0; animation-delay: 0.4s; }
+  .d2-content .d2-compare { opacity: 0; animation-delay: 0.2s; }
+  .d2-content .d2-moats { opacity: 0; animation-delay: 0.15s; }
+  .d2-content .d2-timeline { opacity: 0; animation-delay: 0.2s; }
+
+  @keyframes d2-fade-up {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .d2-title-content {
+    position: relative; z-index: 2;
+    padding: 80px; max-width: 900px;
+  }
+  .d2-title-content .d2-logo,
+  .d2-title-content .d2-h1-line,
+  .d2-title-content .d2-subtitle {
+    opacity: 0; transform: translateY(40px);
+    transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .d2-title-content.in .d2-logo { opacity: 1; transform: translateY(0); transition-delay: 0.1s; }
+  .d2-title-content.in .d2-h1-1 { opacity: 1; transform: translateY(0); transition-delay: 0.25s; }
+  .d2-title-content.in .d2-h1-2 { opacity: 1; transform: translateY(0); transition-delay: 0.45s; }
+  .d2-title-content.in .d2-subtitle { opacity: 1; transform: translateY(0); transition-delay: 0.65s; }
+
+  /* ---- LOGO ---- */
+  .d2-logo {
+    display: flex; align-items: center; gap: 12px;
+    font-family: 'Oswald', sans-serif; font-weight: 700;
+    font-size: 28px; color: #fff; letter-spacing: 3px;
+    text-transform: uppercase; margin-bottom: 32px;
+  }
+  .d2-logo-icon {
+    width: 48px; height: 48px; border-radius: 10px;
+    background: linear-gradient(135deg, var(--d2-blue), rgba(45,140,255,0.3));
+    display: flex; align-items: center; justify-content: center;
+    color: #fff;
+    box-shadow: 0 0 30px rgba(45,140,255,0.3);
+    animation: d2-pulse 3s ease-in-out infinite;
+  }
+  @keyframes d2-pulse {
+    0%, 100% { box-shadow: 0 0 20px rgba(45,140,255,0.2); }
+    50% { box-shadow: 0 0 40px rgba(45,140,255,0.4); }
   }
 
   /* ---- TYPOGRAPHY ---- */
-  .slide-title {
+  .d2-h1 {
+    display: flex; flex-direction: column; gap: 0;
+    margin: 0 0 32px 0;
+  }
+  .d2-h1-line {
+    font-family: 'Oswald', sans-serif; font-weight: 700;
+    font-size: clamp(56px, 9vw, 100px); line-height: 0.95;
+    text-transform: uppercase; display: block;
+  }
+  .d2-h1-1 { color: #fff; }
+  .d2-h1-2 { color: var(--d2-blue); }
+
+  .d2-subtitle {
+    font-family: 'Inter', sans-serif; font-size: clamp(16px, 1.8vw, 20px);
+    color: var(--d2-text); max-width: 600px; line-height: 1.6; font-weight: 400;
+  }
+
+  .d2-slide-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    color: var(--d2-blue); letter-spacing: 3px; text-transform: uppercase;
+    font-weight: 500; margin-bottom: 12px;
+  }
+
+  .d2-h2 {
     font-family: 'Oswald', sans-serif; color: #fff;
-    font-size: clamp(34px, 5vw, 52px); font-weight: 700;
-    text-transform: uppercase; margin-bottom: 35px;
-    position: relative; padding-left: 20px;
+    font-size: clamp(32px, 4.5vw, 48px); font-weight: 700;
+    text-transform: uppercase; margin: 0 0 28px 0; line-height: 1.1;
   }
-  .slide-title::before {
-    content: ''; position: absolute;
-    left: 0; top: 6px; bottom: 6px;
-    width: 6px; background: var(--flux-blue); border-radius: 3px;
-  }
-  .section-h3 {
+
+  .d2-h3 {
     font-family: 'Oswald', sans-serif; color: #fff;
-    font-size: 22px; font-weight: 500;
-    margin-bottom: 14px; text-transform: uppercase;
+    font-size: 20px; font-weight: 500;
+    text-transform: uppercase; margin-bottom: 14px;
+    letter-spacing: 0.5px;
   }
-  .deck-p {
-    color: #b0b0b0; font-size: 15px; line-height: 1.7;
+
+  .d2-p {
+    color: var(--d2-text); font-size: 15px; line-height: 1.7;
     margin-bottom: 14px; font-family: 'Inter', sans-serif;
   }
-  .deck-p strong { color: #fff; font-weight: 600; }
+  .d2-p strong { color: #fff; font-weight: 600; }
+  .d2-highlight { color: var(--d2-blue) !important; font-weight: 500 !important; }
 
-  .deck-ul { list-style: none; padding: 0; margin: 0; }
-  .deck-ul li {
-    position: relative; padding-left: 26px; margin-bottom: 12px;
-    color: #b0b0b0; font-size: 15px; line-height: 1.6;
+  .d2-checklist { list-style: none; padding: 0; margin: 16px 0; }
+  .d2-checklist li {
+    position: relative; padding-left: 28px; margin-bottom: 12px;
+    color: var(--d2-text); font-size: 14px; line-height: 1.6;
     font-family: 'Inter', sans-serif;
   }
-  .deck-ul li::before {
-    content: ''; position: absolute; left: 0; top: 6px;
-    width: 13px; height: 13px;
-    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232d8cff' stroke-width='3'%3E%3Cpath d='M20 6L9 17l-5-5'/%3E%3C/svg%3E") center/contain no-repeat;
+  .d2-checklist li::before {
+    content: ''; position: absolute; left: 0; top: 4px;
+    width: 16px; height: 16px; border-radius: 50%;
+    background: rgba(45,140,255,0.1); border: 1.5px solid var(--d2-blue);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232d8cff' stroke-width='3'%3E%3Cpath d='M20 6L9 17l-5-5'/%3E%3C/svg%3E");
+    background-size: 10px; background-position: center; background-repeat: no-repeat;
   }
-  .deck-ul li strong { color: #fff; font-weight: 600; }
+  .d2-checklist li strong { color: #fff; }
 
-  .source-citation {
-    font-family: 'Inter', sans-serif; font-size: 11px; color: #555;
-    margin-top: 25px; border-top: 1px solid #222; padding-top: 12px;
+  .d2-source {
+    font-family: 'Inter', sans-serif; font-size: 10px;
+    color: var(--d2-text-dim); margin-top: 24px;
     text-transform: uppercase; letter-spacing: 1px;
-  }
-  .source-row {
-    display: flex; justify-content: space-between; align-items: center;
-    margin-top: 15px; border-top: 1px solid #222; padding-top: 12px; width: 100%;
-  }
-  .source-row .source-citation { margin: 0; border: none; padding: 0; }
-  .quotes-row {
-    display: flex; gap: 16px;
-  }
-  .vance-quote {
-    display: flex; flex-direction: column; gap: 4px;
-    padding: 12px 20px;
-    border: 1px solid rgba(196,30,58,0.3);
-    border-left: 3px solid var(--flux-red);
-    background: rgba(196,30,58,0.04);
-    border-radius: 4px;
-    flex: 1; max-width: 360px;
-    text-decoration: none;
-    transition: background 0.2s, border-color 0.2s;
-    cursor: pointer;
-  }
-  .vance-quote:hover {
-    background: rgba(196,30,58,0.1);
-    border-color: rgba(196,30,58,0.5);
-  }
-  .vance-with-img {
-    flex-direction: row; align-items: center; gap: 14px;
-  }
-  .vance-thumb {
-    width: 56px; height: 56px; border-radius: 4px;
-    object-fit: cover; flex-shrink: 0;
-    border: 1px solid #333;
-  }
-  .vance-label {
-    font-family: 'Inter', sans-serif; font-size: 11px;
-    color: var(--flux-red); text-transform: uppercase;
-    letter-spacing: 1.5px; font-weight: 700;
-  }
-  .vance-text {
-    font-family: 'Inter', sans-serif; font-size: 15px;
-    color: #ddd; font-style: italic; line-height: 1.4;
   }
 
   /* ---- LAYOUTS ---- */
-  .two-col {
-    display: grid; grid-template-columns: 1fr 1.2fr;
-    gap: 50px; width: 100%; align-items: center;
-  }
-  @media (max-width: 900px) {
-    .two-col { grid-template-columns: 1fr !important; gap: 24px; }
-    .content-area { padding: 30px 20px; }
-    .title-overlay { padding: 40px 24px; }
-  }
-
-  /* ---- MOBILE ---- */
-  @media (max-width: 768px) {
-    /* Kill fixed positioning — normal scrolling page on mobile */
-    body { overflow-y: auto !important; }
-    .deck-scroll-container {
-      position: relative !important;
-      inset: auto !important;
-      overflow-y: visible !important;
-      scroll-snap-type: none !important;
-      max-width: 100vw;
-      width: 100%;
-    }
-    .deck-section {
-      min-height: auto;
-      padding: 40px 0;
-      scroll-snap-align: none;
-      width: 100%;
-      max-width: 100vw;
-      overflow-x: hidden;
-    }
-    /* First and last slides keep full height */
-    .deck-section.title-section,
-    .deck-section.closing-section {
-      min-height: 100vh;
-      min-height: 100svh;
-      padding: 0;
-    }
-
-    .content-area { padding: 24px 16px; width: 100%; max-width: 100vw; }
-    .title-overlay { padding: 30px 20px; }
-
-    /* Typography scale down */
-    .slide-title { font-size: 28px; margin-bottom: 20px; padding-left: 16px; }
-    .slide-title::before { width: 4px; }
-    .section-h3 { font-size: 18px; margin-bottom: 10px; }
-    .deck-p { font-size: 14px; line-height: 1.6; margin-bottom: 10px; }
-    .deck-ul li { font-size: 13px; padding-left: 22px; margin-bottom: 8px; }
-    .deck-ul li::before { width: 11px; height: 11px; top: 5px; }
-    .flux-logo-large { font-size: 32px; gap: 10px; margin-bottom: 20px; }
-    .flux-logo-large svg { width: 36px !important; height: 36px !important; }
-
-    /* Hide desktop nav controls on mobile — it's a normal scroll page */
-    .deck-controls { display: none; }
-    .scroll-hint { display: none; }
-
-    /* Two-col stacks */
-    .two-col { grid-template-columns: 1fr !important; gap: 20px; }
-
-    /* Source row + quotes stack */
-    .source-row { flex-direction: column; gap: 12px; align-items: flex-start; }
-    .quotes-row { flex-direction: column; gap: 10px; width: 100%; }
-    .vance-quote { max-width: 100%; padding: 10px 14px; }
-    .vance-text { font-size: 13px; }
-    .vance-label { font-size: 10px; }
-    .vance-thumb { width: 44px; height: 44px; }
-
-    /* Chart */
-    .chart-with-legend { max-width: 100%; overflow: hidden; }
-    .chart-container { padding: 10px; max-width: 100%; }
-    .chart-legend-below { flex-wrap: wrap; gap: 10px 16px; padding: 8px 12px; }
-    .legend-item { font-size: 9px; }
-
-    /* Driver cards */
-    .driver-card { padding: 10px 12px; gap: 10px; }
-    .driver-card strong { font-size: 13px; }
-    .driver-stat { font-size: 12px; }
-
-    /* Crisis visual */
-    .crisis-visual { padding: 20px; }
-    .crisis-num { font-size: 52px; }
-    .crisis-pct { font-size: 26px; }
-    .crisis-label { font-size: 11px; }
-    .crisis-stat { padding: 16px 0; }
-
-    /* Opportunity visual */
-    .opportunity-visual { padding: 20px; }
-    .opp-item { padding: 10px 12px; font-size: 13px; }
-    .opp-headline { font-size: 17px; }
-
-    /* Marketplace visual */
-    .marketplace-visual { padding: 20px; gap: 20px; }
-    .mp-flow { flex-direction: column; gap: 10px; }
-    .mp-flow svg.flex-shrink-0 { transform: rotate(90deg); }
-    .mp-step { min-width: 0; width: 100%; padding: 14px; }
-    .mp-secret { padding: 14px; }
-
-    /* All visuals constrain width */
-    .crisis-visual, .opportunity-visual, .marketplace-visual, .vision-visual {
-      max-width: 100%; overflow: hidden;
-    }
-
-    /* Slide 6 compact */
-    .tech-grid-4 { grid-template-columns: 1fr 1fr; gap: 10px; }
-    .tech-card-compact { padding: 12px; }
-    .tech-card-compact strong { font-size: 12px; }
-    .tech-card-compact span { font-size: 10px; }
-    .slide6-bottom-row { flex-direction: column; gap: 12px; }
-    .process-callout-inline span { font-size: 15px; }
-    .stat-row-inline { width: 100%; }
-    .stat-inline-val { font-size: 22px; }
-
-    /* Split / Leapfrog */
-    .split-section { flex-direction: column !important; }
-    .split-text { padding: 30px 20px; border-right: none; border-bottom: 1px solid #222; }
-    .split-visual { padding: 20px; }
-    .leapfrog-visual { flex-direction: column; gap: 16px; }
-    .leap-box { padding: 18px; }
-    .leap-arrow { transform: rotate(90deg); justify-content: center; }
-
-    /* Moats */
-    .moats-grid { grid-template-columns: 1fr; gap: 14px; }
-    .moat-card { padding: 20px; }
-    .moat-card svg { width: 24px !important; height: 24px !important; margin-bottom: 10px; }
-    .moat-card .section-h3 { font-size: 16px; }
-
-    /* Timeline — vertical on mobile */
-    .timeline { flex-direction: column; gap: 30px; padding-top: 20px; margin-top: 20px; }
-    .timeline-line-h { display: none; }
-    .timeline-item { width: 100%; text-align: left; padding-top: 0; padding-left: 30px; border-left: 2px solid #333; }
-    .timeline-dot {
-      top: 4px; left: -9px; transform: none;
-      width: 14px; height: 14px;
-    }
-    .timeline-year { font-size: 32px; margin-bottom: 6px; }
-    .timeline-title { font-size: 14px; }
-    .timeline-desc { font-size: 12px; }
-
-    /* Closing */
-    .closing-content { padding: 40px 24px; }
-    .closing-sub { font-size: 15px; }
-    .closing-cta { font-size: 12px; padding: 12px 28px; letter-spacing: 2px; }
-    .closing-contact p { font-size: 14px; }
+  .d2-grid-2 {
+    display: grid; grid-template-columns: 1fr 1.1fr;
+    gap: 48px; align-items: start;
   }
 
   /* ---- DRIVER CARDS (slide 2) ---- */
-  .driver-cards { display: flex; flex-direction: column; gap: 10px; margin: 16px 0; }
-  .driver-card {
+  .d2-drivers { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+  .d2-driver {
     display: flex; align-items: center; gap: 14px;
-    padding: 12px 16px;
-    border: 1px solid #222; border-radius: 4px;
-    background: rgba(45,140,255,0.03);
+    padding: 14px 18px; border-radius: var(--d2-radius);
+    background: var(--d2-surface); border: 1px solid var(--d2-border);
+    transition: all 0.3s;
   }
-  .driver-card strong {
-    color: #fff; font-family: 'Inter', sans-serif; font-size: 14px;
-    display: block; font-weight: 600;
+  .d2-driver:hover { border-color: rgba(45,140,255,0.3); background: rgba(45,140,255,0.05); }
+  .d2-driver-icon {
+    width: 40px; height: 40px; border-radius: 10px;
+    background: rgba(45,140,255,0.1);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--d2-blue); flex-shrink: 0;
   }
-  .driver-stat {
-    font-family: 'JetBrains Mono', monospace; font-size: 13px;
-    color: var(--flux-red); font-weight: 700;
-  }
+  .d2-driver-info { display: flex; flex-direction: column; gap: 2px; }
+  .d2-driver-name { font-family: 'Inter', sans-serif; font-size: 14px; color: #fff; font-weight: 600; }
+  .d2-driver-stat { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--d2-red); font-weight: 600; }
 
   /* ---- CHART ---- */
-  .chart-container {
-    background: #151515; border: 1px solid #333; border-radius: 4px;
+  .d2-chart-wrap { display: flex; flex-direction: column; }
+  .d2-chart {
+    background: rgba(255,255,255,0.02); border: 1px solid var(--d2-border);
+    border-radius: var(--d2-radius) var(--d2-radius) 0 0;
     padding: 20px; aspect-ratio: 3 / 2;
     display: flex; align-items: center; justify-content: center;
   }
-  .chart-with-legend { display: flex; flex-direction: column; }
-  .chart-legend-below {
+  .d2-chart-legend {
     display: flex; justify-content: center; gap: 24px;
-    padding: 10px 0 0; border-top: 1px solid #333;
-    margin-top: -1px;
-    background: #151515;
-    border: 1px solid #333; border-top: 1px solid #292929;
-    border-radius: 0 0 4px 4px;
-    padding: 10px 20px;
+    padding: 10px 16px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--d2-border); border-top: none;
+    border-radius: 0 0 var(--d2-radius) var(--d2-radius);
   }
-  .chart-container { border-radius: 4px 4px 0 0; }
-  .legend-item {
-    font-family: 'Inter', sans-serif; font-size: 11px; color: #888;
-    text-transform: uppercase; font-weight: 600;
-    display: flex; align-items: center; gap: 8px;
+  .d2-legend {
+    font-family: 'Inter', sans-serif; font-size: 10px;
+    color: var(--d2-text-dim); text-transform: uppercase; font-weight: 600;
+    display: flex; align-items: center; gap: 6px; letter-spacing: 0.5px;
   }
-  .legend-color { width: 12px; height: 12px; border-radius: 2px; flex-shrink: 0; }
-  .legend-line { height: 2px !important; }
+  .d2-legend-swatch { width: 10px; height: 10px; border-radius: 2px; }
+  .d2-legend-line { height: 2px !important; width: 14px !important; border-radius: 1px; }
 
-  /* ---- CRISIS VISUAL (slide 3) ---- */
-  .crisis-visual {
+  .d2-bar-anim { animation: d2-bar-grow 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; transform-origin: bottom; }
+  @keyframes d2-bar-grow {
+    from { transform: scaleY(0); opacity: 0; }
+    to { transform: scaleY(1); opacity: 1; }
+  }
+
+  /* ---- QUOTES ---- */
+  .d2-quotes-row { display: flex; gap: 16px; margin-top: 20px; }
+  .d2-quote {
+    flex: 1; padding: 16px 20px;
+    border: 1px solid rgba(230,57,70,0.2); border-radius: var(--d2-radius);
+    background: rgba(230,57,70,0.03);
+    text-decoration: none; transition: all 0.3s; cursor: pointer;
+  }
+  .d2-quote:hover { background: rgba(230,57,70,0.08); border-color: rgba(230,57,70,0.4); transform: translateY(-2px); }
+  .d2-quote-who {
+    font-family: 'Inter', sans-serif; font-size: 10px;
+    color: var(--d2-red); text-transform: uppercase; letter-spacing: 1.5px;
+    font-weight: 700; margin-bottom: 6px;
+  }
+  .d2-quote-text {
+    font-family: 'Inter', sans-serif; font-size: 14px;
+    color: rgba(255,255,255,0.8); font-style: italic; line-height: 1.5;
+  }
+
+  /* ---- BIG STATS (slide 3) ---- */
+  .d2-stats-col {
     display: flex; flex-direction: column; gap: 0;
-    background: #151515; border: 1px solid #333; border-radius: 4px;
-    padding: 30px;
+    background: var(--d2-surface); border: 1px solid var(--d2-border);
+    border-radius: var(--d2-radius); overflow: hidden;
   }
-  .crisis-stat { text-align: center; padding: 25px 0; }
-  .crisis-num {
-    font-family: 'Oswald', sans-serif; font-size: 72px; font-weight: 700;
-    color: var(--flux-red); line-height: 1;
+  .d2-big-stat {
+    text-align: center; padding: 32px 24px;
+    border-bottom: 1px solid var(--d2-border);
   }
-  .crisis-pct {
-    font-size: 36px; color: var(--flux-red); opacity: 0.7;
+  .d2-big-stat:last-child { border-bottom: none; }
+  .d2-big-stat-num {
+    font-family: 'Oswald', sans-serif; font-size: 64px; font-weight: 700;
+    color: var(--d2-red); line-height: 1;
   }
-  .crisis-label {
-    font-family: 'Inter', sans-serif; font-size: 13px; color: #888;
-    text-transform: uppercase; letter-spacing: 1px; margin-top: 6px;
-  }
-  .crisis-divider { height: 1px; background: #333; margin: 0 20px; }
-
-  /* ---- OPPORTUNITY VISUAL (slide 4) ---- */
-  .opportunity-visual {
-    background: #151515; border: 1px solid #333; border-radius: 4px;
-    padding: 35px; display: flex; flex-direction: column; gap: 20px;
-  }
-  .opp-icon-row {
-    display: flex; align-items: center; gap: 14px;
-  }
-  .opp-headline {
-    font-family: 'Oswald', sans-serif; font-size: 20px; color: #fff;
-    text-transform: uppercase;
-  }
-  .opp-items { display: flex; flex-direction: column; gap: 12px; }
-  .opp-item {
-    display: flex; align-items: center; gap: 14px;
-    padding: 14px 16px;
-    border: 1px solid #222; border-radius: 4px;
-    font-family: 'Inter', sans-serif; font-size: 14px; color: #b0b0b0;
-  }
-  .opp-item svg { color: var(--flux-blue); flex-shrink: 0; }
-
-  /* ---- MARKETPLACE VISUAL (slide 5) ---- */
-  .marketplace-visual {
-    background: #151515; border: 1px solid #333; border-radius: 4px;
-    padding: 35px; display: flex; flex-direction: column; gap: 30px;
-  }
-  .mp-flow {
-    display: flex; align-items: center; justify-content: center; gap: 16px;
-  }
-  .mp-step {
-    display: flex; flex-direction: column; align-items: center; gap: 10px;
-    padding: 20px; border: 1px solid #333; border-radius: 4px;
-    background: #1a1a1a; min-width: 110px;
-  }
-  .mp-step.active { border-color: var(--flux-blue); background: rgba(45,140,255,0.05); }
-  .mp-step-icon { color: var(--flux-blue); }
-  .mp-step-label {
-    font-family: 'Inter', sans-serif; font-size: 11px; color: #ccc;
-    text-align: center; text-transform: uppercase; font-weight: 600;
-    letter-spacing: 0.5px;
-  }
-  .mp-secret {
-    display: flex; gap: 14px; padding: 20px;
-    border: 1px solid rgba(45,140,255,0.2); border-radius: 4px;
-    background: rgba(45,140,255,0.03);
-  }
-  .mp-secret svg { flex-shrink: 0; margin-top: 2px; }
-  .mp-secret strong {
-    font-family: 'Inter', sans-serif; font-size: 14px; color: #fff;
-    display: block; margin-bottom: 4px;
+  .d2-big-stat-suffix { font-size: 32px; opacity: 0.6; }
+  .d2-big-stat-label {
+    font-family: 'Inter', sans-serif; font-size: 11px;
+    color: var(--d2-text-dim); text-transform: uppercase;
+    letter-spacing: 1.5px; margin-top: 8px;
   }
 
-  /* ---- VISION SECTION (slide 6) ---- */
-  .vision-section { background: #0a0a0a; }
-  .vision-section::before {
-    background: radial-gradient(circle at 50% 50%, rgba(45,140,255,0.06) 0%, transparent 60%);
-  }
-  .vision-visual {
-    background: #151515; border: 1px solid #333; border-radius: 4px;
-    padding: 30px;
-  }
-  .vision-stat-grid {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
-  }
-  .vision-stat-card {
-    display: flex; flex-direction: column; align-items: center;
-    text-align: center; gap: 8px;
-    padding: 24px 16px;
-    border: 1px solid #333; border-radius: 4px;
-    background: rgba(45,140,255,0.03);
-  }
-  .vsc-icon { color: var(--flux-blue); }
-  .vsc-value {
-    font-family: 'Oswald', sans-serif; font-size: 32px; font-weight: 700;
-    color: #fff; line-height: 1;
-  }
-  .vsc-label {
-    font-family: 'Inter', sans-serif; font-size: 11px; color: #888;
-    text-transform: uppercase; letter-spacing: 0.5px;
-  }
-
-  /* ---- SPLIT / LEAPFROG ---- */
-  .split-section { flex-direction: row !important; }
-  .split-text {
-    flex: 1; padding: 70px;
-    display: flex; flex-direction: column; justify-content: center;
-    border-right: 1px solid #222; z-index: 2;
-  }
-  .split-visual {
-    flex: 1; display: flex; align-items: center; justify-content: center;
-    padding: 50px; background: #0a0a0a;
-  }
-  @media (max-width: 900px) and (min-width: 769px) {
-    .split-section { flex-direction: column !important; }
-    .split-text { border-right: none; border-bottom: 1px solid #222; padding: 40px 24px; }
-    .split-visual { padding: 24px; }
-  }
-  .leapfrog-visual { display: flex; align-items: stretch; gap: 24px; width: 100%; }
-  .leap-box {
-    flex: 1; border: 1px solid #333; border-radius: 4px; padding: 24px; text-align: center;
-  }
-  .leap-box.legacy { background: #1a1a1a; }
-  .leap-box.fluxco { background: rgba(45,140,255,0.05); border-color: var(--flux-blue); }
-  .leap-label {
-    font-family: 'Oswald', sans-serif; font-size: 16px; font-weight: 700;
-    text-transform: uppercase; margin-bottom: 14px;
-  }
-  .leap-box.legacy .leap-label { color: #666; }
-  .leap-box.fluxco .leap-label { color: var(--flux-blue); }
-  .leap-items { display: flex; flex-direction: column; gap: 6px; }
-  .leap-items span {
-    font-family: 'Inter', sans-serif; font-size: 12px; color: #888;
-    padding: 5px 0; border-bottom: 1px solid #222;
-  }
-  .leap-box.fluxco .leap-items span { color: #ccc; border-color: rgba(45,140,255,0.15); }
-  .leap-arrow { flex-shrink: 0; display: flex; align-items: center; }
-
-  /* ---- MOATS GRID (slide 8) ---- */
-  .moats-grid {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 100%;
-  }
-  @media (max-width: 900px) { .moats-grid { grid-template-columns: 1fr; } }
-  .moat-card {
-    background: #151515; border: 1px solid #333; border-radius: 4px;
-    padding: 30px; transition: border-color 0.2s;
-  }
-  .moat-card:hover { border-color: var(--flux-blue); }
-  .moat-card svg { margin-bottom: 14px; }
-  .moat-card .section-h3 { font-size: 18px; margin-bottom: 12px; }
-  .moat-card .deck-ul li { font-size: 13px; margin-bottom: 8px; padding-left: 22px; }
-  .moat-card .deck-ul li::before { width: 11px; height: 11px; top: 5px; }
-
-  /* ---- TIMELINE ---- */
-  .timeline {
-    display: flex; justify-content: space-between; align-items: flex-start;
-    position: relative; width: 100%; margin-top: 40px; padding-top: 40px;
-  }
-  .timeline-line-h {
-    position: absolute; top: 47px; left: 0; width: 100%;
-    height: 2px; background: #333;
-  }
-  .timeline-item {
-    position: relative; width: 30%; text-align: center; padding-top: 30px;
-  }
-  .timeline-dot {
-    position: absolute; top: -3px; left: 50%; transform: translateX(-50%);
-    width: 16px; height: 16px;
-    background: #0f0f0f; border: 3px solid var(--flux-blue);
-    border-radius: 50%; z-index: 2;
-  }
-  .timeline-year {
-    font-family: 'Oswald', sans-serif; color: var(--flux-blue);
-    font-size: 42px; font-weight: 700; margin-bottom: 10px;
-  }
-  .timeline-title {
-    font-family: 'Inter', sans-serif; color: #fff; font-size: 15px;
-    display: block; margin-bottom: 10px;
-  }
-  .timeline-desc {
-    font-family: 'Inter', sans-serif; color: #888; font-size: 13px;
+  /* ---- CALLOUT ---- */
+  .d2-callout {
+    display: flex; gap: 14px; padding: 16px 20px;
+    background: rgba(45,140,255,0.04); border: 1px solid rgba(45,140,255,0.15);
+    border-radius: var(--d2-radius); margin-top: 16px;
+    color: var(--d2-text); font-family: 'Inter', sans-serif; font-size: 14px;
     line-height: 1.6;
   }
+  .d2-callout svg { color: var(--d2-blue); flex-shrink: 0; margin-top: 2px; }
+  .d2-callout strong { color: #fff; }
 
-  /* ---- CLOSING ---- */
-  .closing-section {
-    background: radial-gradient(circle at center, #1a1a1a 0%, #0a0a0a 100%);
-    align-items: center; text-align: center;
+  /* ---- PROBLEM CARDS (slide 4) ---- */
+  .d2-problem-cards { display: flex; flex-direction: column; gap: 12px; }
+  .d2-problem-card {
+    display: flex; align-items: center; gap: 16px;
+    padding: 18px 20px; border-radius: var(--d2-radius);
+    background: var(--d2-surface); border: 1px solid var(--d2-border);
+    font-family: 'Inter', sans-serif; font-size: 14px; color: var(--d2-text);
+    transition: all 0.3s;
   }
-  .closing-content {
-    display: flex; flex-direction: column; align-items: center;
-    z-index: 2; padding: 80px;
-  }
-  .closing-headline {
-    font-family: 'Oswald', sans-serif;
-    font-size: clamp(40px, 6vw, 64px); font-weight: 700;
-    color: #fff; text-transform: uppercase; margin-bottom: 20px;
-  }
-  .closing-sub {
-    font-family: 'Inter', sans-serif; font-size: 18px; color: #b0b0b0;
-    max-width: 700px; line-height: 1.5; margin-bottom: 30px;
-  }
-  .closing-cta {
-    color: var(--flux-red); font-family: 'Inter', sans-serif; font-weight: 600;
-    font-size: 14px; letter-spacing: 3px; text-transform: uppercase;
-    padding: 14px 40px;
-    border: 1px solid rgba(196,30,58,0.4); border-radius: 4px;
-    margin-bottom: 40px;
-  }
-  .closing-contact p {
-    font-family: 'Inter', sans-serif; font-size: 16px; color: #666;
-    margin-bottom: 5px;
+  .d2-problem-card:hover { border-color: rgba(45,140,255,0.3); transform: translateX(4px); }
+  .d2-problem-icon {
+    width: 40px; height: 40px; border-radius: 10px;
+    background: rgba(230,57,70,0.08); border: 1px solid rgba(230,57,70,0.15);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--d2-red); flex-shrink: 0;
   }
 
-  /* ---- BACKGROUND IMAGE SECTIONS ---- */
-  .has-bg {
-    background-size: cover !important;
-    background-position: center !important;
+  /* ---- FLOW (slide 5) ---- */
+  .d2-flow-col { display: flex; flex-direction: column; gap: 24px; }
+  .d2-flow { display: flex; align-items: center; justify-content: center; gap: 0; }
+  .d2-flow-group { display: flex; align-items: center; gap: 0; }
+  .d2-flow-arrow { color: var(--d2-text-dim); padding: 0 12px; }
+  .d2-flow-step {
+    display: flex; flex-direction: column; align-items: center; gap: 12px;
+    padding: 24px 20px; border-radius: var(--d2-radius);
+    background: var(--d2-surface); border: 1px solid var(--d2-border);
+    min-width: 130px; transition: all 0.3s;
   }
-  .has-bg::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: rgba(10, 10, 10, 0.84);
-    z-index: 0;
+  .d2-flow-step.active {
+    border-color: var(--d2-blue);
+    background: rgba(45,140,255,0.06);
+    box-shadow: 0 0 30px rgba(45,140,255,0.1);
   }
-  .has-bg .content-area,
-  .has-bg .title-overlay,
-  .has-bg .split-text,
-  .has-bg .split-visual,
-  .has-bg .closing-content {
-    position: relative;
-    z-index: 1;
-  }
-
-  /* ---- SLIDE 6 COMPACT LAYOUT ---- */
-  .slide6-compact { padding-top: 40px; padding-bottom: 30px; }
-  .slide6-compact .slide-title { margin-bottom: 12px; }
-
-  .tech-grid-4 {
-    display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 14px;
-    margin: 16px 0;
-  }
-  .tech-card-compact {
-    display: flex; flex-direction: column; gap: 6px;
-    padding: 16px;
-    border: 1px solid #222; border-radius: 4px;
-    background: rgba(45,140,255,0.03);
-  }
-  .tech-card-compact svg { flex-shrink: 0; }
-  .tech-card-compact strong {
-    color: #fff; font-family: 'Inter', sans-serif; font-size: 13px;
-    font-weight: 600;
-  }
-  .tech-card-compact span {
-    color: #888; font-family: 'Inter', sans-serif; font-size: 11px;
-    line-height: 1.5;
+  .d2-flow-icon { color: var(--d2-blue); }
+  .d2-flow-label {
+    font-family: 'Inter', sans-serif; font-size: 11px;
+    color: #fff; text-align: center; text-transform: uppercase;
+    font-weight: 600; letter-spacing: 0.5px;
   }
 
-  .slide6-bottom-row {
-    display: flex; align-items: center; gap: 20px;
-    margin-top: 16px;
+  .d2-intel-card {
+    display: flex; gap: 14px; padding: 20px;
+    background: rgba(45,140,255,0.04); border: 1px solid rgba(45,140,255,0.15);
+    border-radius: var(--d2-radius);
   }
-  .process-callout-inline {
-    display: flex; align-items: center; gap: 12px;
-    padding: 16px 20px;
-    border: 1px solid rgba(45,140,255,0.3); border-radius: 4px;
-    background: rgba(45,140,255,0.05);
-    flex-shrink: 0;
+  .d2-intel-card svg { color: var(--d2-blue); margin-top: 2px; }
+  .d2-intel-card strong {
+    font-family: 'Inter', sans-serif; font-size: 14px; color: #fff;
+    display: block;
   }
-  .process-callout-inline span {
-    font-family: 'Oswald', sans-serif; font-size: 17px;
-    color: #fff; font-weight: 500; font-style: italic;
-  }
-  .process-callout-inline em { color: var(--flux-blue); font-style: normal; }
 
-  .stat-row-inline {
-    display: flex; gap: 14px; flex: 1;
+  /* ---- TECH GRID (slide 6) ---- */
+  .d2-tech-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 14px; margin-bottom: 20px;
   }
-  .stat-inline {
-    flex: 1; text-align: center;
-    padding: 12px 8px;
-    border: 1px solid #333; border-radius: 4px;
-    background: rgba(45,140,255,0.03);
+  .d2-tech-card {
+    display: flex; flex-direction: column; gap: 8px;
+    padding: 20px; border-radius: var(--d2-radius);
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--d2-border);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s;
   }
-  .stat-inline-val {
-    font-family: 'Oswald', sans-serif; font-size: 26px; font-weight: 700;
+  .d2-tech-card:hover { border-color: rgba(45,140,255,0.3); transform: translateY(-3px); }
+  .d2-tech-icon { color: var(--d2-blue); }
+  .d2-tech-card strong { color: #fff; font-family: 'Inter', sans-serif; font-size: 13px; }
+  .d2-tech-card span { color: var(--d2-text-dim); font-family: 'Inter', sans-serif; font-size: 12px; line-height: 1.5; }
+
+  .d2-metric-row { display: flex; gap: 14px; }
+  .d2-metric {
+    flex: 1; text-align: center; padding: 16px 12px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--d2-border); border-radius: var(--d2-radius);
+  }
+  .d2-metric-val {
+    font-family: 'Oswald', sans-serif; font-size: 28px; font-weight: 700;
     color: #fff; line-height: 1;
   }
-  .stat-inline-label {
-    font-family: 'Inter', sans-serif; font-size: 10px; color: #888;
-    text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px;
+  .d2-metric-label {
+    font-family: 'Inter', sans-serif; font-size: 10px;
+    color: var(--d2-text-dim); text-transform: uppercase;
+    letter-spacing: 0.5px; margin-top: 6px;
   }
 
-  @media (max-width: 1100px) {
-    .tech-grid-4 { grid-template-columns: 1fr 1fr; }
+  /* ---- COMPARE (slide 7) ---- */
+  .d2-compare {
+    display: flex; align-items: stretch; gap: 24px;
+    max-width: 900px; margin: 0 auto;
+  }
+  .d2-compare-box {
+    flex: 1; border-radius: var(--d2-radius); padding: 28px; overflow: hidden;
+  }
+  .d2-compare-legacy {
+    background: rgba(255,255,255,0.03); border: 1px solid var(--d2-border);
+  }
+  .d2-compare-flux {
+    background: rgba(45,140,255,0.04); border: 1px solid rgba(45,140,255,0.2);
+  }
+  .d2-compare-header {
+    font-family: 'Oswald', sans-serif; font-size: 14px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px;
+  }
+  .d2-compare-legacy .d2-compare-header { color: var(--d2-text-dim); }
+  .d2-compare-flux .d2-compare-header { color: var(--d2-blue); }
+  .d2-compare-item {
+    font-family: 'Inter', sans-serif; font-size: 13px;
+    padding: 10px 0; border-bottom: 1px solid var(--d2-border);
+  }
+  .d2-compare-legacy .d2-compare-item { color: var(--d2-text-dim); }
+  .d2-compare-flux .d2-compare-item { color: rgba(255,255,255,0.8); border-color: rgba(45,140,255,0.1); }
+  .d2-compare-item:last-child { border-bottom: none; }
+  .d2-compare-arrow {
+    display: flex; align-items: center; color: var(--d2-blue); flex-shrink: 0;
+  }
+
+  /* ---- MOATS (slide 8) ---- */
+  .d2-moats { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .d2-moat {
+    padding: 28px; border-radius: var(--d2-radius);
+    background: var(--d2-surface); border: 1px solid var(--d2-border);
+    transition: all 0.3s;
+  }
+  .d2-moat:hover { border-color: rgba(45,140,255,0.3); transform: translateY(-2px); }
+  .d2-moat-icon { color: var(--d2-blue); margin-bottom: 14px; }
+  .d2-moat-title {
+    font-family: 'Oswald', sans-serif; font-size: 16px; font-weight: 600;
+    color: #fff; text-transform: uppercase; margin-bottom: 12px;
+    letter-spacing: 0.5px;
+  }
+  .d2-moat-list { list-style: none; padding: 0; margin: 0; }
+  .d2-moat-list li {
+    font-family: 'Inter', sans-serif; font-size: 13px;
+    color: var(--d2-text); line-height: 1.6;
+    padding: 6px 0 6px 20px; position: relative;
+  }
+  .d2-moat-list li::before {
+    content: ''; position: absolute; left: 0; top: 12px;
+    width: 6px; height: 6px; border-radius: 50%;
+    background: rgba(45,140,255,0.4);
+  }
+
+  /* ---- TIMELINE (slide 9) ---- */
+  .d2-timeline {
+    display: flex; gap: 0; position: relative;
+    margin-top: 48px; padding-top: 40px;
+  }
+  .d2-timeline::before {
+    content: ''; position: absolute; top: 46px; left: 0; right: 0;
+    height: 2px; background: linear-gradient(90deg, var(--d2-blue), rgba(45,140,255,0.1));
+  }
+  .d2-tl-item {
+    flex: 1; position: relative; text-align: center; padding-top: 32px;
+  }
+  .d2-tl-dot {
+    position: absolute; top: -2px; left: 50%; transform: translateX(-50%);
+    width: 14px; height: 14px; border-radius: 50%;
+    background: var(--d2-bg); border: 3px solid var(--d2-blue);
+    box-shadow: 0 0 12px rgba(45,140,255,0.3);
+  }
+  .d2-tl-year {
+    font-family: 'Oswald', sans-serif; font-size: 42px; font-weight: 700;
+    color: var(--d2-blue); margin-bottom: 8px;
+  }
+  .d2-tl-title {
+    font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 700;
+    color: #fff; margin-bottom: 10px;
+  }
+  .d2-tl-desc {
+    font-family: 'Inter', sans-serif; font-size: 13px;
+    color: var(--d2-text); line-height: 1.6;
+    max-width: 280px; margin: 0 auto;
+  }
+
+  /* ---- CLOSING (slide 10) ---- */
+  .d2-closing {
+    display: flex; flex-direction: column; align-items: center;
+    text-align: center; z-index: 2; padding: 80px; max-width: 800px;
+  }
+  .d2-closing .d2-logo-icon,
+  .d2-closing .d2-closing-h2,
+  .d2-closing .d2-closing-p,
+  .d2-closing .d2-cta,
+  .d2-closing .d2-closing-contact {
+    opacity: 0; transform: translateY(30px);
+    transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .d2-closing.in .d2-logo-icon { opacity: 1; transform: translateY(0); transition-delay: 0.1s; }
+  .d2-closing.in .d2-closing-h2 { opacity: 1; transform: translateY(0); transition-delay: 0.3s; }
+  .d2-closing.in .d2-closing-p { opacity: 1; transform: translateY(0); transition-delay: 0.5s; }
+  .d2-closing.in .d2-cta { opacity: 1; transform: translateY(0); transition-delay: 0.7s; }
+  .d2-closing.in .d2-closing-contact { opacity: 1; transform: translateY(0); transition-delay: 0.85s; }
+
+  .d2-closing-logo { margin-bottom: 24px; }
+  .d2-closing-h2 {
+    font-family: 'Oswald', sans-serif; font-size: clamp(36px, 5vw, 56px);
+    font-weight: 700; color: #fff; text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .d2-closing-p {
+    font-family: 'Inter', sans-serif; font-size: 17px;
+    color: var(--d2-text); line-height: 1.6; margin-bottom: 32px;
+  }
+  .d2-cta {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600;
+    color: #fff; letter-spacing: 2px; text-transform: uppercase;
+    padding: 16px 32px; border-radius: 100px;
+    background: linear-gradient(135deg, var(--d2-blue), rgba(45,140,255,0.7));
+    text-decoration: none; transition: all 0.3s;
+    box-shadow: 0 0 30px rgba(45,140,255,0.2);
+  }
+  .d2-cta:hover { transform: translateY(-2px); box-shadow: 0 0 50px rgba(45,140,255,0.4); }
+  .d2-closing-contact {
+    display: flex; align-items: center; gap: 16px;
+    margin-top: 32px;
+    font-family: 'Inter', sans-serif; font-size: 14px; color: var(--d2-text-dim);
+  }
+  .d2-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--d2-text-dim); }
+
+  /* ---- MOBILE ---- */
+  @media (max-width: 768px) {
+    body { overflow-y: auto !important; }
+    .d2-container {
+      position: relative !important; inset: auto !important;
+      overflow-y: visible !important; scroll-snap-type: none !important;
+    }
+    .d2-slide {
+      min-height: auto; padding: 48px 0;
+      scroll-snap-align: none;
+    }
+    .d2-slide:first-child, .d2-slide:last-child { min-height: 100vh; min-height: 100svh; padding: 0; }
+    .d2-content { padding: 24px 20px; }
+    .d2-title-content { padding: 40px 24px; }
+    .d2-grid-2 { grid-template-columns: 1fr; gap: 24px; }
+    .d2-h2 { font-size: 28px; }
+    .d2-h3 { font-size: 17px; }
+    .d2-p { font-size: 14px; }
+    .d2-tech-grid { grid-template-columns: 1fr 1fr; }
+    .d2-moats { grid-template-columns: 1fr; }
+    .d2-compare { flex-direction: column; }
+    .d2-compare-arrow { transform: rotate(90deg); justify-content: center; }
+    .d2-flow { flex-direction: column; }
+    .d2-flow-arrow { transform: rotate(90deg); }
+    .d2-flow-step { width: 100%; min-width: 0; }
+    .d2-timeline { flex-direction: column; gap: 32px; }
+    .d2-timeline::before { display: none; }
+    .d2-tl-item { text-align: left; padding-left: 30px; padding-top: 0; border-left: 2px solid rgba(45,140,255,0.3); }
+    .d2-tl-dot { left: -8px; top: 4px; transform: none; width: 12px; height: 12px; }
+    .d2-progress { display: none; }
+    .d2-nav { display: none; }
+    .d2-scroll-hint { display: none; }
+    .d2-quotes-row { flex-direction: column; }
+    .d2-closing { padding: 48px 24px; }
+    .d2-metric-row { flex-wrap: wrap; }
+    .d2-metric { min-width: calc(50% - 7px); }
+    .d2-big-stat-num { font-size: 48px; }
   }
 `;
