@@ -1181,7 +1181,7 @@ const deck2Styles = `
 
   /* ---- MOBILE ---- */
   @media (max-width: 768px) {
-    body { overflow-y: auto !important; }
+    html, body { overflow: auto !important; }
     .d2-container {
       position: relative !important; inset: auto !important;
       overflow-y: visible !important; scroll-snap-type: none !important;
