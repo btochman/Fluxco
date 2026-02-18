@@ -530,7 +530,7 @@ export function DesignRequirementsForm({
             <div
               className={`flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
                 requirements.requireFEOC
-                  ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800'
+                  ? 'bg-green-500/10 border-green-500/40'
                   : 'bg-secondary/30 border-transparent'
               }`}
               onClick={() => updateRequirement('requireFEOC', !requirements.requireFEOC)}
