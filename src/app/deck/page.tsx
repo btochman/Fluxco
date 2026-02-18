@@ -394,12 +394,12 @@ export default function Deck2Page() {
                   It will never make sense for a procurement person to become a transformer expert. It&apos;s one of many things they buy &mdash; but one of the most expensive.
                 </p>
                 <p className="d2-p">
-                  <strong>FluxCo becomes their CTO</strong> (Chief Transformer Officer). Our <strong>free Spec Builder</strong> automates the design, then we bid it across dozens of global suppliers.
+                  <strong>FluxCo becomes their CTO</strong> (Chief Transformer Officer). Our <strong>free Spec Builder</strong> automates the design, then we bid it across <strong>100+ OEMs</strong> worldwide.
                 </p>
                 <ul className="d2-checklist">
                   <li><strong>Full visibility:</strong> price, lead time, quality, certifications &mdash; side-by-side.</li>
                   <li><strong>Speed:</strong> What takes buyers weeks of calls, we do in hours.</li>
-                  <li><strong>Revenue:</strong> Transaction fees on every unit sourced through the platform.</li>
+                  <li><strong>Revenue:</strong> We automate the process EPCs typically take 10–20% on in a <strong>$20B+ annual US market</strong>.</li>
                 </ul>
               </div>
               <div className="d2-flow-col">
@@ -535,7 +535,7 @@ export default function Deck2Page() {
             <div className="d2-timeline">
               {[
                 { year: "2026", title: "Marketplace & Assembly", desc: "Launch marketplace to aggregate demand and collect intelligence. First US assembly lines for immediate FEOC-compliant delivery. Revenue from day one." },
-                { year: "2027", title: "Vertical Integration", desc: "Break ground on automated factory. Begin domestic amorphous steel production. Eliminate foreign feedstock dependency." },
+                { year: "2027", title: "Vertical Integration", desc: "Break ground on automated factory: CNC laser cutting, vision-guided robotic stacking, and adaptive CNC winding. Full domestic production." },
                 { year: "2028+", title: "Gigafactory Scale", desc: "Full robotic production. Raw material independence. Largest domestic transformer manufacturer delivering thousands of units annually." },
               ].map((item, i) => (
                 <div key={item.year} className="d2-tl-item" style={{ animationDelay: `${0.3 + i * 0.25}s` }}>
