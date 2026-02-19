@@ -267,7 +267,7 @@ export default function FAQPage() {
               Contact Us
             </Link>
             <Link
-              href="/design"
+              href="/specbuilder"
               className="inline-flex items-center justify-center gap-2 bg-card border border-border text-foreground px-8 py-3 rounded-lg font-medium hover:border-primary/50 transition-colors"
             >
               Spec Builder

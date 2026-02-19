@@ -406,7 +406,7 @@ export default function Deck2Page() {
                 <div className="d2-flow">
                   {[
                     { icon: <Target className="w-7 h-7" />, label: "Customer Spec", active: false, href: null },
-                    { icon: <Zap className="w-7 h-7" />, label: "FluxCo Spec Builder", active: true, href: "https://fluxco.com/design" },
+                    { icon: <Zap className="w-7 h-7" />, label: "FluxCo Spec Builder", active: true, href: "https://fluxco.com/specbuilder" },
                     { icon: <BarChart3 className="w-7 h-7" />, label: "100+ OEM Bids", active: false, href: null },
                   ].map((step, i) => (
                     <div key={step.label} className="d2-flow-group" style={{ animationDelay: `${0.3 + i * 0.25}s` }}>

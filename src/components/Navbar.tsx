@@ -204,7 +204,7 @@ const Navbar = () => {
 
             {/* Spec Builder Button */}
             <Button asChild variant="hero" className="h-12 px-3">
-              <Link href="/design" className="flex flex-col items-center text-xs leading-tight">
+              <Link href="/specbuilder" className="flex flex-col items-center text-xs leading-tight">
                 <span>Spec</span>
                 <span>Builder</span>
               </Link>
@@ -335,7 +335,7 @@ const Navbar = () => {
               </Button>
 
               <Button asChild variant="hero" size="lg">
-                <Link href="/design" onClick={() => setIsOpen(false)}>
+                <Link href="/specbuilder" onClick={() => setIsOpen(false)}>
                   Spec Builder
                 </Link>
               </Button>

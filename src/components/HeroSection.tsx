@@ -81,7 +81,7 @@ const HeroSection = () => {
               size="xl"
               asChild
             >
-              <Link href="/design">
+              <Link href="/specbuilder">
                 Spec Builder
                 <ArrowRight className="w-5 h-5" />
               </Link>

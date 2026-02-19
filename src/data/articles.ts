@@ -2513,7 +2513,7 @@ Every time you RFP only your usual suppliers, you're potentially missing:
 
 You don't have time to call 50 suppliers. But a marketplace can search 50 suppliers for you.
 
-[Submit your specs](/design) and see what the market actually offers. Or [browse current inventory](/inventory) to see what's available now.
+[Submit your specs](/specbuilder) and see what the market actually offers. Or [browse current inventory](/inventory) to see what's available now.
 `,
   },
   {
@@ -3069,7 +3069,7 @@ This new capacity should begin to bend the curve in late 2026/2027 — but deman
 
 FluxCo has access to in-stock inventory from 100+ global suppliers. Instead of calling five manufacturers and waiting for quotes, search our network in one step.
 
-[Browse inventory](/inventory) | [Request a quote](/get-quote) | [Use the Designer tool](/design)
+[Browse inventory](/inventory) | [Request a quote](/get-quote) | [Use the Spec Builder](/specbuilder)
 `,
   },
 ];
