@@ -405,16 +405,24 @@ export default function Deck2Page() {
               <div className="d2-flow-col">
                 <div className="d2-flow">
                   {[
-                    { icon: <Target className="w-7 h-7" />, label: "Customer Spec", active: false },
-                    { icon: <Zap className="w-7 h-7" />, label: "FluxCo Spec Builder", active: true },
-                    { icon: <BarChart3 className="w-7 h-7" />, label: "100+ OEM Bids", active: false },
+                    { icon: <Target className="w-7 h-7" />, label: "Customer Spec", active: false, href: null },
+                    { icon: <Zap className="w-7 h-7" />, label: "FluxCo Spec Builder", active: true, href: "/get-quote" },
+                    { icon: <BarChart3 className="w-7 h-7" />, label: "100+ OEM Bids", active: false, href: null },
                   ].map((step, i) => (
                     <div key={step.label} className="d2-flow-group" style={{ animationDelay: `${0.3 + i * 0.25}s` }}>
                       {i > 0 && <div className="d2-flow-arrow"><ArrowRight className="w-5 h-5" /></div>}
-                      <div className={`d2-flow-step ${step.active ? "active" : ""}`}>
-                        <div className="d2-flow-icon">{step.icon}</div>
-                        <div className="d2-flow-label">{step.label}</div>
-                      </div>
+                      {step.href ? (
+                        <a href={step.href} target="_blank" rel="noopener noreferrer" className={`d2-flow-step active d2-pulse-glow`} style={{ textDecoration: "none", cursor: "pointer" }}>
+                          <div className="d2-flow-icon">{step.icon}</div>
+                          <div className="d2-flow-label">{step.label}</div>
+                          <div className="d2-try-it">Try it live &rarr;</div>
+                        </a>
+                      ) : (
+                        <div className={`d2-flow-step ${step.active ? "active" : ""}`}>
+                          <div className="d2-flow-icon">{step.icon}</div>
+                          <div className="d2-flow-label">{step.label}</div>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -998,6 +1006,22 @@ const deck2Styles = `
     color: #fff; text-align: center; text-transform: uppercase;
     font-weight: 600; letter-spacing: 0.5px;
   }
+
+  .d2-pulse-glow {
+    animation: d2-spec-pulse 2.5s ease-in-out infinite !important;
+  }
+  @keyframes d2-spec-pulse {
+    0%, 100% { box-shadow: 0 0 20px rgba(45,140,255,0.15); }
+    50% { box-shadow: 0 0 40px rgba(45,140,255,0.4), 0 0 60px rgba(45,140,255,0.15); }
+  }
+  .d2-try-it {
+    font-family: 'Inter', sans-serif; font-size: 10px;
+    color: var(--d2-blue); text-transform: uppercase;
+    letter-spacing: 1px; font-weight: 600; margin-top: 4px;
+    opacity: 0.8;
+  }
+  .d2-pulse-glow:hover { transform: translateY(-3px); }
+  .d2-pulse-glow:hover .d2-try-it { opacity: 1; }
 
   .d2-intel-card {
     display: flex; gap: 14px; padding: 20px;
