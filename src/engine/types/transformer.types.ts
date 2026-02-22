@@ -45,6 +45,10 @@ export interface VectorGroupType {
   name: string;
   description: string;
   phaseShift: number;
+  /** HV winding connection: 'delta' or 'wye' */
+  hvConnection: 'delta' | 'wye';
+  /** LV winding connection: 'delta' or 'wye' */
+  lvConnection: 'delta' | 'wye';
 }
 
 /**

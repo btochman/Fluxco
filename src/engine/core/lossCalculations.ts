@@ -37,7 +37,7 @@ export function calculateLosses(
   const noLoadLoss = calculateNoLoadLoss(coreDesign, requirements.frequency, steps);
 
   // Step 2: Calculate I²R losses
-  const { hvI2R, lvI2R, totalI2R } = calculateI2RLosses(hvWinding, lvWinding, steps);
+  const { hvI2R, lvI2R, totalI2R } = calculateI2RLosses(hvWinding, lvWinding, requirements, steps);
 
   // Step 3: Calculate eddy and stray losses
   const eddyLoss = totalI2R * LOAD_LOSS_FACTORS.eddyLossFactor;
@@ -138,25 +138,29 @@ function calculateNoLoadLoss(
 function calculateI2RLosses(
   hvWinding: WindingDesign,
   lvWinding: WindingDesign,
+  requirements: DesignRequirements,
   steps: CalculationStep[]
 ): { hvI2R: number; lvI2R: number; totalI2R: number } {
-  // I²R loss for each winding
-  const hvI2R = Math.pow(hvWinding.ratedCurrent, 2) * hvWinding.dcResistance;
-  const lvI2R = Math.pow(lvWinding.ratedCurrent, 2) * lvWinding.dcResistance;
+  // I²R loss for each winding: 3 phases × Iphase² × Rphase (for 3-phase)
+  // ratedCurrent is already the winding (phase) current
+  // dcResistance is per-coil (one phase) resistance
+  const phases = requirements.phases;
+  const hvI2R = phases * Math.pow(hvWinding.ratedCurrent, 2) * hvWinding.dcResistance;
+  const lvI2R = phases * Math.pow(lvWinding.ratedCurrent, 2) * lvWinding.dcResistance;
   const totalI2R = hvI2R + lvI2R;
 
   steps.push({
     id: 'i2r-losses',
     title: 'I²R (Resistive) Losses',
-    formula: 'PI²R = IHV² × RHV + ILV² × RLV',
+    formula: `PI²R = ${phases} × (IHV² × RHV + ILV² × RLV)`,
     inputs: {
-      'IHV': { value: hvWinding.ratedCurrent, unit: 'A', description: 'HV rated current' },
-      'RHV': { value: hvWinding.dcResistance, unit: 'Ω', description: 'HV winding resistance at 20°C' },
-      'ILV': { value: lvWinding.ratedCurrent, unit: 'A', description: 'LV rated current' },
-      'RLV': { value: lvWinding.dcResistance, unit: 'Ω', description: 'LV winding resistance at 20°C' },
+      'IHV': { value: hvWinding.ratedCurrent, unit: 'A', description: 'HV winding current' },
+      'RHV': { value: hvWinding.dcResistance, unit: 'Ω', description: 'HV per-phase resistance at 20°C' },
+      'ILV': { value: lvWinding.ratedCurrent, unit: 'A', description: 'LV winding current' },
+      'RLV': { value: lvWinding.dcResistance, unit: 'Ω', description: 'LV per-phase resistance at 20°C' },
     },
     result: { value: Math.round(totalI2R), unit: 'W at 20°C' },
-    explanation: `HV winding I²R loss: ${Math.round(hvI2R)}W. LV winding I²R loss: ${Math.round(lvI2R)}W. These losses are proportional to the square of the load current, so they vary with loading.`,
+    explanation: `HV winding I²R loss: ${Math.round(hvI2R)}W. LV winding I²R loss: ${Math.round(lvI2R)}W. Total for ${phases} phase(s). These losses are proportional to the square of the load current.`,
     category: 'losses',
   });
 

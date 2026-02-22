@@ -152,8 +152,8 @@ function calculatePercentX(
   // distribution of leakage flux within the winding
   const ATD = a / 3 + b + c / 3;
 
-  // Mean diameter of the leakage flux path
-  const meanDiameter = (lvWinding.innerRadius + hvWinding.outerRadius); // mm
+  // Mean diameter of the leakage flux path (center of HV-LV gap)
+  const meanDiameter = (lvWinding.outerRadius + hvWinding.innerRadius); // mm
   const Lmt = Math.PI * meanDiameter; // Mean turn length in mm
 
   // Effective height of windings (use smaller of the two)

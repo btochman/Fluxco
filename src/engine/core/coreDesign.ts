@@ -175,9 +175,9 @@ function selectFluxDensity(
     fluxDensity *= (1 - altitudeDerating);
   }
 
-  // Frequency adjustment (core loss is proportional to f^1.6 to f^2)
+  // Frequency adjustment: at 50 Hz, slightly reduce Bm to limit core loss per cycle
   if (requirements.frequency === 50) {
-    fluxDensity *= 1.02; // Can use slightly higher Bm at 50Hz
+    fluxDensity *= 0.98;
   }
 
   // Round to 2 decimal places
@@ -395,7 +395,7 @@ function calculateCoreWeight(
     : 2 * windowWidth + 2 * coreWidth;
 
   // Yoke cross-section is typically same as limb
-  const yokeVolume = netCrossSection * (yokeLength / 10) * numYokes / 10; // cm³ (length in mm)
+  const yokeVolume = netCrossSection * (yokeLength / 10) * numYokes; // cm³ (length in mm → cm)
 
   // Total volume
   const totalVolume = limbVolume + yokeVolume;

@@ -4,7 +4,7 @@
  * These are approximate market prices for budgetary estimation purposes.
  * Actual costs will vary based on supplier, quantity, location, and market conditions.
  *
- * All prices in USD, updated for 2024-2025 market estimates.
+ * All prices in USD, updated for 2025-2026 market estimates.
  */
 
 // ============================================================================
@@ -17,17 +17,17 @@
  */
 export const STEEL_PRICES: Record<string, number> = {
   // GOES (Grain-Oriented Electrical Steel)
-  'm2': 3.80,           // Premium grade
-  'm3': 3.40,           // High grade
-  'm4': 3.00,           // Standard grade
-  'm5': 2.70,           // Economy grade
-  'm6': 2.40,           // Basic grade
-  'hi-b': 4.20,         // Ultra-premium Hi-B
-  'laser': 4.80,        // Laser-scribed premium
+  'm2': 5.80,           // Premium grade
+  'm3': 5.20,           // High grade
+  'm4': 4.50,           // Standard grade
+  'm5': 3.80,           // Economy grade
+  'm6': 3.20,           // Basic grade
+  'hi-b': 6.50,         // Ultra-premium Hi-B
+  'laser': 7.50,        // Laser-scribed premium
 
   // Amorphous metals (significantly more expensive)
-  'amorphous-sa1': 8.50,   // Metglas 2605SA1
-  'amorphous-hb1m': 9.20,  // Metglas 2605HB1M
+  'amorphous-sa1': 10.50,   // Metglas 2605SA1
+  'amorphous-hb1m': 11.50,  // Metglas 2605HB1M
 };
 
 // ============================================================================
@@ -39,14 +39,14 @@ export const STEEL_PRICES: Record<string, number> = {
  */
 export const CONDUCTOR_PRICES = {
   copper: {
-    wire: 9.50,           // Magnet wire
-    strip: 10.20,         // Rectangular strip
-    ctc: 12.50,           // Continuously Transposed Cable
+    wire: 12.50,          // Magnet wire
+    strip: 13.50,         // Rectangular strip
+    ctc: 16.00,           // Continuously Transposed Cable
   },
   aluminum: {
-    wire: 3.80,
-    strip: 4.20,
-    ctc: 5.50,
+    wire: 5.00,
+    strip: 5.50,
+    ctc: 7.00,
   },
 };
 

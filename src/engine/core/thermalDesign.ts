@@ -84,23 +84,23 @@ function calculateOilVolume(
   coolingClass: string,
   steps: CalculationStep[]
 ): { oilVolume: number; oilWeight: number } {
-  // Empirical formula: V = K × √(kVA)
+  // Empirical formula: V = K × kVA^0.75 (power-law scaling matches industry data)
   const K = THERMAL_CONSTANTS.oilVolumeConstant[coolingClass as keyof typeof THERMAL_CONSTANTS.oilVolumeConstant]
     || THERMAL_CONSTANTS.oilVolumeConstant['ONAN'];
 
-  const oilVolume = K * Math.sqrt(kVA);
+  const oilVolume = K * Math.pow(kVA, 0.75);
   const oilWeight = oilVolume * TRANSFORMER_OIL.density;
 
   steps.push({
     id: 'oil-volume',
     title: 'Oil Volume',
-    formula: 'V = K × √(kVA)',
+    formula: 'V = K × kVA^0.75',
     inputs: {
-      'K': { value: K, unit: 'L/√kVA', description: `Constant for ${coolingClass}` },
+      'K': { value: K, unit: '', description: `Oil volume constant for ${coolingClass}` },
       'kVA': { value: kVA, unit: 'kVA', description: 'Transformer rating' },
     },
     result: { value: Math.round(oilVolume), unit: 'liters' },
-    explanation: `Oil serves dual purposes: electrical insulation and heat transfer. For ${coolingClass} cooling, approximately ${K} liters per √kVA is typical. Total oil weight: ${Math.round(oilWeight)} kg.`,
+    explanation: `Oil serves dual purposes: electrical insulation and heat transfer. The power-law scaling (kVA^0.75) matches industry data for oil-filled transformers. Total oil weight: ${Math.round(oilWeight)} kg.`,
     category: 'thermal',
   });
 

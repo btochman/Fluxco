@@ -109,7 +109,7 @@ export function designTransformer(
       const yokeLength = requirements.phases === 3
         ? 2 * core.windowWidth + 3 * coreWidth
         : 2 * core.windowWidth + 2 * coreWidth;
-      const yokeVolume = core.netCrossSection * (yokeLength / 10) * 2 / 10;
+      const yokeVolume = core.netCrossSection * (yokeLength / 10) * 2;
       core.coreWeight = Math.round((limbVolume + yokeVolume) * core.steelGrade.density / 1000000);
     }
 

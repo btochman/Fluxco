@@ -233,8 +233,8 @@ export const CORE_STEP_UTILIZATION: Record<number, number> = {
  */
 export const VOLTS_PER_TURN_CONSTANT = {
   distribution: { min: 0.40, max: 0.50, typical: 0.45 },  // < 500 kVA
-  mediumPower: { min: 0.45, max: 0.55, typical: 0.50 },   // 500-5000 kVA
-  largePower: { min: 0.50, max: 0.65, typical: 0.55 },    // > 5000 kVA
+  mediumPower: { min: 0.55, max: 0.70, typical: 0.63 },   // 500-5000 kVA
+  largePower: { min: 0.60, max: 0.75, typical: 0.67 },    // > 5000 kVA
 };
 
 /**
@@ -262,14 +262,14 @@ export const THERMAL_CONSTANTS = {
   // Heat transfer coefficients in W/(m²·K)
   oilToTankNatural: 8,
   oilToTankForced: 12,
-  tankToAirNatural: 6,
+  tankToAirNatural: 9,
   tankToAirForced: 15,
 
   // Hot spot factors
   hotSpotFactor: 1.1,           // Multiplier for average winding rise
   hotSpotAllowance: 13,         // Additional °C for hot spot
 
-  // Oil volume empirical constants (L per √kVA)
+  // Oil volume empirical constants for V = K × kVA^0.75
   oilVolumeConstant: {
     'ONAN': 4.5,
     'ONAF': 4.0,
@@ -379,11 +379,11 @@ export function calculatePowerRatings(baseKVA: number, coolingClassId: string): 
 }
 
 export const VECTOR_GROUPS: VectorGroupType[] = [
-  { id: 'dyn11', name: 'Dyn11', description: 'Delta-Wye, 30° lag', phaseShift: -30 },
-  { id: 'dyn1', name: 'Dyn1', description: 'Delta-Wye, 30° lead', phaseShift: 30 },
-  { id: 'ynd11', name: 'YNd11', description: 'Wye-Delta, 30° lag', phaseShift: -30 },
-  { id: 'dd0', name: 'Dd0', description: 'Delta-Delta, 0°', phaseShift: 0 },
-  { id: 'yy0', name: 'Yy0', description: 'Wye-Wye, 0°', phaseShift: 0 },
+  { id: 'dyn11', name: 'Dyn11', description: 'Delta-Wye, 30° lag', phaseShift: -30, hvConnection: 'delta', lvConnection: 'wye' },
+  { id: 'dyn1', name: 'Dyn1', description: 'Delta-Wye, 30° lead', phaseShift: 30, hvConnection: 'delta', lvConnection: 'wye' },
+  { id: 'ynd11', name: 'YNd11', description: 'Wye-Delta, 30° lag', phaseShift: -30, hvConnection: 'wye', lvConnection: 'delta' },
+  { id: 'dd0', name: 'Dd0', description: 'Delta-Delta, 0°', phaseShift: 0, hvConnection: 'delta', lvConnection: 'delta' },
+  { id: 'yy0', name: 'Yy0', description: 'Wye-Wye, 0°', phaseShift: 0, hvConnection: 'wye', lvConnection: 'wye' },
 ];
 
 export const LOAD_PROFILES: LoadProfileType[] = [

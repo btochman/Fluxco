@@ -46,16 +46,26 @@ export function calculateWindingDesign(
     ? advancedOptions.hvConductorMaterial
     : advancedOptions.lvConductorMaterial;
 
-  // Voltage in Volts (both primaryVoltage and secondaryVoltage are already in V)
-  const voltage = side === 'HV'
+  // Determine winding connection from vector group
+  const connection = side === 'HV'
+    ? (requirements.vectorGroup?.hvConnection || 'delta')
+    : (requirements.vectorGroup?.lvConnection || 'wye');
+
+  // Line voltage (both primaryVoltage and secondaryVoltage are line voltages)
+  const lineVoltage = side === 'HV'
     ? requirements.primaryVoltage
     : requirements.secondaryVoltage;
 
-  // Step 1: Calculate number of turns
-  const turns = calculateTurns(side, voltage, coreDesign.voltsPerTurn, steps);
+  // Phase voltage: Delta windings see full line voltage, Wye windings see Vline/sqrt(3)
+  const phaseVoltage = (requirements.phases === 3 && connection === 'wye')
+    ? lineVoltage / Math.sqrt(3)
+    : lineVoltage;
 
-  // Step 2: Calculate rated current
-  const ratedCurrent = calculateRatedCurrent(side, kVA, voltage, requirements.phases, steps);
+  // Step 1: Calculate number of turns (use phase voltage — turns carry phase voltage)
+  const turns = calculateTurns(side, phaseVoltage, coreDesign.voltsPerTurn, steps);
+
+  // Step 2: Calculate rated winding current
+  const ratedCurrent = calculateRatedCurrent(side, kVA, lineVoltage, requirements.phases, connection, steps);
 
   // Step 3: Select current density
   const currentDensity = selectCurrentDensity(
@@ -100,7 +110,9 @@ export function calculateWindingDesign(
 
   // Step 7: Calculate conductor weight and resistance
   const meanTurnLength = Math.PI * (innerRadius + outerRadius); // mm
-  const totalLength = turns * meanTurnLength / 1000; // meters
+  const singleCoilLength = turns * meanTurnLength / 1000; // meters (one coil)
+  // Total conductor length: multiply by number of phases (3 coils per winding in 3-phase)
+  const totalLength = singleCoilLength * requirements.phases;
 
   const conductorWeight = calculateConductorWeight(
     totalLength,
@@ -109,9 +121,13 @@ export function calculateWindingDesign(
     steps
   );
 
+  // Resistance per phase (one coil). For 3-phase:
+  // - Wye connection: total equivalent R = per-coil R (phases are in series with line)
+  // - Delta connection: total equivalent R = per-coil R (each phase is independent)
+  // We store per-coil resistance since I^2R calculations use per-phase values
   const { dcResistance, resistance75C } = calculateResistance(
     side,
-    totalLength,
+    singleCoilLength,
     conductorSize.crossSection,
     conductorMaterial,
     steps
@@ -175,33 +191,47 @@ function calculateTurns(
 function calculateRatedCurrent(
   side: 'HV' | 'LV',
   kVA: number,
-  voltage: number,
+  lineVoltage: number,
   phases: 1 | 3,
+  connection: 'delta' | 'wye',
   steps: CalculationStep[]
 ): number {
   let current: number;
   let formula: string;
+  let explanation: string;
 
   if (phases === 3) {
-    // I = S / (√3 × V)
-    current = (kVA * 1000) / (Math.sqrt(3) * voltage);
-    formula = 'I = S / (√3 × V)';
+    // Line current: Iline = S / (√3 × Vline)
+    const lineCurrent = (kVA * 1000) / (Math.sqrt(3) * lineVoltage);
+
+    if (connection === 'delta') {
+      // Delta: winding current = Iline / √3 (winding carries 1/√3 of line current)
+      current = lineCurrent / Math.sqrt(3);
+      formula = 'Iwinding = S / (3 × Vline)';
+      explanation = `For a Delta-connected ${side} winding, the winding current is Iline/√3. Line current = ${Math.round(lineCurrent * 100) / 100}A, winding current = ${Math.round(current * 100) / 100}A. The conductor is sized for the winding current.`;
+    } else {
+      // Wye: winding current = Iline (winding carries full line current)
+      current = lineCurrent;
+      formula = 'Iwinding = S / (√3 × Vline)';
+      explanation = `For a Wye-connected ${side} winding, the winding current equals the line current. This is the continuous rated current the conductor must carry.`;
+    }
   } else {
-    // I = S / V
-    current = (kVA * 1000) / voltage;
+    // Single phase: I = S / V
+    current = (kVA * 1000) / lineVoltage;
     formula = 'I = S / V';
+    explanation = `For single-phase power, the winding current is S/V.`;
   }
 
   steps.push({
     id: `${side.toLowerCase()}-current`,
-    title: `${side} Rated Current`,
+    title: `${side} Rated Winding Current`,
     formula,
     inputs: {
       'S': { value: kVA, unit: 'kVA', description: 'Transformer rating' },
-      'V': { value: voltage, unit: 'V', description: `${side} voltage` },
+      'V': { value: lineVoltage, unit: 'V', description: `${side} line voltage` },
     },
     result: { value: Math.round(current * 100) / 100, unit: 'A' },
-    explanation: `For ${phases}-phase power, the line current is ${phases === 3 ? 'S/(√3×V)' : 'S/V'}. This is the continuous rated current the winding must carry.`,
+    explanation,
     category: 'winding',
   });
 
