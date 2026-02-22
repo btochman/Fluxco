@@ -108,6 +108,10 @@ export interface DesignRequirements {
   manufacturingRegions?: ('usa' | 'northAmerica' | 'global' | 'china')[];
   /** Require FEOC (Foreign Entity of Concern) compliance */
   requireFEOC?: boolean;
+  /** Spec builder mode */
+  specMode?: 'lite' | 'pro';
+  /** Full PIP ELSTR01 procurement spec (Pro mode only) */
+  proSpec?: import('./proSpec.types').ProSpecData;
 }
 
 /**

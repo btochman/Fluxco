@@ -10,6 +10,11 @@ import { Label } from '@/components/ui/label';
 import { supabase } from '@/lib/supabase';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { DesignRequirementsForm } from '@/components/transformer/inputs/DesignRequirementsForm';
+import { ProDesignForm } from '@/components/transformer/inputs/ProDesignForm';
+import { SpecificationSheet } from '@/components/transformer/output/SpecificationSheet';
+import { Switch } from '@/components/ui/switch';
+import type { ProSpecData } from '@/engine/types/proSpec.types';
+import { getDefaultProSpec } from '@/engine/constants/proDefaults';
 import { CalculationSteps } from '@/components/transformer/calculations/CalculationSteps';
 import { DesignSummary } from '@/components/transformer/output/DesignSummary';
 import { BillOfMaterials } from '@/components/transformer/output/BillOfMaterials';
@@ -51,6 +56,8 @@ export function TransformerDesigner() {
   const [marketplaceOpen, setMarketplaceOpen] = useState(false);
   const [marketplaceSubmitting, setMarketplaceSubmitting] = useState(false);
   const [marketplaceSuccess, setMarketplaceSuccess] = useState(false);
+  const [specMode, setSpecMode] = useState<'lite' | 'pro'>('lite');
+  const [proSpec, setProSpec] = useState<ProSpecData>(getDefaultProSpec());
   const [marketplaceForm, setMarketplaceForm] = useState({
     contactName: '',
     contactEmail: '',
@@ -331,8 +338,11 @@ export function TransformerDesigner() {
         requirements.coolingClass.id !== 'onan' ? `Power Rating: ${calculatePowerRatings(requirements.ratedPower, requirements.coolingClass.id).display}` : null,
       ].filter(Boolean).join('. ') || null,
       zipcode: marketplaceForm.zipcode || null,
+      spec_mode: specMode,
       status: 'listed',
       design_specs: {
+        spec_mode: specMode,
+        ...(specMode === 'pro' ? { proSpec } : {}),
         requirements: {
           ratedPower: requirements.ratedPower,
           primaryVoltage: requirements.primaryVoltage,
@@ -432,15 +442,34 @@ export function TransformerDesigner() {
       <main className="container mx-auto px-4 py-6">
         {/* Input Form */}
         <Card className="mb-6">
-          <CardHeader>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0">
             <CardTitle>Design Requirements</CardTitle>
+            <div className="flex items-center gap-2">
+              <Label htmlFor="spec-mode" className={`text-sm ${specMode === 'lite' ? 'text-foreground font-medium' : 'text-muted-foreground'}`}>Lite</Label>
+              <Switch
+                id="spec-mode"
+                checked={specMode === 'pro'}
+                onCheckedChange={(checked) => setSpecMode(checked ? 'pro' : 'lite')}
+              />
+              <Label htmlFor="spec-mode" className={`text-sm ${specMode === 'pro' ? 'text-blue-600 font-medium' : 'text-muted-foreground'}`}>Pro</Label>
+            </div>
           </CardHeader>
           <CardContent>
-            <DesignRequirementsForm
-              requirements={requirements}
-              onChange={setRequirements}
-              onCalculate={handleCalculate}
-            />
+            {specMode === 'lite' ? (
+              <DesignRequirementsForm
+                requirements={requirements}
+                onChange={setRequirements}
+                onCalculate={handleCalculate}
+              />
+            ) : (
+              <ProDesignForm
+                requirements={requirements}
+                proSpec={proSpec}
+                onChange={setRequirements}
+                onProSpecChange={setProSpec}
+                onCalculate={handleCalculate}
+              />
+            )}
           </CardContent>
         </Card>
 
@@ -534,8 +563,9 @@ export function TransformerDesigner() {
             </div>
 
             <Tabs value={activeTab} onValueChange={setActiveTab}>
-              <TabsList className="grid w-full grid-cols-5">
+              <TabsList className={`grid w-full ${specMode === 'pro' ? 'grid-cols-6' : 'grid-cols-5'}`}>
                 <TabsTrigger value="summary">Summary</TabsTrigger>
+                {specMode === 'pro' && <TabsTrigger value="specifications">Specifications</TabsTrigger>}
                 <TabsTrigger value="calculations">Calculations</TabsTrigger>
                 <TabsTrigger value="drawings">Drawings</TabsTrigger>
                 <TabsTrigger value="bom">BOM</TabsTrigger>
@@ -545,6 +575,20 @@ export function TransformerDesigner() {
               <TabsContent value="summary">
                 <DesignSummary design={design} requirements={requirements} />
               </TabsContent>
+
+              {specMode === 'pro' && (
+                <TabsContent value="specifications">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-lg">PIP ELSTR01 Specification Sheet</CardTitle>
+                      <p className="text-sm text-muted-foreground">Full procurement specification as configured in Pro mode</p>
+                    </CardHeader>
+                    <CardContent>
+                      <SpecificationSheet proSpec={proSpec} requirements={requirements} />
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+              )}
 
               <TabsContent value="calculations">
                 <CalculationSteps design={design} requirements={requirements} />

@@ -102,6 +102,7 @@ export interface MarketplaceListing {
   efficiency_percent: number | null;
   total_weight_kg: number | null;
   design_specs: Record<string, unknown> | null;
+  spec_mode: 'lite' | 'pro' | null;
   contact_name: string;
   contact_email: string;
   contact_phone: string | null;

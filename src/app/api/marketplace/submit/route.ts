@@ -23,6 +23,7 @@ export async function POST(request: NextRequest) {
     // Sanitize numeric fields to fit database constraints
     const sanitizedListing = {
       ...listing,
+      spec_mode: listing.spec_mode || 'lite',
       impedance_percent: safeDecimal(listing.impedance_percent, 5, 2),      // DECIMAL(5,2) max 999.99
       efficiency_percent: safeDecimal(listing.efficiency_percent, 5, 2),    // DECIMAL(5,2) max 999.99
       no_load_loss_w: safeDecimal(listing.no_load_loss_w, 10, 2),           // DECIMAL(10,2)
