@@ -156,6 +156,30 @@ export function SpecificationSheet({ proSpec, requirements }: SpecificationSheet
         <SpecRow label="Hermetically Sealed Contacts" value={s.alarmAndControl.hermeticallySealedContacts} />
       </Section>
 
+      {/* Nameplates */}
+      <Section title="Nameplates" pip="4.2.8.5">
+        <SpecRow label="Material" value={s.nameplates.material === 'laminated_plastic' ? 'Laminated Plastic' : 'Vinyl Adhesive'} />
+        <SpecRow label="Lettering Color" value={s.nameplates.letteringColor === 'black_on_white' ? 'Black on White' : s.nameplates.letteringColorOther || 'Other'} />
+      </Section>
+
+      {/* Wiring & Control Cabinet */}
+      <Section title="Wiring & Control Cabinet" pip="4.2.9">
+        <SpecRow label="Branch Circuit Protection" value={s.wiringAndControlCabinet.branchCircuitProtection} />
+        <SpecRow label="Conduit Type" value={s.wiringAndControlCabinet.conduitType === 'rigid_galv_steel' ? 'Rigid Galvanized Steel' : s.wiringAndControlCabinet.conduitType === 'liquid_tight' ? 'Liquid Tight' : s.wiringAndControlCabinet.conduitTypeOther || 'Other'} />
+      </Section>
+
+      {/* Space Heaters */}
+      {s.spaceHeaters.requiredFor !== 'none' && (
+        <Section title="Space Heaters" pip="4.2.3">
+          <SpecRow label="Required For" value={s.spaceHeaters.requiredFor === 'primary_atc' ? 'Primary ATC' : s.spaceHeaters.requiredFor === 'secondary_atc' ? 'Secondary ATC' : 'Both ATCs'} />
+          {s.spaceHeaters.temperatureToMaintain && <SpecRow label="Temperature to Maintain" value={`${s.spaceHeaters.temperatureToMaintain}°F`} />}
+          <SpecRow label="Ammeter" value={s.spaceHeaters.ammeter} />
+          <SpecRow label="LED Indicator" value={s.spaceHeaters.ledIndicator} />
+          <SpecRow label="Push-to-Test LED" value={s.spaceHeaters.pushToTestLed} />
+          <SpecRow label="Thermostat with Bypass" value={s.spaceHeaters.thermostatWithBypass} />
+        </Section>
+      )}
+
       {/* Coatings */}
       <Section title="Coatings" pip="4.2.11">
         <SpecRow label="Color" value={s.coatings.color === 'ansi_61' ? 'ANSI 61 (Light Gray)' : s.coatings.color === 'ansi_70' ? 'ANSI 70 (Medium Gray)' : s.coatings.colorOther || 'Other'} />

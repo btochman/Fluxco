@@ -278,6 +278,93 @@ export function TransformerDesigner() {
     pdf.setFontSize(8);
     pdf.text('Note: These are budgetary estimates for planning purposes. Actual costs vary by supplier and market conditions.', margin, y);
 
+    // Pro mode: PIP ELSTR01 Specification Sheet
+    if (specMode === 'pro') {
+      pdf.addPage();
+      pdf.setFontSize(16);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('PIP ELSTR01 Specification Sheet', margin, 20);
+      pdf.setFontSize(10);
+      pdf.setFont('helvetica', 'normal');
+      y = 35;
+
+      const specSections: [string, [string, string][]][] = [
+        ['Site Conditions (4.1.1)', [
+          ['Altitude', proSpec.siteConditions.altitude ? `${proSpec.siteConditions.altitude} ${proSpec.siteConditions.altitudeUnit || 'ft'}` : 'N/A'],
+          ['Max Ambient Temp', proSpec.siteConditions.ambientTempMax != null ? `${proSpec.siteConditions.ambientTempMax}°C` : 'N/A'],
+          ['Seismic Qualification', proSpec.siteConditions.seismicQualification === 'required' ? 'Required' : 'Not Required'],
+        ]],
+        ['Certifications (4.1.3–4.1.4)', [
+          ['NRTL Listing', proSpec.nrtlListing === 'required' ? 'Required' : 'Not Required'],
+          ['FM Approved', proSpec.fmApproved === 'required' ? 'Required' : 'Not Required'],
+        ]],
+        ['Windings & Temp Rise (4.2.1)', [
+          ['Temp Rise', `${proSpec.windingsAndTempRise.averageTempRise || 65}°C`],
+          ['Primary', `${proSpec.windingsAndTempRise.primaryConnection === 'delta' ? 'Delta' : 'Wye'} — ${proSpec.windingsAndTempRise.primaryMaterial === 'copper' ? 'Copper' : 'Aluminum'}`],
+          ['Secondary', `${proSpec.windingsAndTempRise.secondaryConnection === 'delta' ? 'Delta' : 'Wye'} — ${proSpec.windingsAndTempRise.secondaryMaterial === 'copper' ? 'Copper' : 'Aluminum'}`],
+        ]],
+        ['Bushings (4.2.3)', [
+          ['Primary Mounting', proSpec.bushingsPrimary.sideMounted ? 'Side' : 'Top'],
+          ['Primary Material', proSpec.bushingsPrimary.material || 'Porcelain'],
+          ['Secondary Mounting', proSpec.bushingsSecondary.sideMounted ? 'Side' : 'Top'],
+        ]],
+        ['Tank (4.2.4)', [
+          ['Cover', proSpec.tank.coverType === 'welded' ? 'Welded' : 'Bolted'],
+          ['Vacuum Rated', proSpec.tank.tankVacuumRated === 'required' ? 'Required' : 'Not Required'],
+        ]],
+        ['Cooling (4.2.5)', [
+          ['Radiator Type', proSpec.cooling.radiatorType === 'mfg_std' ? 'Mfg. Standard' : proSpec.cooling.radiatorType || 'N/A'],
+          ['Fans', proSpec.fans.status === 'required' ? 'Required' : proSpec.fans.status === 'provisions_for_future' ? 'Provisions' : 'Not Required'],
+        ]],
+        ['Tap Changer (4.2.12)', [
+          ['NLTC', proSpec.tapChanger.noLoad.required === 'required' ? `Required — ${proSpec.tapChanger.noLoad.description || ''}` : 'Not Required'],
+          ['OLTC', proSpec.tapChanger.onLoad.required === 'required' ? `Required — ${proSpec.tapChanger.onLoad.regulationRange || ''}` : 'Not Required'],
+        ]],
+        ['Insulating Liquid (4.3)', [
+          ['Type', proSpec.insulatingLiquid.type === 'mineral_type_i' ? 'Mineral Oil (Type I)' : proSpec.insulatingLiquid.type || 'N/A'],
+          ['Preservation', proSpec.liquidPreservation.type === 'sealed_tank' ? 'Sealed Tank' : proSpec.liquidPreservation.type || 'N/A'],
+        ]],
+        ['Coatings (4.2.11)', [
+          ['Color', proSpec.coatings.color === 'ansi_70' ? 'ANSI 70 (Medium Gray)' : proSpec.coatings.color === 'ansi_61' ? 'ANSI 61 (Light Gray)' : 'Other'],
+        ]],
+        ['Tests (4.4)', [
+          ['No-Load & Load Loss', proSpec.tests.noLoadAndLoadLoss ? 'Yes' : 'No'],
+          ['Witnessed', proSpec.tests.witnessed === 'witnessed' ? 'Witnessed' : 'Not Witnessed'],
+        ]],
+      ];
+
+      for (const [sectionTitle, fields] of specSections) {
+        if (y > pageHeight - 30) {
+          pdf.addPage();
+          y = 20;
+        }
+        pdf.setFont('helvetica', 'bold');
+        pdf.text(sectionTitle, margin, y);
+        pdf.setFont('helvetica', 'normal');
+        y += lineHeight;
+
+        for (const [label, value] of fields) {
+          pdf.text(`  ${label}:`, margin, y);
+          pdf.text(value, margin + 60, y);
+          y += lineHeight;
+        }
+        y += 3;
+      }
+
+      if (proSpec.otherRequirements) {
+        if (y > pageHeight - 30) {
+          pdf.addPage();
+          y = 20;
+        }
+        pdf.setFont('helvetica', 'bold');
+        pdf.text('Other Requirements', margin, y);
+        pdf.setFont('helvetica', 'normal');
+        y += lineHeight;
+        const lines = pdf.splitTextToSize(proSpec.otherRequirements, pageWidth - margin * 2);
+        pdf.text(lines, margin + 4, y);
+      }
+    }
+
     // Capture drawings
     const drawingsContainer = document.getElementById('drawings-container');
     if (drawingsContainer) {

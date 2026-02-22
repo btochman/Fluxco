@@ -777,6 +777,57 @@ export function ProDesignForm({
         </AccordionItem>
 
         {/* ============================================================ */}
+        {/* SPACE HEATERS (4.2.3) */}
+        {/* ============================================================ */}
+        <AccordionItem value="spaceheaters">
+          <AccordionTrigger className="text-base">
+            <span className="flex items-center gap-3">Space Heaters <span className="text-xs text-muted-foreground">(4.2.3)</span></span>
+          </AccordionTrigger>
+          <AccordionContent className="space-y-4 pt-2">
+            <FieldRow>
+              <div className="space-y-2">
+                <Label>Space Heaters Required For</Label>
+                <Select value={proSpec.spaceHeaters.requiredFor || 'none'} onValueChange={(v) => updatePro('spaceHeaters.requiredFor', v)}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">Not Required</SelectItem>
+                    <SelectItem value="primary_atc">Primary ATC Only</SelectItem>
+                    <SelectItem value="secondary_atc">Secondary ATC Only</SelectItem>
+                    <SelectItem value="both">Both ATCs</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              {proSpec.spaceHeaters.requiredFor !== 'none' && (
+                <div className="space-y-2">
+                  <Label>Temperature to Maintain (°F)</Label>
+                  <Input type="number" value={proSpec.spaceHeaters.temperatureToMaintain ?? ''} onChange={(e) => updatePro('spaceHeaters.temperatureToMaintain', parseFloat(e.target.value) || undefined)} placeholder="40" />
+                </div>
+              )}
+            </FieldRow>
+            {proSpec.spaceHeaters.requiredFor !== 'none' && (
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <Checkbox checked={proSpec.spaceHeaters.ammeter || false} onCheckedChange={(v) => updatePro('spaceHeaters.ammeter', !!v)} />
+                  <Label>Ammeter</Label>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Checkbox checked={proSpec.spaceHeaters.ledIndicator || false} onCheckedChange={(v) => updatePro('spaceHeaters.ledIndicator', !!v)} />
+                  <Label>LED indicator</Label>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Checkbox checked={proSpec.spaceHeaters.pushToTestLed || false} onCheckedChange={(v) => updatePro('spaceHeaters.pushToTestLed', !!v)} />
+                  <Label>Push-to-test LED</Label>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Checkbox checked={proSpec.spaceHeaters.thermostatWithBypass || false} onCheckedChange={(v) => updatePro('spaceHeaters.thermostatWithBypass', !!v)} />
+                  <Label>Thermostat with bypass</Label>
+                </div>
+              </div>
+            )}
+          </AccordionContent>
+        </AccordionItem>
+
+        {/* ============================================================ */}
         {/* ACCESSORIES & CTs (4.2.6) */}
         {/* ============================================================ */}
         <AccordionItem value="accessories">
@@ -878,6 +929,79 @@ export function ProDesignForm({
                 <Label>Intrinsically safe barriers</Label>
               </div>
             </div>
+          </AccordionContent>
+        </AccordionItem>
+
+        {/* ============================================================ */}
+        {/* NAMEPLATES (4.2.8.5) */}
+        {/* ============================================================ */}
+        <AccordionItem value="nameplates">
+          <AccordionTrigger className="text-base">
+            <span className="flex items-center gap-3">Nameplates <span className="text-xs text-muted-foreground">(4.2.8.5)</span></span>
+          </AccordionTrigger>
+          <AccordionContent className="space-y-4 pt-2">
+            <FieldRow>
+              <div className="space-y-2">
+                <Label>Nameplate Material</Label>
+                <Select value={proSpec.nameplates.material || 'laminated_plastic'} onValueChange={(v) => updatePro('nameplates.material', v)}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="laminated_plastic">Laminated Plastic</SelectItem>
+                    <SelectItem value="vinyl_adhesive">Vinyl Adhesive</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>Lettering Color</Label>
+                <Select value={proSpec.nameplates.letteringColor || 'black_on_white'} onValueChange={(v) => updatePro('nameplates.letteringColor', v)}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="black_on_white">Black on White</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </FieldRow>
+            {proSpec.nameplates.letteringColor === 'other' && (
+              <div className="space-y-2">
+                <Label>Specify Lettering Color</Label>
+                <Input value={proSpec.nameplates.letteringColorOther || ''} onChange={(e) => updatePro('nameplates.letteringColorOther', e.target.value)} placeholder="e.g., White on Black" />
+              </div>
+            )}
+          </AccordionContent>
+        </AccordionItem>
+
+        {/* ============================================================ */}
+        {/* WIRING & CONTROL CABINET (4.2.9) */}
+        {/* ============================================================ */}
+        <AccordionItem value="wiring">
+          <AccordionTrigger className="text-base">
+            <span className="flex items-center gap-3">Wiring & Control Cabinet <span className="text-xs text-muted-foreground">(4.2.9)</span></span>
+          </AccordionTrigger>
+          <AccordionContent className="space-y-4 pt-2">
+            <FieldRow>
+              <div className="space-y-2">
+                <Label>Conduit Type</Label>
+                <Select value={proSpec.wiringAndControlCabinet.conduitType || 'rigid_galv_steel'} onValueChange={(v) => updatePro('wiringAndControlCabinet.conduitType', v)}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="rigid_galv_steel">Rigid Galvanized Steel</SelectItem>
+                    <SelectItem value="liquid_tight">Liquid Tight</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex items-center gap-2 pt-6">
+                <Checkbox checked={proSpec.wiringAndControlCabinet.branchCircuitProtection || false} onCheckedChange={(v) => updatePro('wiringAndControlCabinet.branchCircuitProtection', !!v)} />
+                <Label>Branch circuit protection required</Label>
+              </div>
+            </FieldRow>
+            {proSpec.wiringAndControlCabinet.conduitType === 'other' && (
+              <div className="space-y-2">
+                <Label>Specify Conduit Type</Label>
+                <Input value={proSpec.wiringAndControlCabinet.conduitTypeOther || ''} onChange={(e) => updatePro('wiringAndControlCabinet.conduitTypeOther', e.target.value)} />
+              </div>
+            )}
           </AccordionContent>
         </AccordionItem>
 
