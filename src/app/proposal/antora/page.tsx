@@ -119,76 +119,24 @@ function WorldMapBackground() {
 
   return (
     <div className="ap-map-bg">
-      <svg viewBox="0 0 1000 500" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
-        {/* ---- Continent fills (recognizable shapes) ---- */}
-
-        {/* North America */}
-        <path d="M60,55 L120,40 L160,38 L175,50 L190,55 L210,60 L225,70 L235,80 L242,95 L240,110 L235,125 L228,140 L218,150 L210,155 L200,162 L192,170 L185,175 L178,182 L172,188 L168,192 L160,196 L152,200 L145,198 L138,192 L132,188 L128,180 L125,172 L120,168 L116,175 L110,180 L105,178 L100,170 L96,162 L92,158 L88,160 L82,165 L75,162 L70,155 L65,148 L58,142 L52,138 L48,130 L45,120 L42,108 L40,95 L42,82 L48,70 L55,62 Z"
-          fill="rgba(45,140,255,0.06)" stroke="rgba(45,140,255,0.15)" strokeWidth="0.8" />
-
-        {/* Greenland */}
-        <path d="M280,35 L310,30 L340,35 L350,50 L345,65 L330,72 L310,70 L295,62 L282,50 Z"
-          fill="rgba(45,140,255,0.04)" stroke="rgba(45,140,255,0.12)" strokeWidth="0.5" />
-
-        {/* Central America */}
-        <path d="M152,200 L158,205 L168,210 L175,218 L180,225 L178,232 L172,238 L165,235 L158,230 L152,224 L148,218 L145,210 L148,204 Z"
-          fill="rgba(45,140,255,0.05)" stroke="rgba(45,140,255,0.12)" strokeWidth="0.6" />
-
-        {/* South America */}
-        <path d="M180,225 L195,222 L215,228 L232,238 L248,252 L258,268 L268,285 L275,305 L278,325 L275,345 L268,365 L258,382 L245,395 L232,405 L220,410 L210,408 L202,398 L198,385 L195,368 L188,350 L182,335 L178,318 L175,300 L172,282 L170,265 L168,250 L172,238 Z"
-          fill="rgba(45,140,255,0.05)" stroke="rgba(45,140,255,0.12)" strokeWidth="0.6" />
-
-        {/* Europe */}
-        <path d="M462,50 L480,48 L498,52 L510,58 L520,68 L528,80 L530,95 L525,108 L518,118 L510,125 L502,132 L495,138 L488,142 L480,148 L472,145 L465,140 L458,135 L452,128 L448,120 L445,112 L442,102 L440,92 L442,82 L448,70 L455,60 Z"
-          fill="rgba(45,140,255,0.05)" stroke="rgba(45,140,255,0.12)" strokeWidth="0.6" />
-        {/* Scandinavia */}
-        <path d="M488,35 L495,30 L505,32 L512,40 L510,52 L505,60 L498,55 L492,48 L488,42 Z"
-          fill="rgba(45,140,255,0.04)" stroke="rgba(45,140,255,0.10)" strokeWidth="0.5" />
-        {/* UK */}
-        <path d="M452,68 L458,62 L462,66 L460,75 L455,78 L450,74 Z"
-          fill="rgba(45,140,255,0.04)" stroke="rgba(45,140,255,0.10)" strokeWidth="0.5" />
-
-        {/* Africa */}
-        <path d="M458,150 L475,148 L495,150 L512,158 L528,168 L542,182 L548,198 L552,218 L550,240 L545,262 L538,282 L528,300 L515,318 L502,332 L488,342 L475,348 L462,345 L450,335 L442,322 L438,305 L435,288 L434,268 L436,248 L440,228 L445,210 L448,195 L450,180 L452,165 Z"
-          fill="rgba(45,140,255,0.05)" stroke="rgba(45,140,255,0.12)" strokeWidth="0.6" />
-
-        {/* Middle East / Arabian Peninsula */}
-        <path d="M545,148 L560,142 L578,145 L592,155 L598,168 L595,178 L588,188 L578,195 L565,192 L555,185 L548,175 L542,165 L542,155 Z"
-          fill="rgba(45,140,255,0.04)" stroke="rgba(45,140,255,0.10)" strokeWidth="0.5" />
-
-        {/* Russia / Central Asia */}
-        <path d="M520,35 L560,28 L600,22 L650,20 L700,22 L740,28 L770,35 L790,45 L800,58 L798,72 L790,82 L775,88 L758,92 L740,90 L720,85 L700,82 L680,80 L660,78 L640,75 L620,72 L600,68 L580,65 L560,60 L545,55 L530,48 Z"
-          fill="rgba(45,140,255,0.04)" stroke="rgba(45,140,255,0.10)" strokeWidth="0.5" />
-
-        {/* India / South Asia */}
-        <path d="M640,130 L658,125 L675,130 L685,142 L690,158 L688,175 L682,192 L672,208 L660,218 L648,222 L638,215 L632,205 L628,192 L625,178 L624,162 L628,148 L635,138 Z"
-          fill="rgba(45,140,255,0.05)" stroke="rgba(45,140,255,0.12)" strokeWidth="0.6" />
-
-        {/* China / East Asia */}
-        <path d="M700,82 L720,78 L742,80 L760,85 L775,92 L785,102 L790,115 L788,130 L782,145 L775,158 L765,168 L755,175 L742,180 L730,178 L718,172 L708,165 L700,155 L695,145 L692,135 L690,122 L692,110 L695,98 Z"
-          fill="rgba(45,140,255,0.06)" stroke="rgba(45,140,255,0.15)" strokeWidth="0.6" />
-
-        {/* Korean Peninsula */}
-        <path d="M788,105 L795,100 L800,105 L798,115 L792,120 L786,115 Z"
-          fill="rgba(45,140,255,0.05)" stroke="rgba(45,140,255,0.12)" strokeWidth="0.5" />
-
-        {/* Japan */}
-        <path d="M808,95 L815,88 L820,92 L822,102 L818,112 L812,118 L806,115 L804,108 L806,100 Z"
-          fill="rgba(45,140,255,0.05)" stroke="rgba(45,140,255,0.12)" strokeWidth="0.5" />
-
-        {/* Southeast Asia */}
-        <path d="M742,180 L758,185 L775,195 L785,210 L790,228 L782,238 L770,242 L755,238 L742,230 L735,218 L732,205 L735,192 Z"
-          fill="rgba(45,140,255,0.04)" stroke="rgba(45,140,255,0.10)" strokeWidth="0.5" />
-
-        {/* Indonesia */}
-        <path d="M748,252 L770,248 L792,252 L810,258 L825,265 L818,275 L802,278 L785,275 L768,272 L752,268 L745,260 Z"
-          fill="rgba(45,140,255,0.03)" stroke="rgba(45,140,255,0.08)" strokeWidth="0.5" />
-
-        {/* Australia */}
-        <path d="M790,310 L820,298 L850,295 L878,300 L898,312 L905,328 L900,348 L888,365 L870,375 L848,378 L825,372 L808,362 L795,348 L788,332 L786,318 Z"
-          fill="rgba(45,140,255,0.04)" stroke="rgba(45,140,255,0.10)" strokeWidth="0.5" />
-
-        {/* ---- OEM Location pins ---- */}
+      {/* Real world map from Natural Earth data (equirectangular projection) */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/world-map-bg.svg"
+        alt=""
+        aria-hidden="true"
+        style={{
+          position: "absolute",
+          inset: 0,
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+          pointerEvents: "none",
+        }}
+      />
+      {/* OEM location pins overlay */}
+      <svg viewBox="0 0 1000 500" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"
+        style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}>
         {pins.map((pin, i) => (
           <g key={i}>
             {/* Outer pulse */}
