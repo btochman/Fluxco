@@ -160,7 +160,7 @@ function WorldMapBackground() {
 const CHART_DATA = [
   { name: "CEEG", price: 195500, weeks: 20, type: "fluxco" },
   { name: "Yawei", price: 367866, weeks: 22, type: "fluxco", recommended: true },
-  { name: "Omex", price: 604737, weeks: 23, type: "antora" },
+  { name: "Omex", price: 604737, weeks: 31, type: "antora" },
   { name: "Jiangsu FP", price: 415000, weeks: 26, type: "fluxco" },
   { name: "Keyuan", price: 305500, weeks: 28, type: "fluxco", recommended: true },
   { name: "VaOpto", price: 1121100, weeks: 34, type: "fluxco" },
@@ -603,6 +603,19 @@ export default function AntoraProposal() {
                   operation by Antspace. Price still feels negotiable.
                 </p>
               </div>
+              <div className="ap-detail-card">
+                <h3 className="ap-h3">PEL (Pak Elektron) <span className="ap-price-tag">$572,297 DDP</span></h3>
+                <p className="ap-p">
+                  PEL is a highly professional organization that acquired <strong>Ganz technology</strong> — the company that
+                  invented transformers in 1885. They consistently show up with 3-6 technical representatives per meeting, demonstrating
+                  deep engineering capability. Past projects include <strong>Tesla data centers</strong>.
+                </p>
+                <p className="ap-p">
+                  They have delivered approximately <strong>800 transformers to the US in 2024-2025</strong> and provided a detailed
+                  BOM and long-lead analysis. They hold UL/c-UL XPLH listing, ISO 9001:2015, ISO 14001, and ISO 45001 certifications.
+                  Estimated revenue of $162M with 50 units/year capacity.
+                </p>
+              </div>
             </div>
           </div>
         </section>
@@ -629,10 +642,10 @@ export default function AntoraProposal() {
                   <tr className="ap-row-rec"><td>Keyuan Electric</td><td>China</td><td>28 wks</td><td>$305,500</td><td>$120,000</td><td className="ap-price-cell">$425,500</td></tr>
                   <tr className="ap-row-rec"><td>Yawei Transformer</td><td>China</td><td>22 wks</td><td>$367,866</td><td>$104,500</td><td className="ap-price-cell">$472,366</td></tr>
                   <tr className="ap-row-rec"><td>PEL</td><td>Pakistan</td><td>40 wks</td><td>$572,297</td><td>$0</td><td className="ap-price-cell">$572,297</td></tr>
-                  <tr><td>CEEG</td><td>China</td><td>20 wks</td><td>$195,500</td><td>&mdash;</td><td>$195,500</td></tr>
+                  <tr><td>CEEG</td><td>China</td><td>20 wks</td><td>$195,500</td><td>$120,000</td><td>$315,500</td></tr>
                   <tr><td>Jiangsu First Power</td><td>China</td><td>26 wks</td><td>$415,000</td><td>$205,000</td><td>$620,000</td></tr>
                   <tr><td>Daelim</td><td>China</td><td>51 wks</td><td>$596,730</td><td>$0</td><td>$596,730</td></tr>
-                  <tr><td>Omex</td><td>US</td><td>23 wks</td><td>$604,737</td><td>&mdash;</td><td>$604,737</td></tr>
+                  <tr><td>Omex</td><td>US</td><td>31 wks</td><td>$604,737</td><td>&mdash;</td><td>$604,737</td></tr>
                   <tr><td>Texas Transformer</td><td>India</td><td>50 wks</td><td>$642,000</td><td>$0</td><td>$642,000</td></tr>
                   <tr><td>Bolt Electrical</td><td>UAE</td><td>66 wks</td><td>$693,790</td><td>$113,744</td><td>$807,534</td></tr>
                   <tr><td>T&R Electric</td><td>US</td><td>94 wks</td><td>$729,565</td><td>&mdash;</td><td>$729,565</td></tr>
@@ -668,6 +681,7 @@ export default function AntoraProposal() {
                 { name: "Virginia Transformer", country: "US", icon: <Factory className="w-5 h-5" /> },
                 { name: "Grupo Edmar", country: "Mexico", icon: <Globe className="w-5 h-5" /> },
                 { name: "EFACEC", country: "Portugal", icon: <Globe className="w-5 h-5" /> },
+                { name: "Toshiba", country: "India", icon: <Globe className="w-5 h-5" /> },
               ].map((s) => (
                 <div key={s.name} className="ap-pending-card">
                   <div className="ap-pending-icon">{s.icon}</div>
@@ -717,7 +731,7 @@ export default function AntoraProposal() {
                     <td className="ap-td-name">CEEG</td>
                     <td>Three large facilities in China. White label for ABB, Siemens, Schneider, Hitachi. 2M sq ft mfg.</td>
                     <td>ISO 9001:2015, UL/c-UL XPLH</td>
-                    <td>$195,500<br/><span className="ap-td-lt">8 wks after drawings</span></td>
+                    <td>$315,500<br/><span className="ap-td-lt">($195,500)</span><br/><span className="ap-td-lt">8 wks after drawings</span></td>
                     <td>Limited US project history. No established US servicing.</td>
                   </tr>
                   <tr>
