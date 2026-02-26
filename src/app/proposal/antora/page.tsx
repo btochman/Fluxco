@@ -829,7 +829,7 @@ const apStyles = `
   .ap-grid-bg { position: absolute; inset: 0; z-index: 0; opacity: 0.8; }
   .ap-map-bg {
     position: absolute; inset: 0; z-index: 0;
-    opacity: 0.5;
+    opacity: 0.7;
     display: flex; align-items: center; justify-content: center;
   }
   .ap-map-bg svg {
