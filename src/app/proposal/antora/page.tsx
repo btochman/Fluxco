@@ -569,29 +569,20 @@ export default function AntoraProposal() {
               <div className="ap-detail-card">
                 <h3 className="ap-h3">Keyuan Electric <span className="ap-price-tag">$305,500 FOB</span></h3>
                 <p className="ap-p">
-                  We believe Keyuan is a good option for a variety of reasons outside of just great pricing and
-                  production timelines that fit the schedule. They have comprehensive certifications (UL-US, ISO 9001:2015, etc.).
-                  Based on our conversations with other OEMs, <strong>Keyuan was a name that kept coming up as the white label manufacturer</strong>.
-                  They have established cooperative relations with Schneider, ABB, and GE.
-                </p>
-                <p className="ap-p">
-                  They have been awarded Chinese national projects which has stringent quality/performance requirements
-                  and you lose access to these projects for a three year period if you do not meet quality standards.
-                  They claim to have delivered directly to the US for the third year now under white labels.
-                  They have support teams based out of <strong>New York and Dallas</strong>.
+                  Comprehensive certifications (UL-US, ISO 9001:2015, etc.). Based on our conversations with other OEMs,
+                  {" "}<strong>Keyuan was a name that kept coming up as the white label manufacturer</strong>.
+                  Cooperative relations with Schneider, ABB, and GE. Awarded Chinese national projects with stringent
+                  quality requirements. Delivering directly to the US for 3 years under white labels.
+                  Support teams in <strong>New York and Dallas</strong>.
                 </p>
               </div>
               <div className="ap-detail-card">
                 <h3 className="ap-h3">Jiangsu Yawei <span className="ap-price-tag">$367,866 FOB</span></h3>
                 <p className="ap-p">
-                  Yawei has comprehensive certifications (UL-Canada, ISO 9001:2015, etc.). They have what appears
-                  to be an organized and large operation based on our research in a <strong>2.7M square foot facility</strong>.
-                  They have been awarded Chinese national projects with stringent quality requirements.
-                </p>
-                <p className="ap-p">
-                  They have delivered many units of similar specs within the last few years including many projects in
-                  Canada and in the US. We have outreach to one of their public US customers (BGIN) and are awaiting responses.
-                  Rather than NRTL, they do offer <strong>UL witnessed factory acceptance testing</strong> certification.
+                  Comprehensive certifications (UL-Canada, ISO 9001:2015). Organized, large operation in a
+                  {" "}<strong>2.7M square foot facility</strong>. Awarded Chinese national projects with stringent quality
+                  requirements. Delivered many units to Canada and the US including <strong>BGIN</strong> projects.
+                  Offers <strong>UL witnessed factory acceptance testing</strong> certification.
                 </p>
               </div>
               <div className="ap-detail-card">
@@ -606,14 +597,10 @@ export default function AntoraProposal() {
               <div className="ap-detail-card">
                 <h3 className="ap-h3">PEL (Pak Elektron) <span className="ap-price-tag">$572,297 DDP</span></h3>
                 <p className="ap-p">
-                  PEL is a highly professional organization that acquired <strong>Ganz technology</strong> — the company that
-                  invented transformers in 1885. They consistently show up with 3-6 technical representatives per meeting, demonstrating
-                  deep engineering capability. Past projects include <strong>Tesla data centers</strong>.
-                </p>
-                <p className="ap-p">
-                  They have delivered approximately <strong>800 transformers to the US in 2024-2025</strong> and provided a detailed
-                  BOM and long-lead analysis. They hold UL/c-UL XPLH listing, ISO 9001:2015, ISO 14001, and ISO 45001 certifications.
-                  Estimated revenue of $162M with 50 units/year capacity.
+                  Acquired <strong>Ganz technology</strong> (invented transformers in 1885). 3-6 technical reps per meeting.
+                  Past projects include <strong>Tesla data centers</strong>.
+                  Delivered <strong>~800 transformers to the US in 2024-2025</strong>. Provided detailed BOM + long-lead analysis.
+                  UL/c-UL XPLH, ISO 9001:2015, ISO 14001, ISO 45001. Est. revenue $162M, 50 units/year capacity.
                 </p>
               </div>
             </div>
@@ -1205,19 +1192,21 @@ const apStyles = `
   /* ---- DETAIL CARDS ---- */
   .ap-detail-grid {
     display: grid; grid-template-columns: 1fr 1fr;
-    gap: 20px; margin-top: 24px;
+    gap: 12px; margin-top: 14px;
   }
   .ap-detail-card {
-    padding: 28px; border-radius: var(--ap-radius);
+    padding: 16px 18px; border-radius: var(--ap-radius);
     background: var(--ap-surface); border: 1px solid var(--ap-border);
     transition: all 0.3s;
   }
   .ap-detail-card:hover { border-color: rgba(45,140,255,0.3); }
-  .ap-detail-card:first-child { grid-column: 1 / -1; }
+  .ap-detail-card .ap-h3 { font-size: 15px; margin-bottom: 8px; }
+  .ap-detail-card .ap-p { font-size: 12px; line-height: 1.55; margin-bottom: 6px; }
+  .ap-detail-card .ap-p:last-child { margin-bottom: 0; }
   .ap-price-tag {
-    font-family: 'JetBrains Mono', monospace; font-size: 12px;
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
     color: var(--ap-blue); font-weight: 500; letter-spacing: 0;
-    text-transform: none; margin-left: 12px;
+    text-transform: none; margin-left: 10px;
   }
 
   /* ---- TABLE ---- */
@@ -1350,7 +1339,6 @@ const apStyles = `
     .ap-grid-2 { grid-template-columns: 1fr; }
     .ap-rec-grid { grid-template-columns: 1fr; }
     .ap-detail-grid { grid-template-columns: 1fr; }
-    .ap-detail-card:first-child { grid-column: auto; }
     .ap-pending-grid { grid-template-columns: 1fr; }
     .ap-progress { display: none; }
     .ap-nav { display: none; }
