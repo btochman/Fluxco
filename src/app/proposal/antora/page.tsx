@@ -74,98 +74,132 @@ function GridBackground() {
 
 /* ------------------------------------------------------------------ */
 /*  World map background with OEM location pins                         */
+/*  Equirectangular projection: x = (lon+180)/360*1000, y = (90-lat)/180*500 */
 /* ------------------------------------------------------------------ */
-const OEM_PINS = [
-  // China cluster
-  { x: 78, y: 42, label: "Guangdong" },
-  { x: 76, y: 38, label: "Jiangsu" },
-  { x: 74, y: 36, label: "Shandong" },
-  { x: 72, y: 34, label: "Beijing" },
-  { x: 77, y: 40, label: "Shenzhen" },
-  { x: 75, y: 37, label: "Nanjing" },
-  { x: 73, y: 39, label: "Wenzhou" },
-  // Other Asia
-  { x: 81, y: 36, label: "South Korea" },
-  { x: 84, y: 38, label: "Japan" },
-  { x: 66, y: 48, label: "India" },
-  { x: 62, y: 44, label: "Pakistan" },
-  { x: 56, y: 44, label: "UAE" },
-  // Europe
-  { x: 42, y: 30, label: "Portugal" },
-  { x: 50, y: 30, label: "Turkey" },
-  // Americas
-  { x: 18, y: 36, label: "US-East" },
-  { x: 14, y: 38, label: "US-Central" },
-  { x: 12, y: 34, label: "US-West" },
-  { x: 16, y: 46, label: "Mexico" },
+function lonLatToXY(lon: number, lat: number): [number, number] {
+  return [(lon + 180) / 360 * 1000, (90 - lat) / 180 * 500];
+}
+
+const OEM_LOCATIONS: { lon: number; lat: number; label: string }[] = [
+  // China
+  { lon: 113.3, lat: 23.1, label: "Guangdong" },
+  { lon: 119.4, lat: 32.4, label: "Jiangsu/Yawei" },
+  { lon: 118.8, lat: 32.1, label: "Nanjing/CEEG" },
+  { lon: 116.4, lat: 39.9, label: "Beijing/Daelim" },
+  { lon: 114.1, lat: 22.5, label: "Shenzhen/VaOpto" },
+  { lon: 120.6, lat: 28.0, label: "Wenzhou" },
+  { lon: 117.0, lat: 36.7, label: "Shandong/Fudao" },
+  // South Korea
+  { lon: 127.0, lat: 37.6, label: "South Korea" },
+  // Japan
+  { lon: 139.7, lat: 35.7, label: "Japan/Toshiba" },
+  // India
+  { lon: 77.2, lat: 28.6, label: "India/TX Xfmr" },
+  // Pakistan
+  { lon: 74.3, lat: 31.5, label: "Lahore/PEL" },
+  // UAE
+  { lon: 55.3, lat: 25.3, label: "Dubai/Bolt" },
+  // Turkey
+  { lon: 29.0, lat: 41.0, label: "Turkey/Astor" },
+  // Portugal
+  { lon: -8.6, lat: 41.2, label: "Porto/EFACEC" },
+  // Mexico
+  { lon: -99.1, lat: 19.4, label: "Mexico/Edmar" },
+  // US
+  { lon: -79.9, lat: 37.3, label: "Virginia/VTC" },
+  { lon: -96.7, lat: 44.0, label: "SD/T&R" },
+  { lon: -97.7, lat: 30.3, label: "Texas" },
 ];
 
 function WorldMapBackground() {
+  const pins = OEM_LOCATIONS.map(loc => {
+    const [x, y] = lonLatToXY(loc.lon, loc.lat);
+    return { x, y, label: loc.label };
+  });
+
   return (
     <div className="ap-map-bg">
-      <svg viewBox="0 0 100 60" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
-        {/* Simplified continent outlines */}
+      <svg viewBox="0 0 1000 500" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+        {/* ---- Continent fills (recognizable shapes) ---- */}
+
         {/* North America */}
-        <path d="M5,8 L12,6 L18,8 L22,12 L24,18 L22,24 L20,28 L18,32 L16,34 L14,36 L12,38 L10,36 L8,32 L6,28 L5,24 L4,18 L5,12 Z"
-          fill="none" stroke="rgba(45,140,255,0.12)" strokeWidth="0.3" />
-        {/* Central America + Mexico */}
-        <path d="M12,38 L14,40 L16,42 L18,44 L16,46 L14,44 L12,42 L10,40 Z"
-          fill="none" stroke="rgba(45,140,255,0.12)" strokeWidth="0.3" />
+        <path d="M60,55 L120,40 L160,38 L175,50 L190,55 L210,60 L225,70 L235,80 L242,95 L240,110 L235,125 L228,140 L218,150 L210,155 L200,162 L192,170 L185,175 L178,182 L172,188 L168,192 L160,196 L152,200 L145,198 L138,192 L132,188 L128,180 L125,172 L120,168 L116,175 L110,180 L105,178 L100,170 L96,162 L92,158 L88,160 L82,165 L75,162 L70,155 L65,148 L58,142 L52,138 L48,130 L45,120 L42,108 L40,95 L42,82 L48,70 L55,62 Z"
+          fill="rgba(45,140,255,0.06)" stroke="rgba(45,140,255,0.15)" strokeWidth="0.8" />
+
+        {/* Greenland */}
+        <path d="M280,35 L310,30 L340,35 L350,50 L345,65 L330,72 L310,70 L295,62 L282,50 Z"
+          fill="rgba(45,140,255,0.04)" stroke="rgba(45,140,255,0.12)" strokeWidth="0.5" />
+
+        {/* Central America */}
+        <path d="M152,200 L158,205 L168,210 L175,218 L180,225 L178,232 L172,238 L165,235 L158,230 L152,224 L148,218 L145,210 L148,204 Z"
+          fill="rgba(45,140,255,0.05)" stroke="rgba(45,140,255,0.12)" strokeWidth="0.6" />
+
         {/* South America */}
-        <path d="M18,44 L22,46 L26,50 L28,54 L26,58 L22,56 L20,52 L18,48 L16,46 Z"
-          fill="none" stroke="rgba(45,140,255,0.12)" strokeWidth="0.3" />
+        <path d="M180,225 L195,222 L215,228 L232,238 L248,252 L258,268 L268,285 L275,305 L278,325 L275,345 L268,365 L258,382 L245,395 L232,405 L220,410 L210,408 L202,398 L198,385 L195,368 L188,350 L182,335 L178,318 L175,300 L172,282 L170,265 L168,250 L172,238 Z"
+          fill="rgba(45,140,255,0.05)" stroke="rgba(45,140,255,0.12)" strokeWidth="0.6" />
+
         {/* Europe */}
-        <path d="M42,10 L44,8 L48,8 L52,10 L54,14 L52,18 L50,22 L48,26 L46,28 L44,30 L42,28 L40,24 L38,20 L40,16 L42,12 Z"
-          fill="none" stroke="rgba(45,140,255,0.12)" strokeWidth="0.3" />
+        <path d="M462,50 L480,48 L498,52 L510,58 L520,68 L528,80 L530,95 L525,108 L518,118 L510,125 L502,132 L495,138 L488,142 L480,148 L472,145 L465,140 L458,135 L452,128 L448,120 L445,112 L442,102 L440,92 L442,82 L448,70 L455,60 Z"
+          fill="rgba(45,140,255,0.05)" stroke="rgba(45,140,255,0.12)" strokeWidth="0.6" />
+        {/* Scandinavia */}
+        <path d="M488,35 L495,30 L505,32 L512,40 L510,52 L505,60 L498,55 L492,48 L488,42 Z"
+          fill="rgba(45,140,255,0.04)" stroke="rgba(45,140,255,0.10)" strokeWidth="0.5" />
+        {/* UK */}
+        <path d="M452,68 L458,62 L462,66 L460,75 L455,78 L450,74 Z"
+          fill="rgba(45,140,255,0.04)" stroke="rgba(45,140,255,0.10)" strokeWidth="0.5" />
+
         {/* Africa */}
-        <path d="M42,30 L46,32 L50,34 L52,38 L54,42 L52,48 L48,52 L44,54 L40,50 L38,46 L36,42 L38,38 L40,34 Z"
-          fill="none" stroke="rgba(45,140,255,0.12)" strokeWidth="0.3" />
-        {/* Middle East */}
-        <path d="M52,26 L56,28 L60,30 L62,34 L58,36 L54,34 L52,30 Z"
-          fill="none" stroke="rgba(45,140,255,0.12)" strokeWidth="0.3" />
-        {/* South Asia / India */}
-        <path d="M62,28 L66,26 L70,28 L68,34 L66,40 L64,44 L62,40 L60,36 L62,32 Z"
-          fill="none" stroke="rgba(45,140,255,0.12)" strokeWidth="0.3" />
-        {/* East Asia / China */}
-        <path d="M66,14 L70,12 L76,14 L80,18 L82,22 L84,28 L82,32 L80,36 L78,40 L76,42 L74,40 L72,36 L70,32 L68,28 L66,24 L64,20 L66,16 Z"
-          fill="none" stroke="rgba(45,140,255,0.12)" strokeWidth="0.3" />
-        {/* Korea + Japan */}
-        <path d="M80,28 L82,26 L84,28 L82,32 L80,30 Z"
-          fill="none" stroke="rgba(45,140,255,0.10)" strokeWidth="0.3" />
-        <path d="M84,24 L86,22 L88,26 L86,32 L84,30 Z"
-          fill="none" stroke="rgba(45,140,255,0.10)" strokeWidth="0.3" />
+        <path d="M458,150 L475,148 L495,150 L512,158 L528,168 L542,182 L548,198 L552,218 L550,240 L545,262 L538,282 L528,300 L515,318 L502,332 L488,342 L475,348 L462,345 L450,335 L442,322 L438,305 L435,288 L434,268 L436,248 L440,228 L445,210 L448,195 L450,180 L452,165 Z"
+          fill="rgba(45,140,255,0.05)" stroke="rgba(45,140,255,0.12)" strokeWidth="0.6" />
+
+        {/* Middle East / Arabian Peninsula */}
+        <path d="M545,148 L560,142 L578,145 L592,155 L598,168 L595,178 L588,188 L578,195 L565,192 L555,185 L548,175 L542,165 L542,155 Z"
+          fill="rgba(45,140,255,0.04)" stroke="rgba(45,140,255,0.10)" strokeWidth="0.5" />
+
+        {/* Russia / Central Asia */}
+        <path d="M520,35 L560,28 L600,22 L650,20 L700,22 L740,28 L770,35 L790,45 L800,58 L798,72 L790,82 L775,88 L758,92 L740,90 L720,85 L700,82 L680,80 L660,78 L640,75 L620,72 L600,68 L580,65 L560,60 L545,55 L530,48 Z"
+          fill="rgba(45,140,255,0.04)" stroke="rgba(45,140,255,0.10)" strokeWidth="0.5" />
+
+        {/* India / South Asia */}
+        <path d="M640,130 L658,125 L675,130 L685,142 L690,158 L688,175 L682,192 L672,208 L660,218 L648,222 L638,215 L632,205 L628,192 L625,178 L624,162 L628,148 L635,138 Z"
+          fill="rgba(45,140,255,0.05)" stroke="rgba(45,140,255,0.12)" strokeWidth="0.6" />
+
+        {/* China / East Asia */}
+        <path d="M700,82 L720,78 L742,80 L760,85 L775,92 L785,102 L790,115 L788,130 L782,145 L775,158 L765,168 L755,175 L742,180 L730,178 L718,172 L708,165 L700,155 L695,145 L692,135 L690,122 L692,110 L695,98 Z"
+          fill="rgba(45,140,255,0.06)" stroke="rgba(45,140,255,0.15)" strokeWidth="0.6" />
+
+        {/* Korean Peninsula */}
+        <path d="M788,105 L795,100 L800,105 L798,115 L792,120 L786,115 Z"
+          fill="rgba(45,140,255,0.05)" stroke="rgba(45,140,255,0.12)" strokeWidth="0.5" />
+
+        {/* Japan */}
+        <path d="M808,95 L815,88 L820,92 L822,102 L818,112 L812,118 L806,115 L804,108 L806,100 Z"
+          fill="rgba(45,140,255,0.05)" stroke="rgba(45,140,255,0.12)" strokeWidth="0.5" />
+
         {/* Southeast Asia */}
-        <path d="M74,42 L78,44 L82,46 L84,50 L80,52 L76,48 L74,44 Z"
-          fill="none" stroke="rgba(45,140,255,0.10)" strokeWidth="0.3" />
+        <path d="M742,180 L758,185 L775,195 L785,210 L790,228 L782,238 L770,242 L755,238 L742,230 L735,218 L732,205 L735,192 Z"
+          fill="rgba(45,140,255,0.04)" stroke="rgba(45,140,255,0.10)" strokeWidth="0.5" />
+
+        {/* Indonesia */}
+        <path d="M748,252 L770,248 L792,252 L810,258 L825,265 L818,275 L802,278 L785,275 L768,272 L752,268 L745,260 Z"
+          fill="rgba(45,140,255,0.03)" stroke="rgba(45,140,255,0.08)" strokeWidth="0.5" />
+
         {/* Australia */}
-        <path d="M80,52 L86,50 L92,52 L94,56 L90,58 L84,56 L80,54 Z"
-          fill="none" stroke="rgba(45,140,255,0.10)" strokeWidth="0.3" />
+        <path d="M790,310 L820,298 L850,295 L878,300 L898,312 L905,328 L900,348 L888,365 L870,375 L848,378 L825,372 L808,362 L795,348 L788,332 L786,318 Z"
+          fill="rgba(45,140,255,0.04)" stroke="rgba(45,140,255,0.10)" strokeWidth="0.5" />
 
-        {/* Grid lines (lat/lon) */}
-        {[15, 30, 45].map(y => (
-          <line key={`lat-${y}`} x1="0" y1={y} x2="100" y2={y} stroke="rgba(45,140,255,0.04)" strokeWidth="0.15" strokeDasharray="1,2" />
-        ))}
-        {[20, 40, 60, 80].map(x => (
-          <line key={`lon-${x}`} x1={x} y1="0" x2={x} y2="60" stroke="rgba(45,140,255,0.04)" strokeWidth="0.15" strokeDasharray="1,2" />
-        ))}
-
-        {/* Location pins */}
-        {OEM_PINS.map((pin, i) => (
+        {/* ---- OEM Location pins ---- */}
+        {pins.map((pin, i) => (
           <g key={i}>
-            {/* Pulse ring */}
-            <circle cx={pin.x} cy={pin.y} r="1.5" fill="none" stroke="rgba(45,140,255,0.3)" strokeWidth="0.15">
-              <animate attributeName="r" from="0.5" to="2.5" dur={`${2 + (i % 3) * 0.5}s`} repeatCount="indefinite" />
-              <animate attributeName="opacity" from="0.6" to="0" dur={`${2 + (i % 3) * 0.5}s`} repeatCount="indefinite" />
+            {/* Outer pulse */}
+            <circle cx={pin.x} cy={pin.y} r="8" fill="none" stroke="rgba(45,140,255,0.4)" strokeWidth="1">
+              <animate attributeName="r" from="4" to="18" dur={`${2 + (i % 3) * 0.7}s`} repeatCount="indefinite" />
+              <animate attributeName="opacity" from="0.6" to="0" dur={`${2 + (i % 3) * 0.7}s`} repeatCount="indefinite" />
             </circle>
-            {/* Pin dot */}
-            <circle cx={pin.x} cy={pin.y} r="0.5" fill="#2d8cff" opacity="0.7" />
+            {/* Pin marker */}
+            <circle cx={pin.x} cy={pin.y} r="4" fill="#2d8cff" opacity="0.8" />
+            <circle cx={pin.x} cy={pin.y} r="2" fill="#fff" opacity="0.9" />
           </g>
-        ))}
-
-        {/* Connection lines from pins to a central "FluxCo" hub */}
-        {OEM_PINS.map((pin, i) => (
-          <line key={`line-${i}`} x1={pin.x} y1={pin.y} x2={14} y2={38}
-            stroke="rgba(45,140,255,0.04)" strokeWidth="0.1" strokeDasharray="0.5,1" />
         ))}
       </svg>
     </div>
