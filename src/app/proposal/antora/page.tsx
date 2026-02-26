@@ -432,7 +432,7 @@ export default function AntoraProposal() {
                 <ul className="ap-checklist">
                   <li>Initial Quotes</li>
                   <li>Engineering Q&A</li>
-                  <li>DDP Review <span className="ap-note">(tariffs changed)</span></li>
+                  <li>DDP Review <span className="ap-note">(tariffs changed mid process)</span></li>
                   <li><strong>Top 3 OEM Recommendations</strong></li>
                   <li className="ap-sub">+1-2 Wildcards</li>
                 </ul>
