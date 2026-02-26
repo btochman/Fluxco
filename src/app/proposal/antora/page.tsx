@@ -786,8 +786,6 @@ export default function AntoraProposal() {
               Contact FluxCo <ArrowRight className="w-4 h-4" />
             </a>
             <div className="ap-closing-contact">
-              <span>brian@fluxco.com</span>
-              <div className="ap-dot" />
               <span>FluxCo</span>
             </div>
           </div>
