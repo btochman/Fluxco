@@ -73,6 +73,106 @@ function GridBackground() {
 }
 
 /* ------------------------------------------------------------------ */
+/*  World map background with OEM location pins                         */
+/* ------------------------------------------------------------------ */
+const OEM_PINS = [
+  // China cluster
+  { x: 78, y: 42, label: "Guangdong" },
+  { x: 76, y: 38, label: "Jiangsu" },
+  { x: 74, y: 36, label: "Shandong" },
+  { x: 72, y: 34, label: "Beijing" },
+  { x: 77, y: 40, label: "Shenzhen" },
+  { x: 75, y: 37, label: "Nanjing" },
+  { x: 73, y: 39, label: "Wenzhou" },
+  // Other Asia
+  { x: 81, y: 36, label: "South Korea" },
+  { x: 84, y: 38, label: "Japan" },
+  { x: 66, y: 48, label: "India" },
+  { x: 62, y: 44, label: "Pakistan" },
+  { x: 56, y: 44, label: "UAE" },
+  // Europe
+  { x: 42, y: 30, label: "Portugal" },
+  { x: 50, y: 30, label: "Turkey" },
+  // Americas
+  { x: 18, y: 36, label: "US-East" },
+  { x: 14, y: 38, label: "US-Central" },
+  { x: 12, y: 34, label: "US-West" },
+  { x: 16, y: 46, label: "Mexico" },
+];
+
+function WorldMapBackground() {
+  return (
+    <div className="ap-map-bg">
+      <svg viewBox="0 0 100 60" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+        {/* Simplified continent outlines */}
+        {/* North America */}
+        <path d="M5,8 L12,6 L18,8 L22,12 L24,18 L22,24 L20,28 L18,32 L16,34 L14,36 L12,38 L10,36 L8,32 L6,28 L5,24 L4,18 L5,12 Z"
+          fill="none" stroke="rgba(45,140,255,0.12)" strokeWidth="0.3" />
+        {/* Central America + Mexico */}
+        <path d="M12,38 L14,40 L16,42 L18,44 L16,46 L14,44 L12,42 L10,40 Z"
+          fill="none" stroke="rgba(45,140,255,0.12)" strokeWidth="0.3" />
+        {/* South America */}
+        <path d="M18,44 L22,46 L26,50 L28,54 L26,58 L22,56 L20,52 L18,48 L16,46 Z"
+          fill="none" stroke="rgba(45,140,255,0.12)" strokeWidth="0.3" />
+        {/* Europe */}
+        <path d="M42,10 L44,8 L48,8 L52,10 L54,14 L52,18 L50,22 L48,26 L46,28 L44,30 L42,28 L40,24 L38,20 L40,16 L42,12 Z"
+          fill="none" stroke="rgba(45,140,255,0.12)" strokeWidth="0.3" />
+        {/* Africa */}
+        <path d="M42,30 L46,32 L50,34 L52,38 L54,42 L52,48 L48,52 L44,54 L40,50 L38,46 L36,42 L38,38 L40,34 Z"
+          fill="none" stroke="rgba(45,140,255,0.12)" strokeWidth="0.3" />
+        {/* Middle East */}
+        <path d="M52,26 L56,28 L60,30 L62,34 L58,36 L54,34 L52,30 Z"
+          fill="none" stroke="rgba(45,140,255,0.12)" strokeWidth="0.3" />
+        {/* South Asia / India */}
+        <path d="M62,28 L66,26 L70,28 L68,34 L66,40 L64,44 L62,40 L60,36 L62,32 Z"
+          fill="none" stroke="rgba(45,140,255,0.12)" strokeWidth="0.3" />
+        {/* East Asia / China */}
+        <path d="M66,14 L70,12 L76,14 L80,18 L82,22 L84,28 L82,32 L80,36 L78,40 L76,42 L74,40 L72,36 L70,32 L68,28 L66,24 L64,20 L66,16 Z"
+          fill="none" stroke="rgba(45,140,255,0.12)" strokeWidth="0.3" />
+        {/* Korea + Japan */}
+        <path d="M80,28 L82,26 L84,28 L82,32 L80,30 Z"
+          fill="none" stroke="rgba(45,140,255,0.10)" strokeWidth="0.3" />
+        <path d="M84,24 L86,22 L88,26 L86,32 L84,30 Z"
+          fill="none" stroke="rgba(45,140,255,0.10)" strokeWidth="0.3" />
+        {/* Southeast Asia */}
+        <path d="M74,42 L78,44 L82,46 L84,50 L80,52 L76,48 L74,44 Z"
+          fill="none" stroke="rgba(45,140,255,0.10)" strokeWidth="0.3" />
+        {/* Australia */}
+        <path d="M80,52 L86,50 L92,52 L94,56 L90,58 L84,56 L80,54 Z"
+          fill="none" stroke="rgba(45,140,255,0.10)" strokeWidth="0.3" />
+
+        {/* Grid lines (lat/lon) */}
+        {[15, 30, 45].map(y => (
+          <line key={`lat-${y}`} x1="0" y1={y} x2="100" y2={y} stroke="rgba(45,140,255,0.04)" strokeWidth="0.15" strokeDasharray="1,2" />
+        ))}
+        {[20, 40, 60, 80].map(x => (
+          <line key={`lon-${x}`} x1={x} y1="0" x2={x} y2="60" stroke="rgba(45,140,255,0.04)" strokeWidth="0.15" strokeDasharray="1,2" />
+        ))}
+
+        {/* Location pins */}
+        {OEM_PINS.map((pin, i) => (
+          <g key={i}>
+            {/* Pulse ring */}
+            <circle cx={pin.x} cy={pin.y} r="1.5" fill="none" stroke="rgba(45,140,255,0.3)" strokeWidth="0.15">
+              <animate attributeName="r" from="0.5" to="2.5" dur={`${2 + (i % 3) * 0.5}s`} repeatCount="indefinite" />
+              <animate attributeName="opacity" from="0.6" to="0" dur={`${2 + (i % 3) * 0.5}s`} repeatCount="indefinite" />
+            </circle>
+            {/* Pin dot */}
+            <circle cx={pin.x} cy={pin.y} r="0.5" fill="#2d8cff" opacity="0.7" />
+          </g>
+        ))}
+
+        {/* Connection lines from pins to a central "FluxCo" hub */}
+        {OEM_PINS.map((pin, i) => (
+          <line key={`line-${i}`} x1={pin.x} y1={pin.y} x2={14} y2={38}
+            stroke="rgba(45,140,255,0.04)" strokeWidth="0.1" strokeDasharray="0.5,1" />
+        ))}
+      </svg>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
 /*  Scatter chart data                                                  */
 /* ------------------------------------------------------------------ */
 const CHART_DATA = [
@@ -311,6 +411,7 @@ export default function AntoraProposal() {
 
         {/* ========== SLIDE 2 — PROCESS OVERVIEW ========== */}
         <section className="ap-slide" ref={s2.ref}>
+          <WorldMapBackground />
           <div className="ap-glow ap-glow-3" />
           <div className={`ap-content ${s2.inView ? "in" : ""}`}>
             <div className="ap-slide-label">PROCUREMENT PROCESS</div>
@@ -744,6 +845,14 @@ const apStyles = `
 
   /* ---- BACKGROUNDS ---- */
   .ap-grid-bg { position: absolute; inset: 0; z-index: 0; opacity: 0.8; }
+  .ap-map-bg {
+    position: absolute; inset: 0; z-index: 0;
+    opacity: 0.5;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .ap-map-bg svg {
+    width: 100%; height: 100%;
+  }
 
   .ap-glow {
     position: absolute; border-radius: 50%;
