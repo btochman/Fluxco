@@ -5,6 +5,7 @@ export interface ProposalProject {
   productDescription: string;
   mvaSize: number | null;
   deliveryDate: string | null;
+  deliveryRequirement: string | null;
   location: string;
   zipCode: string;
 }
@@ -12,6 +13,7 @@ export interface ProposalProject {
 export interface ProposalQuote {
   name: string;
   shortName: string;
+  supplierShort: string;
   country: string;
   quotedPrice: number | null;
   ddp: number | null;
@@ -23,6 +25,7 @@ export interface ProposalQuote {
   status: string;
   bidSource: string;
   recommended: boolean;
+  customerSourced: boolean;
   description: string;
 }
 

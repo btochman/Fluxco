@@ -184,6 +184,7 @@ interface ChartDatum {
   weeks: number;
   type: "fluxco" | "antora";
   recommended?: boolean;
+  customerSourced?: boolean;
 }
 
 function ScatterChart({ inView, data, maxPrice, maxWeeks, deliveryWeek, deliveryLabel }: {
@@ -257,7 +258,7 @@ function ScatterChart({ inView, data, maxPrice, maxWeeks, deliveryWeek, delivery
       {data.map((d, i) => {
         const cx = x(d.weeks);
         const cy = y(d.price);
-        const isAntora = d.type === "antora";
+        const isCustSourced = d.customerSourced;
         const isRec = d.recommended;
         return (
           <g key={d.name} style={{
@@ -266,22 +267,22 @@ function ScatterChart({ inView, data, maxPrice, maxWeeks, deliveryWeek, delivery
             transformOrigin: `${cx}px ${cy}px`,
             transition: `all 0.5s cubic-bezier(0.16, 1, 0.3, 1) ${0.1 + i * 0.04}s`,
           }}>
-            {isRec && <circle cx={cx} cy={cy} r="12" fill="rgba(45,140,255,0.1)" stroke="rgba(45,140,255,0.3)" strokeWidth="0.5" />}
+            {isRec && <circle cx={cx} cy={cy} r="12" fill={isCustSourced ? "rgba(230,57,70,0.1)" : "rgba(45,140,255,0.1)"} stroke={isCustSourced ? "rgba(230,57,70,0.3)" : "rgba(45,140,255,0.3)"} strokeWidth="0.5" />}
             <circle
               cx={cx} cy={cy}
               r={isRec ? "6" : "5"}
-              fill={isAntora ? "#e63946" : isRec ? "#2d8cff" : "rgba(45,140,255,0.6)"}
-              stroke={isRec ? "#2d8cff" : "none"}
-              strokeWidth={isRec ? "1.5" : "0"}
+              fill={isCustSourced ? "#e63946" : isRec ? "#2d8cff" : "rgba(45,140,255,0.6)"}
+              stroke={isCustSourced ? "#e63946" : isRec ? "#2d8cff" : "none"}
+              strokeWidth={isRec || isCustSourced ? "1.5" : "0"}
             />
             <text
               x={cx}
               y={cy - 10}
               textAnchor="middle"
-              fill={isAntora ? "#e63946" : isRec ? "#2d8cff" : "rgba(255,255,255,0.45)"}
+              fill={isCustSourced ? "#e63946" : isRec ? "#2d8cff" : "rgba(255,255,255,0.45)"}
               fontSize="7.5"
               fontFamily="Inter"
-              fontWeight={isRec ? "600" : "400"}
+              fontWeight={isRec || isCustSourced ? "600" : "400"}
             >
               {d.name}
             </text>
@@ -321,11 +322,12 @@ export function ProposalClient({ project, quotes, stats }: ProposalClientProps) 
   const chartData: ChartDatum[] = receivedQuotes
     .filter(q => q.totalPrice != null && q.totalWeeks != null)
     .map(q => ({
-      name: q.shortName || q.name,
+      name: q.supplierShort || q.shortName || q.name,
       price: q.totalPrice!,
       weeks: q.totalWeeks!,
       type: (q.bidSource === "Antora" ? "antora" : "fluxco") as "fluxco" | "antora",
       recommended: q.recommended,
+      customerSourced: q.customerSourced,
     }));
 
   // Chart axis bounds (with padding)
@@ -336,10 +338,11 @@ export function ProposalClient({ project, quotes, stats }: ProposalClientProps) 
     ? Math.ceil(Math.max(...chartData.map(d => d.weeks)) * 1.15 / 10) * 10
     : 220;
 
-  // Delivery deadline in weeks from now
-  const deliveryWeek = weeksFromNow(project.deliveryDate);
-  const deliveryLabel = project.deliveryDate
-    ? new Date(project.deliveryDate + "T00:00:00").toLocaleDateString("en-US", { month: "numeric", day: "numeric" })
+  // Delivery requirement line on chart (weeks from now + MM/DD label)
+  const deliveryReqDate = project.deliveryRequirement || project.deliveryDate;
+  const deliveryWeek = weeksFromNow(deliveryReqDate);
+  const deliveryLabel = deliveryReqDate
+    ? new Date(deliveryReqDate + "T00:00:00").toLocaleDateString("en-US", { month: "2-digit", day: "2-digit" })
     : "";
 
   // Sorted received quotes for table (by totalPrice ascending)

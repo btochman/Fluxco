@@ -135,6 +135,7 @@ export async function getProjectBySlug(
     productDescription: getText(p["Product Description"]),
     mvaSize: getNumber(p["MVA Size"]),
     deliveryDate: getDate(p["Delivery Date"]),
+    deliveryRequirement: getDate(p["Delivery Requirement"]),
     location: getText(p["Location"]),
     zipCode: getText(p["Zip Code"]),
   };
@@ -194,6 +195,7 @@ export async function getQuotesForProject(
     return {
       name: getRollupText(p["Supplier Profile"]),
       shortName: getText(p["Quote Name/No."]),
+      supplierShort: getRollupText(p["Supplier Short"]) || getText(p["Supplier Short"]),
       country: getMultiSelect(p["Country of Origin"]).join(", "),
       quotedPrice,
       ddp,
@@ -205,6 +207,7 @@ export async function getQuotesForProject(
       status: getStatus(p["Status"]),
       bidSource: getSelect(p["Bid Source"]) || "FluxCo",
       recommended: getCheckbox(p["Recommended"]),
+      customerSourced: getCheckbox(p["Customer Sourced Bid"]),
       description: getText(p["Description"]),
     };
   });
