@@ -75,6 +75,9 @@ function getRollupText(prop: any): string {
     if (item.type === "title") {
       return (item.title || []).map((t: any) => t.plain_text).join("");
     }
+    if (item.type === "rich_text") {
+      return (item.rich_text || []).map((t: any) => t.plain_text).join("");
+    }
   }
   return "";
 }
