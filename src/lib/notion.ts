@@ -211,7 +211,7 @@ export async function getQuotesForProject(
       bidSource: getSelect(p["Bid Source"]) || "FluxCo",
       recommended: getCheckbox(p["Recommended"]),
       customerSourced: getCheckbox(p["Customer Sourced Bid"]),
-      description: getText(p["Description"]),
+      description: getText(p["Rec Description"]),
     };
   });
 }

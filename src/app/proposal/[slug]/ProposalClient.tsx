@@ -670,6 +670,7 @@ export function ProposalClient({ project, quotes, stats }: ProposalClientProps) 
                 <thead>
                   <tr>
                     <th>OEM</th>
+                    <th>Code</th>
                     <th>Country</th>
                     <th>Lead Time</th>
                     <th>Quoted Price</th>
@@ -681,6 +682,7 @@ export function ProposalClient({ project, quotes, stats }: ProposalClientProps) 
                   {sortedReceivedQuotes.map((q) => (
                     <tr key={q.name} className={q.recommended ? "ap-row-rec" : ""}>
                       <td>{q.name}</td>
+                      <td>{q.supplierShort || "\u2014"}</td>
                       <td>{q.country}</td>
                       <td>{q.totalWeeks != null ? `${q.totalWeeks} wks` : "\u2014"}</td>
                       <td>{formatCurrency(q.quotedPrice)}</td>
