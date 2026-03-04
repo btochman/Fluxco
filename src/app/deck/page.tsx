@@ -7,7 +7,7 @@ import {
   Users, Wrench, Bot, Sparkles, AlertTriangle, Eye, Target,
 } from "lucide-react";
 
-const TOTAL_SECTIONS = 11;
+const TOTAL_SECTIONS = 10;
 
 /* ------------------------------------------------------------------ */
 /*  Hook: animate numbers counting up                                  */
@@ -248,7 +248,6 @@ export default function Deck2Page() {
   /* Slide in-view trackers */
   const s1 = useInView(0.3);
   const s2 = useInView(0.2);
-  const sChart = useInView(0.2);
   const s3 = useInView(0.2);
   const s4 = useInView(0.2);
   const s5 = useInView(0.2);
@@ -423,28 +422,7 @@ export default function Deck2Page() {
           </div>
         </section>
 
-        {/* ========== SLIDE 3 — PRICE vs LEAD TIME ========== */}
-        <section className="d2-slide d2-slide-dark" ref={sChart.ref}>
-          <div className="d2-bg-img" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1619033476025-71cc6bd8c3f5?w=1920&q=80)', opacity: 0.15 }} />
-          <div className={`d2-content ${sChart.inView ? "in" : ""}`}>
-            <div className="d2-slide-label">REAL DATA</div>
-            <h2 className="d2-h2">Quoted Price by Lead Time</h2>
-            <p className="d2-p" style={{ maxWidth: 700 }}>
-              All 40 bids plotted by <strong>total lead time</strong> and <strong>quoted price</strong>. Dot size reflects <strong>quality score</strong>. Recommended suppliers highlighted. Red dotted line marks the target delivery deadline.
-            </p>
-            <div style={{ width: "100%", maxWidth: 900, margin: "24px auto 0", background: "rgba(255,255,255,0.02)", borderRadius: 12, border: "1px solid rgba(255,255,255,0.06)", padding: "24px 16px 16px" }}>
-              <DeckScatterChart inView={sChart.inView} />
-            </div>
-            <div className="d2-chart-legend" style={{ marginTop: 16 }}>
-              <div className="d2-legend"><div className="d2-legend-swatch" style={{ background: "var(--d2-blue)" }} />FluxCo Sourced</div>
-              <div className="d2-legend"><div className="d2-legend-swatch" style={{ background: "#e63946" }} />Client Sourced</div>
-              <div className="d2-legend"><div className="d2-legend-swatch" style={{ background: "var(--d2-blue)", border: "2px solid var(--d2-blue)", boxShadow: "0 0 6px rgba(45,140,255,0.3)" }} />Recommended</div>
-              <div className="d2-legend" style={{ opacity: 0.5 }}>Dot size = quality score</div>
-            </div>
-          </div>
-        </section>
-
-        {/* ========== SLIDE 4 — OPAQUE MARKET ========== */}
+        {/* ========== SLIDE 3 — OPAQUE MARKET ========== */}
         <section className="d2-slide" ref={s4.ref}>
           <div className="d2-glow d2-glow-3" />
           <div className={`d2-content ${s4.inView ? "in" : ""}`}>
@@ -465,24 +443,18 @@ export default function Deck2Page() {
                   </div>
                 </div>
               </div>
-              <div className="d2-problem-cards">
-                {[
-                  { icon: <Search className="w-5 h-5" />, text: "100s of OEMs, impossible to find & compare" },
-                  { icon: <DollarSign className="w-5 h-5" />, text: "Zero pricing transparency — 6x spreads" },
-                  { icon: <Users className="w-5 h-5" />, text: "Procurement staff are not transformer experts" },
-                  { icon: <Globe className="w-5 h-5" />, text: "No visibility on origin, compliance, or quality" },
-                ].map((item, i) => (
-                  <div key={i} className="d2-problem-card" style={{ animationDelay: `${0.3 + i * 0.12}s` }}>
-                    <div className="d2-problem-icon">{item.icon}</div>
-                    <span>{item.text}</span>
-                  </div>
-                ))}
+              <div style={{ background: "rgba(255,255,255,0.02)", borderRadius: 12, border: "1px solid rgba(255,255,255,0.06)", padding: "16px 12px 8px" }}>
+                <DeckScatterChart inView={s4.inView} />
+                <div className="d2-chart-legend" style={{ marginTop: 8, justifyContent: "center", gap: 16, fontSize: 10 }}>
+                  <div className="d2-legend"><div className="d2-legend-swatch" style={{ background: "var(--d2-blue)", width: 8, height: 8 }} />FluxCo Sourced</div>
+                  <div className="d2-legend"><div className="d2-legend-swatch" style={{ background: "#e63946", width: 8, height: 8 }} />Client Sourced</div>
+                </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* ========== SLIDE 5 — MARKETPLACE WEDGE ========== */}
+        {/* ========== SLIDE 4 — MARKETPLACE WEDGE ========== */}
         <section className="d2-slide" ref={s5.ref}>
           <div className="d2-glow d2-glow-4" />
           <div className={`d2-content ${s5.inView ? "in" : ""}`}>
@@ -541,7 +513,7 @@ export default function Deck2Page() {
           </div>
         </section>
 
-        {/* ========== SLIDE 6 — MANUFACTURING VISION ========== */}
+        {/* ========== SLIDE 5 — MANUFACTURING VISION ========== */}
         <section className="d2-slide d2-slide-dark" ref={s6.ref}>
           <div className="d2-bg-img" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1619885067109-e1dbec4e7cd0?w=1920&q=80)' }} />
           <div className={`d2-content ${s6.inView ? "in" : ""}`}>
@@ -580,7 +552,7 @@ export default function Deck2Page() {
           </div>
         </section>
 
-        {/* ========== SLIDE 7 — LEAPFROG ========== */}
+        {/* ========== SLIDE 6 — LEAPFROG ========== */}
         <section className="d2-slide d2-slide-dark" ref={s7.ref}>
           <div className="d2-bg-img" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1647427060118-4911c9821b82?w=1920&q=80)' }} />
           <div className={`d2-content ${s7.inView ? "in" : ""}`}>
@@ -609,7 +581,7 @@ export default function Deck2Page() {
           </div>
         </section>
 
-        {/* ========== SLIDE 8 — MOATS ========== */}
+        {/* ========== SLIDE 7 — MOATS ========== */}
         <section className="d2-slide" ref={s8.ref}>
           <div className="d2-glow d2-glow-5" />
           <div className={`d2-content ${s8.inView ? "in" : ""}`}>
@@ -635,7 +607,7 @@ export default function Deck2Page() {
           </div>
         </section>
 
-        {/* ========== SLIDE 9 — ROADMAP ========== */}
+        {/* ========== SLIDE 8 — ROADMAP ========== */}
         <section className="d2-slide d2-slide-dark" ref={s9.ref}>
           <div className="d2-bg-img" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1745448797901-2a4c9d9af1c1?w=1920&q=80)' }} />
           <div className={`d2-content ${s9.inView ? "in" : ""}`}>
@@ -658,7 +630,7 @@ export default function Deck2Page() {
           </div>
         </section>
 
-        {/* ========== SLIDE 10 — CLOSING ========== */}
+        {/* ========== SLIDE 9 — CLOSING ========== */}
         <section className="d2-slide d2-slide-dark" ref={s10.ref}>
           <div className="d2-bg-img" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1641618640134-fd5a58f1d225?w=1920&q=80)' }} />
           <div className={`d2-closing ${s10.inView ? "in" : ""}`}>
