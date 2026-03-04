@@ -92,70 +92,280 @@ export function TransformerDesigner() {
     const pageWidth = pdf.internal.pageSize.getWidth();
     const pageHeight = pdf.internal.pageSize.getHeight();
     const margin = 15;
-
-    // Title page
-    pdf.setFontSize(24);
-    pdf.setFont('helvetica', 'bold');
-    pdf.text('Fluxco Spec Builder Report', pageWidth / 2, 40, { align: 'center' });
-
-    pdf.setFontSize(14);
-    pdf.setFont('helvetica', 'normal');
-    const ratings = calculatePowerRatings(requirements.ratedPower, requirements.coolingClass.id);
-    pdf.text(`${ratings.display} Power Transformer`, pageWidth / 2, 55, { align: 'center' });
-    pdf.text(`${requirements.primaryVoltage}V / ${requirements.secondaryVoltage}V`, pageWidth / 2, 65, { align: 'center' });
-
-    pdf.setFontSize(10);
-    pdf.text(`Generated: ${new Date().toLocaleDateString()}`, pageWidth / 2, 85, { align: 'center' });
-    pdf.text('Fluxco - Verify with qualified engineer', pageWidth / 2, 95, { align: 'center' });
-
-    // Design summary
-    pdf.addPage();
-    pdf.setFontSize(16);
-    pdf.setFont('helvetica', 'bold');
-    pdf.text('Design Summary', margin, 20);
-
-    pdf.setFontSize(10);
-    pdf.setFont('helvetica', 'normal');
-    let y = 35;
+    const contentWidth = pageWidth - margin * 2;
     const lineHeight = 6;
 
-    const summaryData = [
-      ['Power Rating', ratings.display],
-      ['Primary Voltage', `${requirements.primaryVoltage} V`],
-      ['Secondary Voltage', `${requirements.secondaryVoltage} V`],
+    // Brand colors (RGB)
+    const brand = { r: 15, g: 118, b: 110 };   // teal-700
+    const brandDark = { r: 10, g: 80, b: 75 };  // deeper teal for accents
+    const rowAlt = { r: 245, g: 250, b: 249 };  // very light teal tint for alternating rows
+
+    // Load logo as base64
+    let logoBase64: string | null = null;
+    try {
+      const response = await fetch('/fluxco-logo-light.png');
+      const blob = await response.blob();
+      logoBase64 = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+    } catch {
+      // Logo unavailable — continue without it
+    }
+
+    // ── Helpers ────────────────────────────────────────────────────────────────
+
+    const addPageHeader = (pageNum: number, title: string) => {
+      // Top bar
+      pdf.setFillColor(brand.r, brand.g, brand.b);
+      pdf.rect(0, 0, pageWidth, 14, 'F');
+
+      // Logo in header
+      if (logoBase64) {
+        pdf.addImage(logoBase64, 'PNG', margin, 2, 28, 10);
+      } else {
+        pdf.setTextColor(255, 255, 255);
+        pdf.setFontSize(11);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text('FLUXCO', margin, 9);
+      }
+
+      // Page title right-aligned in header
+      pdf.setTextColor(255, 255, 255);
+      pdf.setFontSize(9);
+      pdf.setFont('helvetica', 'normal');
+      pdf.text(title, pageWidth - margin, 9, { align: 'right' });
+
+      // Reset text color
+      pdf.setTextColor(30, 30, 30);
+
+      // Footer rule + text
+      pdf.setDrawColor(brand.r, brand.g, brand.b);
+      pdf.setLineWidth(0.4);
+      pdf.line(margin, pageHeight - 10, pageWidth - margin, pageHeight - 10);
+
+      pdf.setFontSize(7.5);
+      pdf.setFont('helvetica', 'normal');
+      pdf.setTextColor(120, 120, 120);
+      pdf.text('Confidential — Prepared by Fluxco · fluxco.com', margin, pageHeight - 6);
+      pdf.text(`Page ${pageNum}`, pageWidth - margin, pageHeight - 6, { align: 'right' });
+      pdf.setTextColor(30, 30, 30);
+    };
+
+    const drawSectionHeader = (label: string, yPos: number): number => {
+      pdf.setFillColor(brand.r, brand.g, brand.b);
+      pdf.rect(margin, yPos, contentWidth, 7, 'F');
+      pdf.setTextColor(255, 255, 255);
+      pdf.setFontSize(9);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text(label, margin + 3, yPos + 5);
+      pdf.setTextColor(30, 30, 30);
+      return yPos + 7 + 2;
+    };
+
+    const drawTable = (
+      rows: [string, string][],
+      startY: number,
+      colSplit: number = margin + 75,
+    ): number => {
+      const rowH = 6.5;
+      pdf.setFontSize(9);
+      rows.forEach(([label, value], i) => {
+        // Alternating row background
+        if (i % 2 === 1) {
+          pdf.setFillColor(rowAlt.r, rowAlt.g, rowAlt.b);
+          pdf.rect(margin, startY + i * rowH, contentWidth, rowH, 'F');
+        }
+        pdf.setFont('helvetica', 'normal');
+        pdf.setTextColor(80, 80, 80);
+        pdf.text(label, margin + 3, startY + i * rowH + 4.5);
+        pdf.setFont('helvetica', 'bold');
+        pdf.setTextColor(30, 30, 30);
+        pdf.text(value, colSplit, startY + i * rowH + 4.5);
+      });
+      pdf.setFont('helvetica', 'normal');
+      return startY + rows.length * rowH + 4;
+    };
+
+    const drawSubtotalRow = (label: string, value: string, yPos: number): number => {
+      pdf.setFillColor(brandDark.r, brandDark.g, brandDark.b);
+      pdf.rect(margin, yPos, contentWidth, 7, 'F');
+      pdf.setTextColor(255, 255, 255);
+      pdf.setFontSize(9);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text(label, margin + 3, yPos + 5);
+      pdf.text(value, pageWidth - margin - 3, yPos + 5, { align: 'right' });
+      pdf.setTextColor(30, 30, 30);
+      return yPos + 7 + 3;
+    };
+
+    // ── Page 1: Cover ──────────────────────────────────────────────────────────
+
+    const ratings = calculatePowerRatings(requirements.ratedPower, requirements.coolingClass.id);
+
+    // Full-height left accent strip
+    pdf.setFillColor(brand.r, brand.g, brand.b);
+    pdf.rect(0, 0, 8, pageHeight, 'F');
+
+    // Top header band
+    pdf.setFillColor(brand.r, brand.g, brand.b);
+    pdf.rect(8, 0, pageWidth - 8, 55, 'F');
+
+    // Logo on cover
+    if (logoBase64) {
+      pdf.addImage(logoBase64, 'PNG', 18, 8, 50, 18);
+    } else {
+      pdf.setTextColor(255, 255, 255);
+      pdf.setFontSize(22);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('FLUXCO', 18, 24);
+    }
+
+    // Tagline under logo
+    pdf.setTextColor(200, 240, 235);
+    pdf.setFontSize(9);
+    pdf.setFont('helvetica', 'normal');
+    pdf.text("America's Transformer Marketplace", 18, 32);
+
+    // Document title block
+    pdf.setTextColor(255, 255, 255);
+    pdf.setFontSize(20);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('Transformer Specification Report', 18, 48);
+
+    // Specification summary card
+    pdf.setFillColor(250, 253, 252);
+    pdf.roundedRect(18, 65, pageWidth - 26, 68, 2, 2, 'F');
+    pdf.setDrawColor(brand.r, brand.g, brand.b);
+    pdf.setLineWidth(0.6);
+    pdf.roundedRect(18, 65, pageWidth - 26, 68, 2, 2, 'S');
+
+    pdf.setTextColor(brand.r, brand.g, brand.b);
+    pdf.setFontSize(13);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text(`${ratings.display} Power Transformer`, 26, 77);
+
+    pdf.setFontSize(10);
+    pdf.setFont('helvetica', 'normal');
+    pdf.setTextColor(60, 60, 60);
+    const coverSpecs: [string, string][] = [
+      ['Primary Voltage', `${requirements.primaryVoltage.toLocaleString()} V`],
+      ['Secondary Voltage', `${requirements.secondaryVoltage.toLocaleString()} V`],
       ['Frequency', `${requirements.frequency} Hz`],
       ['Vector Group', requirements.vectorGroup.name],
       ['Cooling Class', requirements.coolingClass.name],
-      ['', ''],
-      ['Core Steel', design.core.steelGrade.name],
-      ['Flux Density', `${design.core.fluxDensity} T`],
-      ['Core Diameter', `${design.core.coreDiameter} mm`],
-      ['Core Weight', `${design.core.coreWeight} kg`],
-      ['', ''],
-      ['HV Turns', `${design.hvWinding.turns}`],
-      ['LV Turns', `${design.lvWinding.turns}`],
-      ['Impedance', `${design.impedance.percentZ.toFixed(2)}%`],
-      ['', ''],
-      ['No-Load Loss', `${design.losses.noLoadLoss.toFixed(0)} W`],
-      ['Load Loss', `${design.losses.loadLoss.toFixed(0)} W`],
-      ['Efficiency at 100%', `${design.losses.efficiency.find(e => e.loadPercent === 100)?.efficiency.toFixed(2) || 'N/A'}%`],
+      ['Phases', `${requirements.phases}-Phase`],
     ];
-
-    summaryData.forEach(([label, value]) => {
-      if (label === '') {
-        y += lineHeight / 2;
-      } else {
-        pdf.text(label, margin, y);
-        pdf.text(value, margin + 60, y);
-        y += lineHeight;
-      }
+    const colA = 26;
+    const colB = 115;
+    coverSpecs.forEach(([label, value], i) => {
+      const col = i < 3 ? colA : colB;
+      const row = i % 3;
+      const yy = 86 + row * 10;
+      pdf.setTextColor(100, 100, 100);
+      pdf.setFont('helvetica', 'normal');
+      pdf.text(label, col, yy);
+      pdf.setTextColor(30, 30, 30);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text(value, col, yy + 5);
     });
 
-    // Cost Estimate page
-    pdf.addPage();
-    pdf.setFontSize(16);
+    // Divider
+    pdf.setDrawColor(brand.r, brand.g, brand.b);
+    pdf.setLineWidth(0.3);
+    pdf.line(18, 141, pageWidth - 8, 141);
+
+    // Prepared by / date block
+    pdf.setFontSize(9);
+    pdf.setFont('helvetica', 'normal');
+    pdf.setTextColor(80, 80, 80);
+    pdf.text('Prepared by', 18, 150);
     pdf.setFont('helvetica', 'bold');
-    pdf.text('Cost Estimate', margin, 20);
+    pdf.setTextColor(30, 30, 30);
+    pdf.text('Fluxco Spec Builder', 18, 156);
+
+    pdf.setFont('helvetica', 'normal');
+    pdf.setTextColor(80, 80, 80);
+    pdf.text('Date Generated', 18, 166);
+    pdf.setFont('helvetica', 'bold');
+    pdf.setTextColor(30, 30, 30);
+    pdf.text(new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }), 18, 172);
+
+    pdf.setFont('helvetica', 'normal');
+    pdf.setTextColor(80, 80, 80);
+    pdf.text('Specification Mode', 18, 182);
+    pdf.setFont('helvetica', 'bold');
+    pdf.setTextColor(30, 30, 30);
+    pdf.text(specMode === 'pro' ? 'Professional (PIP ELSTR01)' : 'Standard', 18, 188);
+
+    // Footer disclaimer on cover
+    pdf.setFontSize(7.5);
+    pdf.setFont('helvetica', 'normal');
+    pdf.setTextColor(150, 150, 150);
+    const disclaimer = 'This document contains budgetary estimates generated by the Fluxco Spec Builder. All specifications should be verified by a qualified engineer before procurement.';
+    const disclaimerLines = pdf.splitTextToSize(disclaimer, pageWidth - 30);
+    pdf.text(disclaimerLines, 18, pageHeight - 14);
+
+    // ── Page 2: Design Summary ─────────────────────────────────────────────────
+
+    pdf.addPage();
+    addPageHeader(2, 'Design Summary');
+    let y = 22;
+
+    y = drawSectionHeader('Electrical Ratings', y);
+    y = drawTable([
+      ['Power Rating', ratings.display],
+      ['Primary Voltage', `${requirements.primaryVoltage.toLocaleString()} V`],
+      ['Secondary Voltage', `${requirements.secondaryVoltage.toLocaleString()} V`],
+      ['Frequency', `${requirements.frequency} Hz`],
+      ['Phases', `${requirements.phases}`],
+      ['Vector Group', requirements.vectorGroup.name],
+      ['Cooling Class', requirements.coolingClass.name],
+    ], y);
+
+    y = drawSectionHeader('Core Design', y);
+    y = drawTable([
+      ['Steel Grade', design.core.steelGrade.name],
+      ['Flux Density', `${design.core.fluxDensity} T`],
+      ['Core Diameter', `${design.core.coreDiameter} mm`],
+      ['Core Weight', `${design.core.coreWeight.toFixed(1)} kg`],
+    ], y);
+
+    y = drawSectionHeader('Winding Design', y);
+    y = drawTable([
+      ['HV Turns', `${design.hvWinding.turns}`],
+      ['LV Turns', `${design.lvWinding.turns}`],
+      ['HV Conductor', `${design.hvWinding.conductorMaterial}`],
+      ['LV Conductor', `${design.lvWinding.conductorMaterial}`],
+      ['Target Impedance', `${requirements.targetImpedance.toFixed(2)}%`],
+      ['Achieved Impedance', `${design.impedance.percentZ.toFixed(2)}%`],
+    ], y);
+
+    y = drawSectionHeader('Losses & Efficiency', y);
+    const effAt100 = design.losses.efficiency.find(e => e.loadPercent === 100)?.efficiency.toFixed(2) ?? 'N/A';
+    const effAt50 = design.losses.efficiency.find(e => e.loadPercent === 50)?.efficiency.toFixed(2) ?? 'N/A';
+    y = drawTable([
+      ['No-Load Loss', `${design.losses.noLoadLoss.toFixed(0)} W`],
+      ['Load Loss (100%)', `${design.losses.loadLoss.toFixed(0)} W`],
+      ['Efficiency @ 50% load', `${effAt50}%`],
+      ['Efficiency @ 100% load', `${effAt100}%`],
+    ], y);
+
+    y = drawSectionHeader('Thermal Performance', y);
+    y = drawTable([
+      ['Top Oil Rise', `${design.thermal?.topOilRise?.toFixed(1) ?? 'N/A'} °C`],
+      ['Average Winding Rise', `${design.thermal?.avgWindingRise?.toFixed(1) ?? 'N/A'} °C`],
+      ['Hot Spot Rise', `${design.thermal?.hotSpotRise?.toFixed(1) ?? 'N/A'} °C`],
+      ['Oil Volume', `${design.thermal?.oilVolume?.toFixed(0) ?? 'N/A'} L`],
+    ], y);
+
+    // ── Page 3: Cost Estimate ──────────────────────────────────────────────────
+
+    pdf.addPage();
+    addPageHeader(3, 'Cost Estimate');
+    y = 22;
 
     const costBreakdown = calculateCostEstimate(design, requirements, { oilType: 'mineral' });
     const lifecycleCost = calculateLifecycleCost(design, requirements, {
@@ -164,29 +374,24 @@ export function TransformerDesigner() {
       loadFactor: 0.5,
     });
 
+    // Total cost highlight card
+    pdf.setFillColor(brand.r, brand.g, brand.b);
+    pdf.roundedRect(margin, y, contentWidth, 16, 2, 2, 'F');
+    pdf.setTextColor(255, 255, 255);
     pdf.setFontSize(10);
     pdf.setFont('helvetica', 'normal');
-    y = 35;
-
-    // Total cost highlight
-    pdf.setFontSize(12);
+    pdf.text('Estimated Total Cost', margin + 4, y + 6);
+    pdf.setFontSize(15);
     pdf.setFont('helvetica', 'bold');
-    pdf.text('ESTIMATED TOTAL COST:', margin, y);
-    pdf.text(formatCurrency(costBreakdown.totalCost), margin + 80, y);
-    pdf.setFontSize(10);
+    pdf.text(formatCurrency(costBreakdown.totalCost), margin + 4, y + 13);
+    pdf.setFontSize(9);
     pdf.setFont('helvetica', 'normal');
-    y += 10;
+    pdf.text(`${formatCurrency(costBreakdown.costPerKVA)} / kVA`, pageWidth - margin - 4, y + 10, { align: 'right' });
+    pdf.setTextColor(30, 30, 30);
+    y += 22;
 
-    pdf.text(`Cost per kVA: ${formatCurrency(costBreakdown.costPerKVA)}`, margin, y);
-    y += lineHeight + 4;
-
-    // Materials breakdown
-    pdf.setFont('helvetica', 'bold');
-    pdf.text('Materials', margin, y);
-    pdf.setFont('helvetica', 'normal');
-    y += lineHeight;
-
-    const materialItems = [
+    y = drawSectionHeader('Materials', y);
+    y = drawTable([
       ['Core Steel', formatCurrency(costBreakdown.coreSteel)],
       ['Conductors', formatCurrency(costBreakdown.conductors)],
       ['Insulation', formatCurrency(costBreakdown.insulation)],
@@ -196,97 +401,51 @@ export function TransformerDesigner() {
       ['Cooling Equipment', formatCurrency(costBreakdown.cooling)],
       ['Tap Changer', formatCurrency(costBreakdown.tapChanger)],
       ['Accessories', formatCurrency(costBreakdown.accessories)],
-    ];
+    ], y, margin + 90);
+    y = drawSubtotalRow('Total Materials', formatCurrency(costBreakdown.totalMaterials), y);
 
-    materialItems.forEach(([label, value]) => {
-      pdf.text(`  ${label}:`, margin, y);
-      pdf.text(value, margin + 70, y);
-      y += lineHeight;
-    });
-
-    pdf.setFont('helvetica', 'bold');
-    pdf.text('  Total Materials:', margin, y);
-    pdf.text(formatCurrency(costBreakdown.totalMaterials), margin + 70, y);
-    pdf.setFont('helvetica', 'normal');
-    y += lineHeight + 4;
-
-    // Labor
-    pdf.setFont('helvetica', 'bold');
-    pdf.text('Labor', margin, y);
-    pdf.setFont('helvetica', 'normal');
-    y += lineHeight;
-
-    const laborItems = [
+    y = drawSectionHeader('Labor', y);
+    y = drawTable([
       ['Assembly', formatCurrency(costBreakdown.assembly)],
       ['Testing', formatCurrency(costBreakdown.testing)],
       ['Engineering', formatCurrency(costBreakdown.engineering)],
-    ];
+    ], y, margin + 90);
+    y = drawSubtotalRow('Total Labor', formatCurrency(costBreakdown.totalLabor), y);
 
-    laborItems.forEach(([label, value]) => {
-      pdf.text(`  ${label}:`, margin, y);
-      pdf.text(value, margin + 70, y);
-      y += lineHeight;
-    });
-
-    pdf.setFont('helvetica', 'bold');
-    pdf.text('  Total Labor:', margin, y);
-    pdf.text(formatCurrency(costBreakdown.totalLabor), margin + 70, y);
-    pdf.setFont('helvetica', 'normal');
-    y += lineHeight + 4;
-
-    // Overhead
-    pdf.setFont('helvetica', 'bold');
-    pdf.text('Overhead & Margin', margin, y);
-    pdf.setFont('helvetica', 'normal');
-    y += lineHeight;
-
-    const overheadItems = [
+    y = drawSectionHeader('Overhead & Margin', y);
+    y = drawTable([
       ['Facility Overhead', formatCurrency(costBreakdown.facilityOverhead)],
       ['Quality Control', formatCurrency(costBreakdown.qualityControl)],
       ['Shipping', formatCurrency(costBreakdown.shipping)],
       ['Warranty Reserve', formatCurrency(costBreakdown.warrantyReserve)],
       ['Profit Margin (12%)', formatCurrency(costBreakdown.profitMargin)],
-    ];
-
-    overheadItems.forEach(([label, value]) => {
-      pdf.text(`  ${label}:`, margin, y);
-      pdf.text(value, margin + 70, y);
-      y += lineHeight;
-    });
+    ], y, margin + 90);
+    y = drawSubtotalRow('Grand Total', formatCurrency(costBreakdown.totalCost), y);
 
     y += 4;
-    pdf.setFont('helvetica', 'bold');
-    pdf.text('TOTAL:', margin, y);
-    pdf.text(formatCurrency(costBreakdown.totalCost), margin + 70, y);
-    y += lineHeight + 8;
-
-    // Lifecycle cost
-    pdf.setFont('helvetica', 'bold');
-    pdf.text('Lifecycle Cost Analysis (25 years @ $0.10/kWh, 50% load)', margin, y);
-    pdf.setFont('helvetica', 'normal');
-    y += lineHeight;
-    pdf.text(`  Initial Cost: ${formatCurrency(lifecycleCost.initialCost)}`, margin, y);
-    y += lineHeight;
-    pdf.text(`  Annual Loss Cost: ${formatCurrency(lifecycleCost.annualLossCost)}`, margin, y);
-    y += lineHeight;
-    pdf.setFont('helvetica', 'bold');
-    pdf.text(`  25-Year Total: ${formatCurrency(lifecycleCost.totalLifecycleCost)}`, margin, y);
-    pdf.setFont('helvetica', 'normal');
-    y += lineHeight + 8;
+    y = drawSectionHeader('Lifecycle Cost Analysis  (25 yr · $0.10/kWh · 50% load factor)', y);
+    y = drawTable([
+      ['Initial Cost', formatCurrency(lifecycleCost.initialCost)],
+      ['Annual Loss Cost', formatCurrency(lifecycleCost.annualLossCost)],
+      ['25-Year Total Cost of Ownership', formatCurrency(lifecycleCost.totalLifecycleCost)],
+    ], y, margin + 90);
 
     // Disclaimer
-    pdf.setFontSize(8);
-    pdf.text('Note: These are budgetary estimates for planning purposes. Actual costs vary by supplier and market conditions.', margin, y);
+    pdf.setFontSize(7.5);
+    pdf.setFont('helvetica', 'normal');
+    pdf.setTextColor(140, 140, 140);
+    pdf.text('Budgetary estimates for planning purposes only. Actual costs vary by supplier and market conditions.', margin, y + 4);
+    pdf.setTextColor(30, 30, 30);
 
-    // Pro mode: PIP ELSTR01 Specification Sheet
+    // ── Page 4 (pro): PIP ELSTR01 Specification ────────────────────────────────
+
+    let pageNum = 4;
+
     if (specMode === 'pro') {
       pdf.addPage();
-      pdf.setFontSize(16);
-      pdf.setFont('helvetica', 'bold');
-      pdf.text('PIP ELSTR01 Specification Sheet', margin, 20);
-      pdf.setFontSize(10);
-      pdf.setFont('helvetica', 'normal');
-      y = 35;
+      addPageHeader(pageNum, 'PIP ELSTR01 Specification');
+      y = 22;
+      pageNum++;
 
       const specSections: [string, [string, string][]][] = [
         ['Site Conditions (4.1.1)', [
@@ -334,44 +493,42 @@ export function TransformerDesigner() {
       ];
 
       for (const [sectionTitle, fields] of specSections) {
-        if (y > pageHeight - 30) {
+        const sectionHeight = 7 + fields.length * 6.5 + 6;
+        if (y + sectionHeight > pageHeight - 16) {
           pdf.addPage();
-          y = 20;
+          addPageHeader(pageNum, 'PIP ELSTR01 Specification');
+          pageNum++;
+          y = 22;
         }
-        pdf.setFont('helvetica', 'bold');
-        pdf.text(sectionTitle, margin, y);
-        pdf.setFont('helvetica', 'normal');
-        y += lineHeight;
-
-        for (const [label, value] of fields) {
-          pdf.text(`  ${label}:`, margin, y);
-          pdf.text(value, margin + 60, y);
-          y += lineHeight;
-        }
-        y += 3;
+        y = drawSectionHeader(sectionTitle, y);
+        y = drawTable(fields as [string, string][], y);
       }
 
       if (proSpec.otherRequirements) {
-        if (y > pageHeight - 30) {
+        const lines = pdf.splitTextToSize(proSpec.otherRequirements, contentWidth - 6);
+        const blockHeight = 7 + lines.length * lineHeight + 4;
+        if (y + blockHeight > pageHeight - 16) {
           pdf.addPage();
-          y = 20;
+          addPageHeader(pageNum, 'PIP ELSTR01 Specification');
+          pageNum++;
+          y = 22;
         }
-        pdf.setFont('helvetica', 'bold');
-        pdf.text('Other Requirements', margin, y);
+        y = drawSectionHeader('Other Requirements', y);
+        pdf.setFontSize(9);
         pdf.setFont('helvetica', 'normal');
-        y += lineHeight;
-        const lines = pdf.splitTextToSize(proSpec.otherRequirements, pageWidth - margin * 2);
-        pdf.text(lines, margin + 4, y);
+        pdf.setTextColor(60, 60, 60);
+        pdf.text(lines, margin + 3, y);
+        y += lines.length * lineHeight + 4;
+        pdf.setTextColor(30, 30, 30);
       }
     }
 
-    // Capture drawings
+    // ── Final page: Technical Drawings ────────────────────────────────────────
+
     const drawingsContainer = document.getElementById('drawings-container');
     if (drawingsContainer) {
       pdf.addPage();
-      pdf.setFontSize(16);
-      pdf.setFont('helvetica', 'bold');
-      pdf.text('Technical Drawings', margin, 20);
+      addPageHeader(pageNum, 'Technical Drawings');
 
       const canvas = await html2canvas(drawingsContainer, {
         scale: 2,
@@ -380,13 +537,15 @@ export function TransformerDesigner() {
       });
 
       const imgData = canvas.toDataURL('image/png');
-      const imgWidth = pageWidth - (margin * 2);
+      const imgWidth = contentWidth;
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      const drawingY = 20;
+      const maxDrawingHeight = pageHeight - drawingY - 14;
 
-      pdf.addImage(imgData, 'PNG', margin, 30, imgWidth, Math.min(imgHeight, pageHeight - 50));
+      pdf.addImage(imgData, 'PNG', margin, drawingY, imgWidth, Math.min(imgHeight, maxDrawingHeight));
     }
 
-    pdf.save(`transformer-design-${requirements.ratedPower}kva.pdf`);
+    pdf.save(`fluxco-spec-${requirements.ratedPower}kva-${requirements.primaryVoltage}v-${requirements.secondaryVoltage}v.pdf`);
   };
 
   const handleMarketplaceSubmit = async () => {
