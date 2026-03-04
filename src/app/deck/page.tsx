@@ -710,17 +710,20 @@ export default function Deck2Page() {
             <div className="d2-logo-strip">
               <div className="d2-logo-strip-label">Previously at</div>
               <div className="d2-logo-row">
-                {[
-                  { src: "/logos/platinum-equity.png", alt: "Platinum Equity" },
-                  { src: "/logos/trust-ventures.svg", alt: "Trust Ventures" },
-                  { text: "BELL", alt: "Bell Helicopter" },
-                  { text: "CIA", alt: "CIA" },
-                  { src: "/logos/houlihan-lokey.png", alt: "Houlihan Lokey" },
-                  { src: "/logos/tesla.png", alt: "Tesla" },
-                ].map((logo) => (
-                  <div key={logo.alt} className="d2-logo-item">
-                    {"text" in logo ? (
-                      <span className="d2-logo-text">{logo.text}</span>
+                {([
+                  { src: "/logos/platinum-equity.png", alt: "Platinum Equity", withText: "" },
+                  { src: "/logos/trust-ventures.svg", alt: "Trust Ventures", withText: "" },
+                  { src: "/logos/bell.png", alt: "Bell Helicopter", withText: "BELL" },
+                  { src: "/logos/cia.png", alt: "CIA", withText: "CENTRAL\nINTELLIGENCE\nAGENCY" },
+                  { src: "/logos/houlihan-lokey.png", alt: "Houlihan Lokey", withText: "" },
+                  { src: "/logos/tesla.png", alt: "Tesla", withText: "" },
+                ] as const).map((logo) => (
+                  <div key={logo.alt} className={`d2-logo-item ${logo.withText ? "d2-logo-combo" : ""}`}>
+                    {logo.withText ? (
+                      <>
+                        <img src={logo.src} alt={logo.alt} className="d2-logo-color" />
+                        <span className="d2-logo-text d2-logo-text-sm">{logo.withText}</span>
+                      </>
                     ) : (
                       <img src={logo.src} alt={logo.alt} />
                     )}
@@ -1484,6 +1487,18 @@ const deck2Styles = `
     transition: opacity 0.3s;
   }
   .d2-logo-item:hover .d2-logo-text { opacity: 0.8; }
+  .d2-logo-combo {
+    display: flex; align-items: center; gap: 8px; height: auto;
+  }
+  .d2-logo-color {
+    height: 36px; width: auto; object-fit: contain;
+    filter: none; opacity: 0.7; transition: opacity 0.3s;
+  }
+  .d2-logo-combo:hover .d2-logo-color { opacity: 1; }
+  .d2-logo-text-sm {
+    font-size: 10px; letter-spacing: 2px; line-height: 1.3;
+    white-space: pre-line; text-align: left;
+  }
 
   /* ---- TIMELINE (slide 9) ---- */
   .d2-timeline {
