@@ -713,7 +713,7 @@ export default function Deck2Page() {
                 {([
                   { src: "/logos/platinum-equity.png", alt: "Platinum Equity", withText: "", stacked: false },
                   { src: "/logos/trust-ventures.svg", alt: "Trust Ventures", withText: "TRUST VENTURES", stacked: true },
-                  { src: "/logos/bell.png", alt: "Bell Helicopter", withText: "BELL", stacked: false },
+                  { src: "/logos/bell-clean.svg", alt: "Bell", withText: "", stacked: false },
                   { src: "/logos/cia.png", alt: "CIA", withText: "CENTRAL\nINTELLIGENCE\nAGENCY", stacked: false },
                   { src: "/logos/houlihan-lokey.png", alt: "Houlihan Lokey", withText: "", stacked: false },
                   { src: "/logos/tesla.png", alt: "Tesla", withText: "", stacked: false },
