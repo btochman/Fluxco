@@ -27,8 +27,8 @@ export default function Hero() {
 
           {/* Subheadline */}
           <p className="text-lg md:text-xl text-gray-300 mb-8 max-w-2xl">
-            Your complete transformer partner. Full engineering, procurement &
-            construction services through a single trusted source.
+            It doesn&apos;t make sense for your team to become transformer experts.
+            We handle procurement, leasing, service and warranty so you don&apos;t have to.
           </p>
 
           {/* CTA Buttons */}

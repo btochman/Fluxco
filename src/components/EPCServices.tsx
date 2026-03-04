@@ -19,14 +19,14 @@ export default function EPCServices() {
           FULL EPC SERVICES
         </h2>
         <p className="text-xl text-gray-300 max-w-3xl mx-auto mb-8">
-          Engineering, Procurement & Construction — all under one roof. We manage
-          complex transformer projects from specification to commissioning.
+          Engineering, procurement and project management for every transformer need.
+          Plus leasing, service and warranty support for the life of your equipment.
         </p>
         <a
           href="#contact"
           className="inline-flex items-center gap-2 bg-[#0ea5e9] hover:bg-[#0284c7] text-white px-8 py-4 rounded font-semibold transition-colors text-lg"
         >
-          Start Your Project
+          Talk to Our Team
         </a>
       </div>
     </section>

@@ -13,10 +13,10 @@ export const metadata: Metadata = {
     "transformer quote",
     "request for quote transformer",
     "transformer pricing",
-    "buy transformer quote",
+    "transformer procurement",
+    "transformer leasing",
     "padmount transformer quote",
     "power transformer RFQ",
-    "transformer procurement",
     "get transformer quote",
   ],
   openGraph: {
@@ -112,12 +112,12 @@ export default function GetQuotePage() {
                     </div>
                     <div>
                       <h3 className="font-medium text-foreground mb-1">
-                        Full EPC Services
+                        Procurement + Lifecycle Support
                       </h3>
                       <p className="text-muted-foreground text-sm">
-                        Engineering, procurement, logistics, installation,
-                        commissioning, and lifetime support — all through a
-                        single partner.
+                        Engineering, procurement, logistics, leasing, service
+                        and warranty — all through a single partner for the
+                        life of your equipment.
                       </p>
                     </div>
                   </div>

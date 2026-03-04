@@ -13,13 +13,16 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL("https://fluxco.com"),
   title: {
-    default: "FluxCo | In-Stock Padmount & Substation Transformers | Transformer Broker",
+    default: "FluxCo | Your Chief Transformer Officer | Procurement, Leasing & Service",
     template: "%s | FluxCo",
   },
   description:
-    "America's transformer marketplace. Buy in-stock padmount, substation, and distribution transformers from 100+ global suppliers. Full EPC services, DOE 2027 compliant, fast delivery.",
+    "Your Chief Transformer Officer. Procurement, leasing, service and warranty for padmount, substation, and distribution transformers from 100+ global suppliers. DOE 2027 compliant.",
   keywords: [
-    "buy transformers",
+    "transformer procurement",
+    "transformer leasing",
+    "transformer service",
+    "transformer warranty",
     "padmount transformer for sale",
     "substation transformer supplier",
     "distribution transformer for sale",
@@ -29,7 +32,6 @@ export const metadata: Metadata = {
     "in-stock transformers",
     "DOE 2027 compliant transformers",
     "FEOC compliant transformers",
-    "transformer procurement",
     "EPC transformer services",
     "data center transformers",
     "renewable energy transformers",
@@ -37,9 +39,9 @@ export const metadata: Metadata = {
     "Made in USA transformers",
   ],
   openGraph: {
-    title: "FluxCo | America's Transformer Marketplace",
+    title: "FluxCo | Your Chief Transformer Officer",
     description:
-      "Buy in-stock padmount, substation, and distribution transformers from 100+ global suppliers. Full EPC services with fast delivery.",
+      "Procurement, leasing, service and warranty for padmount, substation, and distribution transformers from 100+ global suppliers.",
     type: "website",
     locale: "en_US",
     siteName: "FluxCo",
@@ -47,9 +49,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "FluxCo | In-Stock Transformers",
+    title: "FluxCo | Your Chief Transformer Officer",
     description:
-      "America's transformer marketplace. In-stock inventory from 100+ global suppliers.",
+      "Procurement, leasing, service and warranty for transformers from 100+ global suppliers.",
   },
   robots: {
     index: true,

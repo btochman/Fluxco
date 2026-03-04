@@ -1,6 +1,6 @@
 'use client';
 
-import { PenTool, ShoppingCart, Truck, Wrench, CheckCircle, HeadphonesIcon } from 'lucide-react';
+import { PenTool, ShoppingCart, Truck, KeyRound, ShieldCheck, HeadphonesIcon } from 'lucide-react';
 
 const services = [
   {
@@ -19,14 +19,14 @@ const services = [
     description: 'End-to-end shipping and delivery coordination',
   },
   {
-    icon: Wrench,
-    title: 'Installation',
-    description: 'Professional installation services nationwide',
+    icon: KeyRound,
+    title: 'Leasing',
+    description: 'Flexible lease and finance options to fit your budget and timeline',
   },
   {
-    icon: CheckCircle,
-    title: 'Commissioning',
-    description: 'Testing and verification to ensure optimal performance',
+    icon: ShieldCheck,
+    title: 'Service & Warranty',
+    description: 'Ongoing maintenance, repairs, and warranty management for the life of your equipment',
   },
   {
     icon: HeadphonesIcon,
@@ -55,7 +55,7 @@ export default function GlobalServices() {
             GLOBAL REACH, LOCAL SERVICE
           </h2>
           <p className="text-gray-400 max-w-2xl mx-auto">
-            Comprehensive support at every stage of your transformer project
+            Procurement, leasing, and lifecycle support for every transformer
           </p>
         </div>
 

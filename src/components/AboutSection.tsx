@@ -47,18 +47,18 @@ const AboutSection = () => {
               Why Choose Fluxco
             </span>
             <h2 className="font-display text-4xl md:text-5xl text-foreground mb-6 leading-tight">
-              YOUR ONE-STOP SHOP
+              YOUR CTO
             </h2>
             <p className="text-muted-foreground text-lg leading-relaxed mb-8">
-              Buying a transformer shouldn't mean navigating a maze of manufacturers, lead times, and specifications. We've built relationships with hundreds of partners across the globe so you don't have to. Get complete visibility into the entire supply chain and find the perfect solution for your exact needs.
+              Your team shouldn&apos;t have to become transformer experts. As your Chief Transformer Officer, we manage procurement, leasing, service and warranty across hundreds of global partners—so you get the right equipment without the learning curve.
             </p>
             <div className="bg-primary/5 border border-primary/20 rounded-xl p-6 mb-6">
               <p className="text-foreground font-medium text-center">
-                From engineering consultation to final installation—we handle everything so you can focus on your core business.
+                Procurement, leasing, ongoing service and warranty management—we handle the full transformer lifecycle so you can focus on your core business.
               </p>
             </div>
             <div className="text-center">
-              <div className="font-display text-2xl font-bold text-primary">The Ultimate Transformer Resource</div>
+              <div className="font-display text-2xl font-bold text-primary">Procurement. Leasing. Service. Warranty.</div>
             </div>
           </div>
 
@@ -229,10 +229,10 @@ const AboutSection = () => {
                 </div>
                 <div>
                   <h3 className="font-display text-2xl text-foreground mb-3">
-                    Your Single Partner for Every Transformer Need
+                    Your Chief Transformer Officer
                   </h3>
                   <p className="text-muted-foreground leading-relaxed">
-                    We're here to solve all the complexity of finding the transformer that meets your cost, lead time, and installation requirements. From navigating global suppliers to managing logistics and specifications—one partner, one solution.
+                    We act as an extension of your team—handling procurement, leasing options, and ongoing service and warranty so you never have to navigate the transformer market alone.
                   </p>
                 </div>
               </div>
