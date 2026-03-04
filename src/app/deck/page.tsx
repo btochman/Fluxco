@@ -713,13 +713,17 @@ export default function Deck2Page() {
                 {[
                   { src: "/logos/platinum-equity.png", alt: "Platinum Equity" },
                   { src: "/logos/trust-ventures.svg", alt: "Trust Ventures" },
-                  { src: "/logos/bell.png", alt: "Bell Helicopter" },
-                  { src: "/logos/cia.png", alt: "CIA" },
+                  { text: "BELL", alt: "Bell Helicopter" },
+                  { text: "CIA", alt: "CIA" },
                   { src: "/logos/houlihan-lokey.png", alt: "Houlihan Lokey" },
                   { src: "/logos/tesla.png", alt: "Tesla" },
                 ].map((logo) => (
                   <div key={logo.alt} className="d2-logo-item">
-                    <img src={logo.src} alt={logo.alt} />
+                    {"text" in logo ? (
+                      <span className="d2-logo-text">{logo.text}</span>
+                    ) : (
+                      <img src={logo.src} alt={logo.alt} />
+                    )}
                   </div>
                 ))}
               </div>
@@ -1474,6 +1478,12 @@ const deck2Styles = `
     transition: opacity 0.3s;
   }
   .d2-logo-item:hover img { opacity: 0.8; }
+  .d2-logo-text {
+    font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 700;
+    letter-spacing: 3px; color: #fff; opacity: 0.45;
+    transition: opacity 0.3s;
+  }
+  .d2-logo-item:hover .d2-logo-text { opacity: 0.8; }
 
   /* ---- TIMELINE (slide 9) ---- */
   .d2-timeline {
