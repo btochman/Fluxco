@@ -1490,11 +1490,11 @@ const deck2Styles = `
   .d2-logo-combo {
     display: flex; align-items: center; gap: 8px; height: auto;
   }
-  .d2-logo-color {
+  .d2-logo-combo img.d2-logo-color {
     height: 36px; width: auto; object-fit: contain;
-    filter: none; opacity: 0.7; transition: opacity 0.3s;
+    filter: none !important; opacity: 0.7; transition: opacity 0.3s;
   }
-  .d2-logo-combo:hover .d2-logo-color { opacity: 1; }
+  .d2-logo-combo:hover img.d2-logo-color { opacity: 1; }
   .d2-logo-text-sm {
     font-size: 10px; letter-spacing: 2px; line-height: 1.3;
     white-space: pre-line; text-align: left;
