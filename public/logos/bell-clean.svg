@@ -1,13 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 220" fill="#222">
-  <!-- Shield outline -->
-  <path d="M10 10 L170 10 L170 140 Q170 190 90 215 Q10 190 10 140 Z"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 220">
+  <!-- Shield outline only -->
+  <path d="M10 10 L170 10 L170 140 Q170 190 90 215 Q10 190 10 140 Z" fill="none" stroke="#222" stroke-width="12"/>
   <!-- BELL text -->
-  <text x="90" y="72" text-anchor="middle" font-family="Arial Black, Impact, sans-serif" font-weight="900" font-size="50" fill="#fff" letter-spacing="3">BELL</text>
+  <text x="90" y="75" text-anchor="middle" font-family="Arial Black, Impact, sans-serif" font-weight="900" font-size="52" fill="#222" letter-spacing="3">BELL</text>
   <!-- Simplified rotor wings -->
-  <path d="M90 105 L40 95 Q30 93 40 90 L90 98 Z" fill="#fff"/>
-  <path d="M90 105 L140 95 Q150 93 140 90 L90 98 Z" fill="#fff"/>
-  <!-- Fuselage/blade -->
-  <rect x="86" y="95" width="8" height="60" rx="3" fill="#fff"/>
+  <path d="M48 108 Q68 100 90 105 Q112 100 132 108" fill="none" stroke="#222" stroke-width="6" stroke-linecap="round"/>
+  <!-- Fuselage -->
+  <rect x="86" y="102" width="8" height="55" rx="3" fill="#222"/>
   <!-- Blade tip -->
-  <path d="M86 155 L90 168 L94 155 Z" fill="#fff"/>
+  <path d="M86 157 L90 172 L94 157 Z" fill="#222"/>
 </svg>
