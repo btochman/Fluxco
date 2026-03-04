@@ -4,10 +4,10 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import {
   Zap, ArrowRight, ArrowLeft, ChevronDown, Shield, Factory, Cpu, Building2,
   Globe, Clock, DollarSign, CheckCircle, TrendingUp, Search, BarChart3,
-  Users, Wrench, Bot, Sparkles, AlertTriangle, Eye, Target,
+  Users, Wrench, Bot, Sparkles, AlertTriangle, Eye, Target, Repeat,
 } from "lucide-react";
 
-const TOTAL_SECTIONS = 10;
+const TOTAL_SECTIONS = 12;
 
 /* ------------------------------------------------------------------ */
 /*  Hook: animate numbers counting up                                  */
@@ -254,8 +254,10 @@ export default function Deck2Page() {
   const s6 = useInView(0.2);
   const s7 = useInView(0.2);
   const s8 = useInView(0.2);
+  const s8b = useInView(0.2);
   const s9 = useInView(0.2);
   const s10 = useInView(0.2);
+  const s11 = useInView(0.2);
 
   /* Animated counters */
   const c85 = useCountUp(85, 1800, s3.inView);
@@ -607,10 +609,128 @@ export default function Deck2Page() {
           </div>
         </section>
 
-        {/* ========== SLIDE 8 — ROADMAP ========== */}
-        <section className="d2-slide d2-slide-dark" ref={s9.ref}>
-          <div className="d2-bg-img" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1745448797901-2a4c9d9af1c1?w=1920&q=80)' }} />
+        {/* ========== SLIDE 8 — MONETIZATION ========== */}
+        <section className="d2-slide" ref={s8b.ref}>
+          <div className="d2-glow d2-glow-5" />
+          <div className={`d2-content ${s8b.inView ? "in" : ""}`}>
+            <div className="d2-slide-label">MONETIZATION</div>
+            <h2 className="d2-h2">How We Make Money</h2>
+
+            <div className="d2-rev-stats">
+              {[
+                { value: "15–25%", label: "Marketplace Take Rate" },
+                { value: "$20B+", label: "Addressable Market" },
+                { value: "Recurring", label: "TaaS Revenue" },
+              ].map((stat) => (
+                <div key={stat.label} className="d2-rev-stat">
+                  <div className="d2-rev-stat-value">{stat.value}</div>
+                  <div className="d2-rev-stat-label">{stat.label}</div>
+                </div>
+              ))}
+            </div>
+
+            <div className="d2-rev-grid">
+              {[
+                { icon: <DollarSign className="w-6 h-6" />, title: "Marketplace Commission", points: ["15–25% take rate on every transaction.", "Volume grows as OEM network expands.", "Higher margins on complex/custom specs."] },
+                { icon: <TrendingUp className="w-6 h-6" />, title: "OEM Volume Pricing", points: ["Negotiate volume discounts across OEM network.", "Customer sees market price, FluxCo captures the spread.", "Looks custom to buyer — commodity to us."] },
+                { icon: <Repeat className="w-6 h-6" />, title: "Transformer as a Service", points: ["Leasing model for companies that don't want to own.", "Recurring monthly revenue per unit.", "Lower barrier to entry for customers."] },
+                { icon: <Wrench className="w-6 h-6" />, title: "Warranty & Fleet Service", points: ["Service contracts across full deployed fleet.", "Scale advantage: hundreds of units = predictable revenue.", "Cross-sell upgrades, monitoring, replacements."] },
+              ].map((card, i) => (
+                <div key={card.title} className="d2-rev-card" style={{ animationDelay: `${0.2 + i * 0.15}s` }}>
+                  <div className="d2-rev-card-icon">{card.icon}</div>
+                  <h3 className="d2-rev-card-title">{card.title}</h3>
+                  <ul className="d2-rev-card-list">
+                    {card.points.map((p, j) => <li key={j}>{p}</li>)}
+                  </ul>
+                </div>
+              ))}
+            </div>
+
+            <div className="d2-rev-insight">
+              &ldquo;Every unit looks like a custom order to the customer. To us, it&apos;s a commodity we&apos;ve seen a thousand times.&rdquo;
+            </div>
+          </div>
+        </section>
+
+        {/* ========== SLIDE 9 — TEAM ========== */}
+        <section className="d2-slide" ref={s9.ref}>
+          <div className="d2-glow d2-glow-6" />
           <div className={`d2-content ${s9.inView ? "in" : ""}`}>
+            <div className="d2-slide-label">THE TEAM</div>
+            <h2 className="d2-h2">Built to Execute</h2>
+            <div className="d2-team-grid">
+              {[
+                {
+                  photo: "/team/brian.jpg",
+                  name: "Brian Tochman",
+                  title: "CEO",
+                  bio: "Co-Founder of Trust Ventures. Operator and investor across deep tech, energy, and industrial sectors.",
+                  linkedin: "https://www.linkedin.com/in/briantochman/",
+                },
+                {
+                  photo: "/team/eric.jpg",
+                  name: "Eric Hobby",
+                  title: "Head of Manufacturing",
+                  bio: "Deep tech specialist with transformer industry expertise. UT McCombs MBA.",
+                  linkedin: "https://www.linkedin.com/in/eric-hobby-8261a4101/",
+                },
+                {
+                  photo: "/team/casey.jpg",
+                  name: "Casey Wu",
+                  title: "CFO",
+                  bio: "Venture capital and finance background. Texas A&M engineering. Oversees capital strategy and operations.",
+                  linkedin: "https://www.linkedin.com/in/casey-wu-486a751/",
+                },
+                {
+                  photo: "/team/benji.jpg",
+                  name: "Benji Miller",
+                  title: "CTO",
+                  bio: "Technical operations leader in transformer manufacturing. Johns Hopkins engineering.",
+                  linkedin: "https://www.linkedin.com/in/benjimiller-1/",
+                },
+              ].map((member, i) => (
+                <a
+                  key={member.name}
+                  href={member.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="d2-team-card"
+                  style={{ animationDelay: `${0.2 + i * 0.15}s`, textDecoration: "none" }}
+                >
+                  <div className="d2-team-photo">
+                    <img src={member.photo} alt={member.name} />
+                  </div>
+                  <div className="d2-team-name">{member.name}</div>
+                  <div className="d2-team-title">{member.title}</div>
+                  <div className="d2-team-bio">{member.bio}</div>
+                </a>
+              ))}
+            </div>
+
+            <div className="d2-logo-strip">
+              <div className="d2-logo-strip-label">Previously at</div>
+              <div className="d2-logo-row">
+                {[
+                  { src: "/logos/platinum-equity.png", alt: "Platinum Equity" },
+                  { src: "/logos/trust-ventures.svg", alt: "Trust Ventures" },
+                  { src: "/logos/bell.png", alt: "Bell Helicopter" },
+                  { src: "/logos/cia.png", alt: "CIA" },
+                  { src: "/logos/houlihan-lokey.png", alt: "Houlihan Lokey" },
+                  { src: "/logos/tesla.png", alt: "Tesla" },
+                ].map((logo) => (
+                  <div key={logo.alt} className="d2-logo-item">
+                    <img src={logo.src} alt={logo.alt} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ========== SLIDE 9 — ROADMAP ========== */}
+        <section className="d2-slide d2-slide-dark" ref={s10.ref}>
+          <div className="d2-bg-img" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1745448797901-2a4c9d9af1c1?w=1920&q=80)' }} />
+          <div className={`d2-content ${s10.inView ? "in" : ""}`}>
             <div className="d2-slide-label">THE PLAN</div>
             <h2 className="d2-h2">Roadmap to Independence</h2>
             <div className="d2-timeline">
@@ -630,10 +750,10 @@ export default function Deck2Page() {
           </div>
         </section>
 
-        {/* ========== SLIDE 9 — CLOSING ========== */}
-        <section className="d2-slide d2-slide-dark" ref={s10.ref}>
+        {/* ========== SLIDE 10 — CLOSING ========== */}
+        <section className="d2-slide d2-slide-dark" ref={s11.ref}>
           <div className="d2-bg-img" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1641618640134-fd5a58f1d225?w=1920&q=80)' }} />
-          <div className={`d2-closing ${s10.inView ? "in" : ""}`}>
+          <div className={`d2-closing ${s11.inView ? "in" : ""}`}>
             <div className="d2-logo-icon d2-closing-logo"><Zap className="w-10 h-10" /></div>
             <h2 className="d2-closing-h2">Powering the Renaissance</h2>
             <p className="d2-closing-p">
@@ -851,6 +971,11 @@ const deck2Styles = `
   .d2-content.in .d2-metric-row,
   .d2-content.in .d2-compare,
   .d2-content.in .d2-moats,
+  .d2-content.in .d2-rev-stats,
+  .d2-content.in .d2-rev-grid,
+  .d2-content.in .d2-rev-insight,
+  .d2-content.in .d2-team-grid,
+  .d2-content.in .d2-logo-strip,
   .d2-content.in .d2-timeline,
   .d2-content.in > .d2-p {
     animation: d2-fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -865,6 +990,11 @@ const deck2Styles = `
   .d2-content .d2-metric-row { opacity: 0; animation-delay: 0.4s; }
   .d2-content .d2-compare { opacity: 0; animation-delay: 0.2s; }
   .d2-content .d2-moats { opacity: 0; animation-delay: 0.15s; }
+  .d2-content .d2-rev-stats { opacity: 0; animation-delay: 0.15s; }
+  .d2-content .d2-rev-grid { opacity: 0; animation-delay: 0.25s; }
+  .d2-content .d2-rev-insight { opacity: 0; animation-delay: 0.5s; }
+  .d2-content .d2-team-grid { opacity: 0; animation-delay: 0.2s; }
+  .d2-content .d2-logo-strip { opacity: 0; animation-delay: 0.8s; }
   .d2-content .d2-timeline { opacity: 0; animation-delay: 0.2s; }
 
   @keyframes d2-fade-up {
@@ -1236,7 +1366,116 @@ const deck2Styles = `
     background: rgba(45,140,255,0.4);
   }
 
-  /* ---- TIMELINE (slide 8) ---- */
+  /* ---- MONETIZATION (slide 8) ---- */
+  .d2-rev-stats {
+    display: flex; gap: 24px; margin-bottom: 28px;
+  }
+  .d2-rev-stat {
+    flex: 1; text-align: center; padding: 20px;
+    border-radius: var(--d2-radius); background: var(--d2-surface);
+    border: 1px solid var(--d2-border);
+  }
+  .d2-rev-stat-value {
+    font-family: 'JetBrains Mono', monospace; font-size: 28px; font-weight: 700;
+    color: var(--d2-blue); margin-bottom: 4px;
+  }
+  .d2-rev-stat-label {
+    font-family: 'Inter', sans-serif; font-size: 13px;
+    color: var(--d2-text); text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .d2-rev-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .d2-rev-card {
+    padding: 28px; border-radius: var(--d2-radius);
+    background: var(--d2-surface); border: 1px solid var(--d2-border);
+    transition: all 0.3s;
+  }
+  .d2-rev-card:hover { border-color: rgba(45,140,255,0.3); transform: translateY(-2px); }
+  .d2-rev-card-icon { color: var(--d2-blue); margin-bottom: 14px; }
+  .d2-rev-card-title {
+    font-family: 'Oswald', sans-serif; font-size: 16px; font-weight: 600;
+    color: #fff; text-transform: uppercase; margin-bottom: 12px;
+    letter-spacing: 0.5px;
+  }
+  .d2-rev-card-list { list-style: none; padding: 0; margin: 0; }
+  .d2-rev-card-list li {
+    font-family: 'Inter', sans-serif; font-size: 13px;
+    color: var(--d2-text); line-height: 1.6;
+    padding: 6px 0 6px 20px; position: relative;
+  }
+  .d2-rev-card-list li::before {
+    content: ''; position: absolute; left: 0; top: 12px;
+    width: 6px; height: 6px; border-radius: 50%;
+    background: rgba(45,140,255,0.4);
+  }
+  .d2-rev-insight {
+    margin-top: 24px; padding: 20px 24px;
+    border-left: 3px solid var(--d2-blue);
+    background: rgba(45,140,255,0.05); border-radius: 0 var(--d2-radius) var(--d2-radius) 0;
+    font-family: 'Inter', sans-serif; font-size: 15px; font-style: italic;
+    color: rgba(255,255,255,0.85); line-height: 1.6;
+  }
+
+  /* ---- TEAM (slide 9) ---- */
+  .d2-team-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+  .d2-team-card {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 12px; padding: 32px 20px; border-radius: var(--d2-radius);
+    background: var(--d2-surface); border: 1px solid var(--d2-border);
+    text-align: center; transition: all 0.3s; cursor: pointer;
+  }
+  .d2-team-card:hover { border-color: rgba(45,140,255,0.3); transform: translateY(-4px); box-shadow: 0 0 30px rgba(45,140,255,0.1); }
+  .d2-team-photo {
+    width: 100px; height: 100px; border-radius: 50%; overflow: hidden;
+    border: 2px solid rgba(45,140,255,0.3);
+    box-shadow: 0 0 20px rgba(45,140,255,0.1);
+  }
+  .d2-team-photo img { width: 100%; height: 100%; object-fit: cover; }
+  .d2-team-name {
+    font-family: 'Inter', sans-serif; font-size: 16px; font-weight: 600;
+    color: #fff;
+  }
+  .d2-team-title {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    color: var(--d2-blue); text-transform: uppercase; letter-spacing: 1.5px;
+    font-weight: 500;
+  }
+  .d2-team-bio {
+    font-family: 'Inter', sans-serif; font-size: 13px;
+    color: var(--d2-text); line-height: 1.5;
+  }
+  .d2-glow-6 {
+    width: 500px; height: 500px; top: 20%; right: 10%;
+    background: rgba(45,140,255,0.05);
+    animation: d2-float 10s ease-in-out infinite;
+  }
+
+  /* ---- LOGO STRIP (team slide) ---- */
+  .d2-logo-strip {
+    margin-top: 40px; text-align: center; width: 100%;
+  }
+  .d2-logo-strip-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    color: var(--d2-text); text-transform: uppercase; letter-spacing: 2px;
+    margin-bottom: 20px; opacity: 0.6;
+  }
+  .d2-logo-row {
+    display: flex; align-items: center; justify-content: center;
+    gap: 36px; flex-wrap: wrap;
+  }
+  .d2-logo-item {
+    height: 32px; display: flex; align-items: center;
+  }
+  .d2-logo-item img {
+    height: 100%; width: auto; object-fit: contain;
+    filter: brightness(0) invert(1); opacity: 0.45;
+    transition: opacity 0.3s;
+  }
+  .d2-logo-item:hover img { opacity: 0.8; }
+
+  /* ---- TIMELINE (slide 9) ---- */
   .d2-timeline {
     display: flex; gap: 0; position: relative;
     margin-top: 48px; padding-top: 40px;
@@ -1334,6 +1573,12 @@ const deck2Styles = `
     .d2-p { font-size: 14px; }
     .d2-tech-grid { grid-template-columns: 1fr 1fr; }
     .d2-moats { grid-template-columns: 1fr; }
+    .d2-rev-stats { flex-wrap: wrap; }
+    .d2-rev-stat { min-width: calc(50% - 12px); }
+    .d2-rev-grid { grid-template-columns: 1fr; }
+    .d2-team-grid { grid-template-columns: 1fr 1fr; }
+    .d2-logo-row { gap: 24px; }
+    .d2-logo-item { height: 24px; }
     .d2-compare { flex-direction: column; }
     .d2-compare-arrow { transform: rotate(90deg); justify-content: center; }
     .d2-flow { flex-direction: column; }
