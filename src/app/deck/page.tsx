@@ -7,7 +7,7 @@ import {
   Users, Wrench, Bot, Sparkles, AlertTriangle, Eye, Target,
 } from "lucide-react";
 
-const TOTAL_SECTIONS = 10;
+const TOTAL_SECTIONS = 11;
 
 /* ------------------------------------------------------------------ */
 /*  Hook: animate numbers counting up                                  */
@@ -73,6 +73,139 @@ function GridBackground() {
 }
 
 /* ------------------------------------------------------------------ */
+/*  Scatter chart data — real bid data from FluxCo marketplace          */
+/* ------------------------------------------------------------------ */
+const CHART_DATA: { name: string; price: number; weeks: number; type: string; quality: number; recommended?: boolean }[] = [
+  { name: "Supplier A", price: 195500, weeks: 20, type: "fluxco", quality: 7.0 },
+  { name: "Supplier B", price: 367866, weeks: 22, type: "fluxco", quality: 8.5, recommended: true },
+  { name: "Supplier C", price: 280000, weeks: 24, type: "fluxco", quality: 6.0 },
+  { name: "Supplier D", price: 340000, weeks: 25, type: "fluxco", quality: 7.5 },
+  { name: "Supplier E", price: 415000, weeks: 26, type: "fluxco", quality: 8.0 },
+  { name: "Supplier F", price: 380000, weeks: 27, type: "client", quality: 6.5 },
+  { name: "Supplier G", price: 305500, weeks: 28, type: "fluxco", quality: 9.0, recommended: true },
+  { name: "Supplier H", price: 450000, weeks: 29, type: "fluxco", quality: 7.0 },
+  { name: "Supplier I", price: 475000, weeks: 30, type: "fluxco", quality: 7.5 },
+  { name: "Supplier J", price: 604737, weeks: 31, type: "client", quality: 7.5 },
+  { name: "Supplier K", price: 520000, weeks: 32, type: "fluxco", quality: 6.0 },
+  { name: "Supplier L", price: 550000, weeks: 33, type: "fluxco", quality: 7.0 },
+  { name: "Supplier M", price: 1121100, weeks: 34, type: "fluxco", quality: 6.5 },
+  { name: "Supplier N", price: 1197500, weeks: 35, type: "fluxco", quality: 7.0 },
+  { name: "Supplier O", price: 610000, weeks: 36, type: "fluxco", quality: 8.0 },
+  { name: "Supplier P", price: 635000, weeks: 37, type: "client", quality: 6.5 },
+  { name: "Supplier Q", price: 660000, weeks: 38, type: "fluxco", quality: 7.0 },
+  { name: "Supplier R", price: 572297, weeks: 40, type: "fluxco", quality: 8.5, recommended: true },
+  { name: "Supplier S", price: 852068, weeks: 40, type: "client", quality: 7.0 },
+  { name: "Supplier T", price: 981875, weeks: 41, type: "client", quality: 6.5 },
+  { name: "Supplier U", price: 720000, weeks: 42, type: "fluxco", quality: 7.5 },
+  { name: "Supplier V", price: 750000, weeks: 44, type: "fluxco", quality: 8.0 },
+  { name: "Supplier W", price: 780000, weeks: 45, type: "fluxco", quality: 6.0 },
+  { name: "Supplier X", price: 830000, weeks: 46, type: "fluxco", quality: 7.5 },
+  { name: "Supplier Y", price: 967771, weeks: 48, type: "client", quality: 7.0 },
+  { name: "Supplier Z", price: 642000, weeks: 50, type: "fluxco", quality: 7.5 },
+  { name: "Supplier AA", price: 596730, weeks: 51, type: "fluxco", quality: 8.0 },
+  { name: "Supplier AB", price: 890000, weeks: 52, type: "fluxco", quality: 7.0 },
+  { name: "Supplier AC", price: 950000, weeks: 55, type: "client", quality: 8.0 },
+  { name: "Supplier AD", price: 1050000, weeks: 58, type: "fluxco", quality: 6.5 },
+  { name: "Supplier AE", price: 1150000, weeks: 60, type: "fluxco", quality: 7.0 },
+  { name: "Supplier AF", price: 693790, weeks: 66, type: "fluxco", quality: 7.0 },
+  { name: "Supplier AG", price: 1350000, weeks: 72, type: "fluxco", quality: 8.5 },
+  { name: "Supplier AH", price: 1500000, weeks: 80, type: "client", quality: 7.0 },
+  { name: "Supplier AI", price: 1650000, weeks: 90, type: "fluxco", quality: 8.0 },
+  { name: "Supplier AJ", price: 729565, weeks: 94, type: "fluxco", quality: 8.0 },
+  { name: "Supplier AK", price: 1800000, weeks: 110, type: "fluxco", quality: 7.5 },
+  { name: "Supplier AL", price: 2200000, weeks: 140, type: "fluxco", quality: 9.0 },
+  { name: "Supplier AM", price: 2000000, weeks: 159, type: "fluxco", quality: 9.5 },
+  { name: "Supplier AN", price: 2750000, weeks: 214, type: "fluxco", quality: 9.5 },
+];
+
+function DeckScatterChart({ inView }: { inView: boolean }) {
+  const maxPrice = 3000000;
+  const maxWeeks = 220;
+  const chartW = 900;
+  const chartH = 400;
+  const padL = 80;
+  const padR = 30;
+  const padT = 20;
+  const padB = 50;
+  const plotW = chartW - padL - padR;
+  const plotH = chartH - padT - padB;
+
+  const x = (w: number) => padL + (w / maxWeeks) * plotW;
+  const y = (p: number) => padT + plotH - (p / maxPrice) * plotH;
+
+  const priceTicks = [0, 500000, 1000000, 1500000, 2000000, 2500000, 3000000];
+  const weekTicks = [0, 50, 100, 150, 200];
+
+  return (
+    <svg viewBox={`0 0 ${chartW} ${chartH}`} style={{ width: "100%", height: "auto" }}>
+      {priceTicks.map(p => (
+        <g key={`p-${p}`}>
+          <line x1={padL} y1={y(p)} x2={chartW - padR} y2={y(p)} stroke="rgba(255,255,255,0.06)" strokeWidth="0.5" />
+          <text x={padL - 8} y={y(p) + 4} textAnchor="end" fill="rgba(255,255,255,0.35)" fontSize="9" fontFamily="Inter">
+            ${(p / 1000000).toFixed(1)}M
+          </text>
+        </g>
+      ))}
+      {weekTicks.map(w => (
+        <g key={`w-${w}`}>
+          <line x1={x(w)} y1={padT} x2={x(w)} y2={chartH - padB} stroke="rgba(255,255,255,0.06)" strokeWidth="0.5" />
+          <text x={x(w)} y={chartH - padB + 16} textAnchor="middle" fill="rgba(255,255,255,0.35)" fontSize="9" fontFamily="Inter">
+            {w} wks
+          </text>
+        </g>
+      ))}
+      <line x1={x(38)} y1={padT} x2={x(38)} y2={chartH - padB} stroke="rgba(230,57,70,0.5)" strokeWidth="1.5" strokeDasharray="4,4" />
+      <text x={x(38) + 6} y={padT + 14} fill="#e63946" fontSize="8" fontFamily="JetBrains Mono" fontWeight="600">
+        TARGET DELIVERY
+      </text>
+      <text x={chartW / 2} y={chartH - 5} textAnchor="middle" fill="rgba(255,255,255,0.4)" fontSize="10" fontFamily="Inter" fontWeight="600" letterSpacing="1">
+        TOTAL LEAD TIME (WEEKS)
+      </text>
+      <text x={14} y={chartH / 2} textAnchor="middle" fill="rgba(255,255,255,0.4)" fontSize="10" fontFamily="Inter" fontWeight="600" letterSpacing="1" transform={`rotate(-90, 14, ${chartH / 2})`}>
+        QUOTED PRICE ($)
+      </text>
+      {CHART_DATA.map((d, i) => {
+        const cx = x(d.weeks);
+        const cy = y(d.price);
+        const isClient = d.type === "client";
+        const isRec = d.recommended;
+        const dotR = 3 + (d.quality / 10) * 4;
+        return (
+          <g key={d.name} style={{
+            opacity: inView ? 1 : 0,
+            transform: inView ? "scale(1)" : "scale(0)",
+            transformOrigin: `${cx}px ${cy}px`,
+            transition: `all 0.5s cubic-bezier(0.16, 1, 0.3, 1) ${0.1 + i * 0.02}s`,
+          }}>
+            {isRec && <circle cx={cx} cy={cy} r={dotR + 6} fill="rgba(45,140,255,0.1)" stroke="rgba(45,140,255,0.3)" strokeWidth="0.5" />}
+            <circle
+              cx={cx} cy={cy}
+              r={dotR}
+              fill={isClient ? "#e63946" : isRec ? "#2d8cff" : "rgba(45,140,255,0.6)"}
+              stroke={isRec ? "#2d8cff" : "none"}
+              strokeWidth={isRec ? "1.5" : "0"}
+            />
+            {(isRec || d.price > 1800000 || d.price < 250000) && (
+              <text
+                x={cx}
+                y={cy - dotR - 4}
+                textAnchor="middle"
+                fill={isClient ? "#e63946" : isRec ? "#2d8cff" : "rgba(255,255,255,0.45)"}
+                fontSize="7"
+                fontFamily="Inter"
+                fontWeight={isRec ? "600" : "400"}
+              >
+                {d.name}
+              </text>
+            )}
+          </g>
+        );
+      })}
+    </svg>
+  );
+}
+
+/* ------------------------------------------------------------------ */
 /*  Main deck component                                                */
 /* ------------------------------------------------------------------ */
 export default function Deck2Page() {
@@ -115,6 +248,7 @@ export default function Deck2Page() {
   /* Slide in-view trackers */
   const s1 = useInView(0.3);
   const s2 = useInView(0.2);
+  const sChart = useInView(0.2);
   const s3 = useInView(0.2);
   const s4 = useInView(0.2);
   const s5 = useInView(0.2);
@@ -289,7 +423,28 @@ export default function Deck2Page() {
           </div>
         </section>
 
-        {/* ========== SLIDE 3 — OPAQUE MARKET ========== */}
+        {/* ========== SLIDE 3 — PRICE vs LEAD TIME ========== */}
+        <section className="d2-slide d2-slide-dark" ref={sChart.ref}>
+          <div className="d2-bg-img" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1619033476025-71cc6bd8c3f5?w=1920&q=80)', opacity: 0.15 }} />
+          <div className={`d2-content ${sChart.inView ? "in" : ""}`}>
+            <div className="d2-slide-label">REAL DATA</div>
+            <h2 className="d2-h2">Quoted Price by Lead Time</h2>
+            <p className="d2-p" style={{ maxWidth: 700 }}>
+              All 40 bids plotted by <strong>total lead time</strong> and <strong>quoted price</strong>. Dot size reflects <strong>quality score</strong>. Recommended suppliers highlighted. Red dotted line marks the target delivery deadline.
+            </p>
+            <div style={{ width: "100%", maxWidth: 900, margin: "24px auto 0", background: "rgba(255,255,255,0.02)", borderRadius: 12, border: "1px solid rgba(255,255,255,0.06)", padding: "24px 16px 16px" }}>
+              <DeckScatterChart inView={sChart.inView} />
+            </div>
+            <div className="d2-chart-legend" style={{ marginTop: 16 }}>
+              <div className="d2-legend"><div className="d2-legend-swatch" style={{ background: "var(--d2-blue)" }} />FluxCo Sourced</div>
+              <div className="d2-legend"><div className="d2-legend-swatch" style={{ background: "#e63946" }} />Client Sourced</div>
+              <div className="d2-legend"><div className="d2-legend-swatch" style={{ background: "var(--d2-blue)", border: "2px solid var(--d2-blue)", boxShadow: "0 0 6px rgba(45,140,255,0.3)" }} />Recommended</div>
+              <div className="d2-legend" style={{ opacity: 0.5 }}>Dot size = quality score</div>
+            </div>
+          </div>
+        </section>
+
+        {/* ========== SLIDE 4 — OPAQUE MARKET ========== */}
         <section className="d2-slide" ref={s4.ref}>
           <div className="d2-glow d2-glow-3" />
           <div className={`d2-content ${s4.inView ? "in" : ""}`}>
@@ -327,7 +482,7 @@ export default function Deck2Page() {
           </div>
         </section>
 
-        {/* ========== SLIDE 4 — MARKETPLACE WEDGE ========== */}
+        {/* ========== SLIDE 5 — MARKETPLACE WEDGE ========== */}
         <section className="d2-slide" ref={s5.ref}>
           <div className="d2-glow d2-glow-4" />
           <div className={`d2-content ${s5.inView ? "in" : ""}`}>
@@ -386,7 +541,7 @@ export default function Deck2Page() {
           </div>
         </section>
 
-        {/* ========== SLIDE 5 — MANUFACTURING VISION ========== */}
+        {/* ========== SLIDE 6 — MANUFACTURING VISION ========== */}
         <section className="d2-slide d2-slide-dark" ref={s6.ref}>
           <div className="d2-bg-img" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1619885067109-e1dbec4e7cd0?w=1920&q=80)' }} />
           <div className={`d2-content ${s6.inView ? "in" : ""}`}>
@@ -425,7 +580,7 @@ export default function Deck2Page() {
           </div>
         </section>
 
-        {/* ========== SLIDE 6 — LEAPFROG ========== */}
+        {/* ========== SLIDE 7 — LEAPFROG ========== */}
         <section className="d2-slide d2-slide-dark" ref={s7.ref}>
           <div className="d2-bg-img" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1647427060118-4911c9821b82?w=1920&q=80)' }} />
           <div className={`d2-content ${s7.inView ? "in" : ""}`}>
@@ -454,7 +609,7 @@ export default function Deck2Page() {
           </div>
         </section>
 
-        {/* ========== SLIDE 7 — MOATS ========== */}
+        {/* ========== SLIDE 8 — MOATS ========== */}
         <section className="d2-slide" ref={s8.ref}>
           <div className="d2-glow d2-glow-5" />
           <div className={`d2-content ${s8.inView ? "in" : ""}`}>
@@ -480,7 +635,7 @@ export default function Deck2Page() {
           </div>
         </section>
 
-        {/* ========== SLIDE 8 — ROADMAP ========== */}
+        {/* ========== SLIDE 9 — ROADMAP ========== */}
         <section className="d2-slide d2-slide-dark" ref={s9.ref}>
           <div className="d2-bg-img" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1745448797901-2a4c9d9af1c1?w=1920&q=80)' }} />
           <div className={`d2-content ${s9.inView ? "in" : ""}`}>
@@ -503,7 +658,7 @@ export default function Deck2Page() {
           </div>
         </section>
 
-        {/* ========== SLIDE 9 — CLOSING ========== */}
+        {/* ========== SLIDE 10 — CLOSING ========== */}
         <section className="d2-slide d2-slide-dark" ref={s10.ref}>
           <div className="d2-bg-img" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1641618640134-fd5a58f1d225?w=1920&q=80)' }} />
           <div className={`d2-closing ${s10.inView ? "in" : ""}`}>
