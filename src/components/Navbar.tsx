@@ -1,7 +1,7 @@
 "use client";
 
-import { Zap, Menu, X, ChevronDown } from "lucide-react";
-import { useState } from "react";
+import { Zap, Menu, X, ChevronDown, LogIn } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -69,8 +69,21 @@ const solutionLinks = [
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [mobileSubmenu, setMobileSubmenu] = useState<string | null>(null);
+  const [loginOpen, setLoginOpen] = useState(false);
+  const loginRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const isHomePage = pathname === "/";
+
+  // Close login dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (loginRef.current && !loginRef.current.contains(event.target as Node)) {
+        setLoginOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
@@ -194,21 +207,41 @@ const Navbar = () => {
               </NavigationMenuList>
             </NavigationMenu>
 
-            {/* Customer Login Button */}
-            <Button asChild variant="outline" className="ml-2 h-12 px-3">
-              <Link href="/customer/login" className="flex flex-col items-center text-xs leading-tight">
-                <span>Customer</span>
-                <span>Login</span>
-              </Link>
-            </Button>
-
-            {/* OEM Login Button */}
-            <Button asChild variant="outline" className="h-12 px-3">
-              <Link href="/portal/login" className="flex flex-col items-center text-xs leading-tight">
-                <span>OEM</span>
-                <span>Login</span>
-              </Link>
-            </Button>
+            {/* Login Dropdown */}
+            <div className="relative ml-2" ref={loginRef}>
+              <Button
+                variant="outline"
+                className="h-12 px-4 text-xs uppercase tracking-wider"
+                onClick={() => setLoginOpen(!loginOpen)}
+              >
+                <LogIn className="w-4 h-4 mr-1.5" />
+                Login
+                <ChevronDown
+                  className={cn(
+                    "w-3.5 h-3.5 ml-1.5 transition-transform",
+                    loginOpen && "rotate-180"
+                  )}
+                />
+              </Button>
+              {loginOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-popover border border-border rounded-lg shadow-lg py-1 z-50 animate-fade-up">
+                  <Link
+                    href="/customer/login"
+                    className="flex items-center gap-3 px-4 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+                    onClick={() => setLoginOpen(false)}
+                  >
+                    <span className="font-medium">Customer Login</span>
+                  </Link>
+                  <Link
+                    href="/portal/login"
+                    className="flex items-center gap-3 px-4 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+                    onClick={() => setLoginOpen(false)}
+                  >
+                    <span className="font-medium">OEM Login</span>
+                  </Link>
+                </div>
+              )}
+            </div>
 
             {/* Spec Builder Button */}
             <Button asChild variant="hero" className="h-12 px-3">
@@ -336,17 +369,46 @@ const Navbar = () => {
                 Contact
               </Link>
 
-              <Button asChild variant="outline" size="lg" className="mt-4">
-                <Link href="/customer/login" onClick={() => setIsOpen(false)}>
-                  Customer Login
-                </Link>
-              </Button>
-
-              <Button asChild variant="outline" size="lg">
-                <Link href="/portal/login" onClick={() => setIsOpen(false)}>
-                  OEM Login
-                </Link>
-              </Button>
+              {/* Login Submenu */}
+              <div className="mt-4">
+                <button
+                  onClick={() =>
+                    setMobileSubmenu(
+                      mobileSubmenu === "login" ? null : "login"
+                    )
+                  }
+                  className="flex items-center justify-between w-full text-muted-foreground hover:text-primary transition-colors duration-300 text-sm uppercase tracking-wider py-2"
+                >
+                  <span className="flex items-center gap-2">
+                    <LogIn className="w-4 h-4" />
+                    Login
+                  </span>
+                  <ChevronDown
+                    className={cn(
+                      "w-4 h-4 transition-transform",
+                      mobileSubmenu === "login" && "rotate-180"
+                    )}
+                  />
+                </button>
+                {mobileSubmenu === "login" && (
+                  <div className="pl-4 flex flex-col gap-1 mt-2">
+                    <Link
+                      href="/customer/login"
+                      className="text-muted-foreground hover:text-primary transition-colors text-sm py-2"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      Customer Login
+                    </Link>
+                    <Link
+                      href="/portal/login"
+                      className="text-muted-foreground hover:text-primary transition-colors text-sm py-2"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      OEM Login
+                    </Link>
+                  </div>
+                )}
+              </div>
 
               <Button asChild variant="hero" size="lg">
                 <Link href="/specbuilder" onClick={() => setIsOpen(false)}>
