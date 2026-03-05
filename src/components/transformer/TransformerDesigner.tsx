@@ -20,7 +20,7 @@ import { DesignSummary } from '@/components/transformer/output/DesignSummary';
 import { BillOfMaterials } from '@/components/transformer/output/BillOfMaterials';
 import { CostEstimate } from '@/components/transformer/output/CostEstimate';
 import { DesignCalculationLoader } from '@/components/transformer/DesignCalculationLoader';
-import { calculateCostEstimate, calculateLifecycleCost, formatCurrency } from '@/engine/core/costEstimation';
+import { calculateCostEstimate } from '@/engine/core/costEstimation';
 import { AssemblyDrawing } from '@/components/transformer/drawings/AssemblyDrawing';
 import { SideViewDrawing } from '@/components/transformer/drawings/SideViewDrawing';
 import { TopViewDrawing } from '@/components/transformer/drawings/TopViewDrawing';
@@ -84,7 +84,6 @@ export function TransformerDesigner() {
   const handleExportPDF = async () => {
     if (!design) return;
 
-    // Dynamic import to avoid loading jspdf/html2canvas until needed
     const { default: html2canvas } = await import('html2canvas');
     const { jsPDF } = await import('jspdf');
 
@@ -95,12 +94,13 @@ export function TransformerDesigner() {
     const contentWidth = pageWidth - margin * 2;
     const lineHeight = 6;
 
-    // Brand colors (RGB)
-    const brand = { r: 15, g: 118, b: 110 };   // teal-700
-    const brandDark = { r: 10, g: 80, b: 75 };  // deeper teal for accents
-    const rowAlt = { r: 245, g: 250, b: 249 };  // very light teal tint for alternating rows
+    // ── Palette ────────────────────────────────────────────────────────────────
+    const ink    = { r: 30,  g: 28,  b: 42  };  // near-black for header/footer bars
+    const gold   = { r: 180, g: 152, b: 105 };  // warm gold accent
+    const cream  = { r: 246, g: 240, b: 225 };  // cream section header fill
+    const rowAlt = { r: 252, g: 250, b: 244 };  // subtle cream alternating row tint
 
-    // Load logo as base64
+    // ── Logo ───────────────────────────────────────────────────────────────────
     let logoBase64: string | null = null;
     try {
       const response = await fetch('/fluxco-logo-light.png');
@@ -115,14 +115,14 @@ export function TransformerDesigner() {
       // Logo unavailable — continue without it
     }
 
+    const ratings = calculatePowerRatings(requirements.ratedPower, requirements.coolingClass.id);
+
     // ── Helpers ────────────────────────────────────────────────────────────────
 
     const addPageHeader = (pageNum: number, title: string) => {
-      // Top bar
-      pdf.setFillColor(brand.r, brand.g, brand.b);
+      pdf.setFillColor(ink.r, ink.g, ink.b);
       pdf.rect(0, 0, pageWidth, 14, 'F');
 
-      // Logo in header
       if (logoBase64) {
         pdf.addImage(logoBase64, 'PNG', margin, 2, 28, 10);
       } else {
@@ -132,35 +132,34 @@ export function TransformerDesigner() {
         pdf.text('FLUXCO', margin, 9);
       }
 
-      // Page title right-aligned in header
       pdf.setTextColor(255, 255, 255);
       pdf.setFontSize(9);
       pdf.setFont('helvetica', 'normal');
       pdf.text(title, pageWidth - margin, 9, { align: 'right' });
-
-      // Reset text color
       pdf.setTextColor(30, 30, 30);
 
-      // Footer rule + text
-      pdf.setDrawColor(brand.r, brand.g, brand.b);
-      pdf.setLineWidth(0.4);
+      pdf.setDrawColor(gold.r, gold.g, gold.b);
+      pdf.setLineWidth(0.5);
       pdf.line(margin, pageHeight - 10, pageWidth - margin, pageHeight - 10);
 
       pdf.setFontSize(7.5);
       pdf.setFont('helvetica', 'normal');
-      pdf.setTextColor(120, 120, 120);
-      pdf.text('Confidential — Prepared by Fluxco · fluxco.com', margin, pageHeight - 6);
+      pdf.setTextColor(140, 140, 140);
+      pdf.text('Fluxco Spec Builder · fluxco.com · Issued for OEM Bidding', margin, pageHeight - 6);
       pdf.text(`Page ${pageNum}`, pageWidth - margin, pageHeight - 6, { align: 'right' });
       pdf.setTextColor(30, 30, 30);
     };
 
     const drawSectionHeader = (label: string, yPos: number): number => {
-      pdf.setFillColor(brand.r, brand.g, brand.b);
+      pdf.setFillColor(cream.r, cream.g, cream.b);
       pdf.rect(margin, yPos, contentWidth, 7, 'F');
-      pdf.setTextColor(255, 255, 255);
-      pdf.setFontSize(9);
+      // Gold left accent stripe
+      pdf.setFillColor(gold.r, gold.g, gold.b);
+      pdf.rect(margin, yPos, 2.5, 7, 'F');
+      pdf.setTextColor(ink.r, ink.g, ink.b);
+      pdf.setFontSize(8.5);
       pdf.setFont('helvetica', 'bold');
-      pdf.text(label, margin + 3, yPos + 5);
+      pdf.text(label.toUpperCase(), margin + 6, yPos + 5);
       pdf.setTextColor(30, 30, 30);
       return yPos + 7 + 2;
     };
@@ -168,52 +167,50 @@ export function TransformerDesigner() {
     const drawTable = (
       rows: [string, string][],
       startY: number,
-      colSplit: number = margin + 75,
+      colSplit: number = margin + 82,
     ): number => {
       const rowH = 6.5;
       pdf.setFontSize(9);
       rows.forEach(([label, value], i) => {
-        // Alternating row background
         if (i % 2 === 1) {
           pdf.setFillColor(rowAlt.r, rowAlt.g, rowAlt.b);
           pdf.rect(margin, startY + i * rowH, contentWidth, rowH, 'F');
         }
         pdf.setFont('helvetica', 'normal');
-        pdf.setTextColor(80, 80, 80);
-        pdf.text(label, margin + 3, startY + i * rowH + 4.5);
+        pdf.setTextColor(100, 92, 80);
+        pdf.text(label, margin + 5, startY + i * rowH + 4.5);
         pdf.setFont('helvetica', 'bold');
-        pdf.setTextColor(30, 30, 30);
+        pdf.setTextColor(ink.r, ink.g, ink.b);
         pdf.text(value, colSplit, startY + i * rowH + 4.5);
       });
       pdf.setFont('helvetica', 'normal');
       return startY + rows.length * rowH + 4;
     };
 
-    const drawSubtotalRow = (label: string, value: string, yPos: number): number => {
-      pdf.setFillColor(brandDark.r, brandDark.g, brandDark.b);
-      pdf.rect(margin, yPos, contentWidth, 7, 'F');
-      pdf.setTextColor(255, 255, 255);
-      pdf.setFontSize(9);
-      pdf.setFont('helvetica', 'bold');
-      pdf.text(label, margin + 3, yPos + 5);
-      pdf.text(value, pageWidth - margin - 3, yPos + 5, { align: 'right' });
-      pdf.setTextColor(30, 30, 30);
-      return yPos + 7 + 3;
+    const fmtRegions = (regions: string[] | undefined): string => {
+      if (!regions || regions.length === 0) return 'No preference';
+      const labels: Record<string, string> = { usa: 'USA', northAmerica: 'North America', global: 'Global', china: 'China' };
+      return regions.map(r => labels[r] || r).join(', ');
+    };
+
+    const fmtOilType = (oil: string | undefined): string => {
+      const m: Record<string, string> = { mineral: 'Mineral Oil', naturalEster: 'Natural Ester', syntheticEster: 'Synthetic Ester', silicon: 'Silicon' };
+      return oil ? (m[oil] || oil) : 'Mineral Oil';
+    };
+
+    const fmtOilPreservation = (p: string | undefined): string => {
+      const m: Record<string, string> = { conservator: 'Conservator', sealedTank: 'Sealed Tank', nitrogen: 'Nitrogen Blanket' };
+      return p ? (m[p] || p) : 'Conservator';
     };
 
     // ── Page 1: Cover ──────────────────────────────────────────────────────────
 
-    const ratings = calculatePowerRatings(requirements.ratedPower, requirements.coolingClass.id);
-
-    // Full-height left accent strip
-    pdf.setFillColor(brand.r, brand.g, brand.b);
+    // Full-height left accent (ink)
+    pdf.setFillColor(ink.r, ink.g, ink.b);
     pdf.rect(0, 0, 8, pageHeight, 'F');
-
-    // Top header band
-    pdf.setFillColor(brand.r, brand.g, brand.b);
+    // Top header band (ink)
     pdf.rect(8, 0, pageWidth - 8, 55, 'F');
 
-    // Logo on cover
     if (logoBase64) {
       pdf.addImage(logoBase64, 'PNG', 18, 8, 50, 18);
     } else {
@@ -223,33 +220,36 @@ export function TransformerDesigner() {
       pdf.text('FLUXCO', 18, 24);
     }
 
-    // Tagline under logo
-    pdf.setTextColor(200, 240, 235);
+    // Tagline
+    pdf.setTextColor(gold.r, gold.g, gold.b);
     pdf.setFontSize(9);
     pdf.setFont('helvetica', 'normal');
     pdf.text("America's Transformer Marketplace", 18, 32);
 
-    // Document title block
-    pdf.setTextColor(255, 255, 255);
-    pdf.setFontSize(20);
+    // Mode badge (top right)
+    pdf.setFontSize(8);
     pdf.setFont('helvetica', 'bold');
-    pdf.text('Transformer Specification Report', 18, 48);
+    pdf.setTextColor(gold.r, gold.g, gold.b);
+    pdf.text(specMode === 'pro' ? 'PRO · PIP ELSTR01' : 'STANDARD SPECIFICATION', pageWidth - 12, 10, { align: 'right' });
 
-    // Specification summary card
-    pdf.setFillColor(250, 253, 252);
+    // Document title
+    pdf.setTextColor(255, 255, 255);
+    pdf.setFontSize(18);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('Transformer Procurement Specification', 18, 48);
+
+    // Spec summary card (cream)
+    pdf.setFillColor(cream.r, cream.g, cream.b);
     pdf.roundedRect(18, 65, pageWidth - 26, 68, 2, 2, 'F');
-    pdf.setDrawColor(brand.r, brand.g, brand.b);
-    pdf.setLineWidth(0.6);
+    pdf.setDrawColor(gold.r, gold.g, gold.b);
+    pdf.setLineWidth(0.8);
     pdf.roundedRect(18, 65, pageWidth - 26, 68, 2, 2, 'S');
 
-    pdf.setTextColor(brand.r, brand.g, brand.b);
-    pdf.setFontSize(13);
+    pdf.setTextColor(ink.r, ink.g, ink.b);
+    pdf.setFontSize(14);
     pdf.setFont('helvetica', 'bold');
     pdf.text(`${ratings.display} Power Transformer`, 26, 77);
 
-    pdf.setFontSize(10);
-    pdf.setFont('helvetica', 'normal');
-    pdf.setTextColor(60, 60, 60);
     const coverSpecs: [string, string][] = [
       ['Primary Voltage', `${requirements.primaryVoltage.toLocaleString()} V`],
       ['Secondary Voltage', `${requirements.secondaryVoltage.toLocaleString()} V`],
@@ -263,267 +263,401 @@ export function TransformerDesigner() {
     coverSpecs.forEach(([label, value], i) => {
       const col = i < 3 ? colA : colB;
       const row = i % 3;
-      const yy = 86 + row * 10;
-      pdf.setTextColor(100, 100, 100);
+      const yy = 87 + row * 10;
+      pdf.setFontSize(9.5);
+      pdf.setTextColor(110, 100, 85);
       pdf.setFont('helvetica', 'normal');
       pdf.text(label, col, yy);
-      pdf.setTextColor(30, 30, 30);
+      pdf.setTextColor(ink.r, ink.g, ink.b);
       pdf.setFont('helvetica', 'bold');
       pdf.text(value, col, yy + 5);
     });
 
     // Divider
-    pdf.setDrawColor(brand.r, brand.g, brand.b);
-    pdf.setLineWidth(0.3);
+    pdf.setDrawColor(gold.r, gold.g, gold.b);
+    pdf.setLineWidth(0.4);
     pdf.line(18, 141, pageWidth - 8, 141);
 
-    // Prepared by / date block
-    pdf.setFontSize(9);
-    pdf.setFont('helvetica', 'normal');
-    pdf.setTextColor(80, 80, 80);
-    pdf.text('Prepared by', 18, 150);
-    pdf.setFont('helvetica', 'bold');
-    pdf.setTextColor(30, 30, 30);
-    pdf.text('Fluxco Spec Builder', 18, 156);
+    // Metadata
+    const metaRows: [string, string][] = [
+      ['Prepared by', 'Fluxco Spec Builder'],
+      ['Date Generated', new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })],
+      ['Specification Type', specMode === 'pro' ? 'Professional (PIP ELSTR01)' : 'Standard'],
+    ];
+    metaRows.forEach(([label, value], i) => {
+      const yy = 150 + i * 14;
+      pdf.setFontSize(9);
+      pdf.setFont('helvetica', 'normal');
+      pdf.setTextColor(110, 100, 85);
+      pdf.text(label, 18, yy);
+      pdf.setFont('helvetica', 'bold');
+      pdf.setTextColor(ink.r, ink.g, ink.b);
+      pdf.text(value, 18, yy + 6);
+    });
 
-    pdf.setFont('helvetica', 'normal');
-    pdf.setTextColor(80, 80, 80);
-    pdf.text('Date Generated', 18, 166);
-    pdf.setFont('helvetica', 'bold');
-    pdf.setTextColor(30, 30, 30);
-    pdf.text(new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }), 18, 172);
-
-    pdf.setFont('helvetica', 'normal');
-    pdf.setTextColor(80, 80, 80);
-    pdf.text('Specification Mode', 18, 182);
-    pdf.setFont('helvetica', 'bold');
-    pdf.setTextColor(30, 30, 30);
-    pdf.text(specMode === 'pro' ? 'Professional (PIP ELSTR01)' : 'Standard', 18, 188);
-
-    // Footer disclaimer on cover
+    // Cover footer disclaimer
     pdf.setFontSize(7.5);
     pdf.setFont('helvetica', 'normal');
-    pdf.setTextColor(150, 150, 150);
-    const disclaimer = 'This document contains budgetary estimates generated by the Fluxco Spec Builder. All specifications should be verified by a qualified engineer before procurement.';
-    const disclaimerLines = pdf.splitTextToSize(disclaimer, pageWidth - 30);
-    pdf.text(disclaimerLines, 18, pageHeight - 14);
+    pdf.setTextColor(160, 150, 135);
+    const disclaimer = 'This specification is issued for OEM bidding purposes and is generated by the Fluxco Spec Builder. All specifications should be confirmed by a qualified engineer prior to procurement.';
+    pdf.text(pdf.splitTextToSize(disclaimer, pageWidth - 30), 18, pageHeight - 14);
 
-    // ── Page 2: Design Summary ─────────────────────────────────────────────────
+    // ── Page 2: Procurement Specification (Lite inputs) ────────────────────────
 
     pdf.addPage();
-    addPageHeader(2, 'Design Summary');
+    addPageHeader(2, 'Procurement Specification');
     let y = 22;
 
     y = drawSectionHeader('Electrical Ratings', y);
     y = drawTable([
-      ['Power Rating', ratings.display],
+      ['Rated Power', `${ratings.display}  (${requirements.ratedPower.toLocaleString()} kVA)`],
       ['Primary Voltage', `${requirements.primaryVoltage.toLocaleString()} V`],
       ['Secondary Voltage', `${requirements.secondaryVoltage.toLocaleString()} V`],
       ['Frequency', `${requirements.frequency} Hz`],
-      ['Phases', `${requirements.phases}`],
+      ['Phases', `${requirements.phases}-Phase`],
       ['Vector Group', requirements.vectorGroup.name],
-      ['Cooling Class', requirements.coolingClass.name],
-    ], y);
-
-    y = drawSectionHeader('Core Design', y);
-    y = drawTable([
-      ['Steel Grade', design.core.steelGrade.name],
-      ['Flux Density', `${design.core.fluxDensity} T`],
-      ['Core Diameter', `${design.core.coreDiameter} mm`],
-      ['Core Weight', `${design.core.coreWeight.toFixed(1)} kg`],
-    ], y);
-
-    y = drawSectionHeader('Winding Design', y);
-    y = drawTable([
-      ['HV Turns', `${design.hvWinding.turns}`],
-      ['LV Turns', `${design.lvWinding.turns}`],
-      ['HV Conductor', `${design.hvWinding.conductorType}`],
-      ['LV Conductor', `${design.lvWinding.conductorType}`],
       ['Target Impedance', `${requirements.targetImpedance.toFixed(2)}%`],
-      ['Achieved Impedance', `${design.impedance.percentZ.toFixed(2)}%`],
+      ['Temperature Rise', requirements.temperatureRise ? `${requirements.temperatureRise}°C` : '65°C (default)'],
     ], y);
 
-    y = drawSectionHeader('Losses & Efficiency', y);
-    const effAt100 = design.losses.efficiency.find(e => e.loadPercent === 100)?.efficiency.toFixed(2) ?? 'N/A';
-    const effAt50 = design.losses.efficiency.find(e => e.loadPercent === 50)?.efficiency.toFixed(2) ?? 'N/A';
+    y = drawSectionHeader('Installation Requirements', y);
     y = drawTable([
-      ['No-Load Loss', `${design.losses.noLoadLoss.toFixed(0)} W`],
-      ['Load Loss (100%)', `${design.losses.loadLoss.toFixed(0)} W`],
-      ['Efficiency @ 50% load', `${effAt50}%`],
-      ['Efficiency @ 100% load', `${effAt100}%`],
+      ['Cooling Class', requirements.coolingClass.name],
+      ['Altitude', requirements.altitude ? `${requirements.altitude.toLocaleString()} m above sea level` : 'Not specified  (≤1000 m assumed)'],
+      ['Max Ambient Temperature', requirements.ambientTemperature ? `${requirements.ambientTemperature}°C` : 'Not specified  (40°C assumed)'],
+    ], y);
+
+    y = drawSectionHeader('Core & Winding Materials', y);
+    y = drawTable([
+      ['Core Steel Grade', requirements.steelGrade.name],
+      ['Conductor Material', requirements.conductorType.name],
+      ['Tap Changer', requirements.tapChangerType === 'onLoad' ? 'On-Load (OLTC)' : 'No-Load (NLTC)'],
+    ], y);
+
+    y = drawSectionHeader('Liquid System', y);
+    y = drawTable([
+      ['Insulating Liquid', fmtOilType(requirements.oilType)],
+      ['Liquid Preservation', fmtOilPreservation(requirements.oilPreservation)],
+    ], y);
+
+    y = drawSectionHeader('Procurement Requirements', y);
+    y = drawTable([
+      ['Manufacturing Region(s)', fmtRegions(requirements.manufacturingRegions)],
+      ['FEOC Compliance', requirements.requireFEOC ? 'Required' : 'Not Required'],
+      ['Transformer Automation Controller', requirements.includeTAC ? 'Required  (e.g., SEL-2414)' : 'Not Required'],
+    ], y);
+
+    // ── Page 3: Calculated Performance Targets ─────────────────────────────────
+
+    pdf.addPage();
+    addPageHeader(3, 'Performance Targets');
+    y = 22;
+
+    pdf.setFontSize(8.5);
+    pdf.setFont('helvetica', 'normal');
+    pdf.setTextColor(110, 100, 90);
+    const perfNote = 'The following performance targets are derived from the specified inputs. OEM bids should demonstrate compliance with or improvement upon these values.';
+    const perfNoteLines = pdf.splitTextToSize(perfNote, contentWidth);
+    pdf.text(perfNoteLines, margin, y);
+    y += perfNoteLines.length * 5.2 + 5;
+    pdf.setTextColor(30, 30, 30);
+
+    const effAt100 = design.losses.efficiency.find(e => e.loadPercent === 100)?.efficiency.toFixed(2) ?? 'N/A';
+    const effAt50  = design.losses.efficiency.find(e => e.loadPercent === 50)?.efficiency.toFixed(2) ?? 'N/A';
+
+    y = drawSectionHeader('Impedance & Regulation', y);
+    y = drawTable([
+      ['Target Impedance (%Z)',          `${requirements.targetImpedance.toFixed(2)}%`],
+      ['Calculated Impedance (%Z)',       `${design.impedance.percentZ.toFixed(2)}%`],
+      ['% Resistance (%R)',               `${design.impedance.percentR.toFixed(2)}%`],
+      ['% Reactance (%X)',                `${design.impedance.percentX.toFixed(2)}%`],
+      ['X/R Ratio',                       `${design.impedance.xrRatio.toFixed(1)}`],
+      ['Voltage Regulation (unity PF)',   `${design.impedance.regulationAtUnityPF.toFixed(2)}%`],
+      ['Voltage Regulation (0.8 lag PF)', `${design.impedance.regulationAt08PF.toFixed(2)}%`],
+    ], y);
+
+    y = drawSectionHeader('Losses', y);
+    y = drawTable([
+      ['No-Load (Core) Loss',        `${design.losses.noLoadLoss.toFixed(0)} W`],
+      ['Load Loss @ 100% (75°C)',    `${design.losses.loadLoss.toFixed(0)} W`],
+      ['Total Loss @ 100% Load',     `${design.losses.totalLoss.toFixed(0)} W`],
+    ], y);
+
+    y = drawSectionHeader('Efficiency', y);
+    y = drawTable([
+      ['Efficiency @ 50% Load',   `${effAt50}%`],
+      ['Efficiency @ 100% Load',  `${effAt100}%`],
+      ['Peak Efficiency Load',    `${design.losses.maxEfficiencyLoad}%`],
+      ['Peak Efficiency',         `${design.losses.maxEfficiency.toFixed(2)}%`],
     ], y);
 
     y = drawSectionHeader('Thermal Performance', y);
     y = drawTable([
-      ['Top Oil Rise', `${design.thermal?.topOilRise?.toFixed(1) ?? 'N/A'} °C`],
-      ['Average Winding Rise', `${design.thermal?.averageWindingRise?.toFixed(1) ?? 'N/A'} °C`],
-      ['Hot Spot Rise', `${design.thermal?.hotSpotRise?.toFixed(1) ?? 'N/A'} °C`],
-      ['Oil Volume', `${design.thermal?.oilVolume?.toFixed(0) ?? 'N/A'} L`],
+      ['Top Oil Temperature Rise',  `${design.thermal.topOilRise.toFixed(1)} °C`],
+      ['Average Winding Rise',      `${design.thermal.averageWindingRise.toFixed(1)} °C`],
+      ['Hot Spot Rise',             `${design.thermal.hotSpotRise.toFixed(1)} °C`],
+      ['Oil Volume',                `${design.thermal.oilVolume.toFixed(0)} L`],
+      ['Radiator Panels',           `${design.thermal.numberOfRadiators}`],
     ], y);
 
-    // ── Page 3: Cost Estimate ──────────────────────────────────────────────────
-
-    pdf.addPage();
-    addPageHeader(3, 'Cost Estimate');
-    y = 22;
-
-    const costBreakdown = calculateCostEstimate(design, requirements, { oilType: 'mineral' });
-    const lifecycleCost = calculateLifecycleCost(design, requirements, {
-      electricityRate: 0.10,
-      yearsOfOperation: 25,
-      loadFactor: 0.5,
-    });
-
-    // Total cost highlight card
-    pdf.setFillColor(brand.r, brand.g, brand.b);
-    pdf.roundedRect(margin, y, contentWidth, 16, 2, 2, 'F');
-    pdf.setTextColor(255, 255, 255);
-    pdf.setFontSize(10);
-    pdf.setFont('helvetica', 'normal');
-    pdf.text('Estimated Total Cost', margin + 4, y + 6);
-    pdf.setFontSize(15);
-    pdf.setFont('helvetica', 'bold');
-    pdf.text(formatCurrency(costBreakdown.totalCost), margin + 4, y + 13);
-    pdf.setFontSize(9);
-    pdf.setFont('helvetica', 'normal');
-    pdf.text(`${formatCurrency(costBreakdown.costPerKVA)} / kVA`, pageWidth - margin - 4, y + 10, { align: 'right' });
-    pdf.setTextColor(30, 30, 30);
-    y += 22;
-
-    y = drawSectionHeader('Materials', y);
+    y = drawSectionHeader('Physical Dimensions & Weight', y);
     y = drawTable([
-      ['Core Steel', formatCurrency(costBreakdown.coreSteel)],
-      ['Conductors', formatCurrency(costBreakdown.conductors)],
-      ['Insulation', formatCurrency(costBreakdown.insulation)],
-      ['Transformer Oil', formatCurrency(costBreakdown.oil)],
-      ['Tank & Structure', formatCurrency(costBreakdown.tank)],
-      ['Bushings', formatCurrency(costBreakdown.bushings)],
-      ['Cooling Equipment', formatCurrency(costBreakdown.cooling)],
-      ['Tap Changer', formatCurrency(costBreakdown.tapChanger)],
-      ['Accessories', formatCurrency(costBreakdown.accessories)],
-    ], y, margin + 90);
-    y = drawSubtotalRow('Total Materials', formatCurrency(costBreakdown.totalMaterials), y);
+      ['Tank Length',                     `${design.tank.length.toFixed(0)} mm`],
+      ['Tank Width',                      `${design.tank.width.toFixed(0)} mm`],
+      ['Tank Height',                     `${design.tank.height.toFixed(0)} mm`],
+      ['Overall Height (with bushings)',  `${design.tank.overallHeight.toFixed(0)} mm`],
+      ['Total Weight (oil-filled)',       `${design.tank.totalWeight.toFixed(0)} kg`],
+      ['Shipping Weight (untanked)',      `${design.tank.shippingWeight.toFixed(0)} kg`],
+    ], y);
 
-    y = drawSectionHeader('Labor', y);
-    y = drawTable([
-      ['Assembly', formatCurrency(costBreakdown.assembly)],
-      ['Testing', formatCurrency(costBreakdown.testing)],
-      ['Engineering', formatCurrency(costBreakdown.engineering)],
-    ], y, margin + 90);
-    y = drawSubtotalRow('Total Labor', formatCurrency(costBreakdown.totalLabor), y);
-
-    y = drawSectionHeader('Overhead & Margin', y);
-    y = drawTable([
-      ['Facility Overhead', formatCurrency(costBreakdown.facilityOverhead)],
-      ['Quality Control', formatCurrency(costBreakdown.qualityControl)],
-      ['Shipping', formatCurrency(costBreakdown.shipping)],
-      ['Warranty Reserve', formatCurrency(costBreakdown.warrantyReserve)],
-      ['Profit Margin (12%)', formatCurrency(costBreakdown.profitMargin)],
-    ], y, margin + 90);
-    y = drawSubtotalRow('Grand Total', formatCurrency(costBreakdown.totalCost), y);
-
-    y += 4;
-    y = drawSectionHeader('Lifecycle Cost Analysis  (25 yr · $0.10/kWh · 50% load factor)', y);
-    y = drawTable([
-      ['Initial Cost', formatCurrency(lifecycleCost.initialCost)],
-      ['Annual Loss Cost', formatCurrency(lifecycleCost.annualLossCost)],
-      ['25-Year Total Cost of Ownership', formatCurrency(lifecycleCost.totalLifecycleCost)],
-    ], y, margin + 90);
-
-    // Disclaimer
-    pdf.setFontSize(7.5);
-    pdf.setFont('helvetica', 'normal');
-    pdf.setTextColor(140, 140, 140);
-    pdf.text('Budgetary estimates for planning purposes only. Actual costs vary by supplier and market conditions.', margin, y + 4);
-    pdf.setTextColor(30, 30, 30);
-
-    // ── Page 4 (pro): PIP ELSTR01 Specification ────────────────────────────────
+    // ── Pages 4+: PIP ELSTR01 (Pro only) ──────────────────────────────────────
 
     let pageNum = 4;
 
     if (specMode === 'pro') {
       pdf.addPage();
-      addPageHeader(pageNum, 'PIP ELSTR01 Specification');
-      y = 22;
+      addPageHeader(pageNum, 'PIP ELSTR01 — Site & Certifications');
       pageNum++;
+      y = 22;
 
-      const specSections: [string, [string, string][]][] = [
-        ['Site Conditions (4.1.1)', [
-          ['Altitude', proSpec.siteConditions.altitude ? `${proSpec.siteConditions.altitude} ${proSpec.siteConditions.altitudeUnit || 'ft'}` : 'N/A'],
-          ['Max Ambient Temp', proSpec.siteConditions.ambientTempMax != null ? `${proSpec.siteConditions.ambientTempMax}°C` : 'N/A'],
-          ['Seismic Qualification', proSpec.siteConditions.seismicQualification === 'required' ? 'Required' : 'Not Required'],
-        ]],
-        ['Certifications (4.1.3–4.1.4)', [
-          ['NRTL Listing', proSpec.nrtlListing === 'required' ? 'Required' : 'Not Required'],
-          ['FM Approved', proSpec.fmApproved === 'required' ? 'Required' : 'Not Required'],
-        ]],
-        ['Windings & Temp Rise (4.2.1)', [
-          ['Temp Rise', `${proSpec.windingsAndTempRise.averageTempRise || 65}°C`],
-          ['Primary', `${proSpec.windingsAndTempRise.primaryConnection === 'delta' ? 'Delta' : 'Wye'} — ${proSpec.windingsAndTempRise.primaryMaterial === 'copper' ? 'Copper' : 'Aluminum'}`],
-          ['Secondary', `${proSpec.windingsAndTempRise.secondaryConnection === 'delta' ? 'Delta' : 'Wye'} — ${proSpec.windingsAndTempRise.secondaryMaterial === 'copper' ? 'Copper' : 'Aluminum'}`],
-        ]],
-        ['Bushings (4.2.3)', [
-          ['Primary Mounting', proSpec.bushingsPrimary.sideMounted ? 'Side' : 'Top'],
-          ['Primary Material', proSpec.bushingsPrimary.material || 'Porcelain'],
-          ['Secondary Mounting', proSpec.bushingsSecondary.sideMounted ? 'Side' : 'Top'],
-        ]],
-        ['Tank (4.2.4)', [
-          ['Cover', proSpec.tank.coverType === 'welded' ? 'Welded' : 'Bolted'],
-          ['Vacuum Rated', proSpec.tank.tankVacuumRated === 'required' ? 'Required' : 'Not Required'],
-        ]],
-        ['Cooling (4.2.5)', [
-          ['Radiator Type', proSpec.cooling.radiatorType === 'mfg_std' ? 'Mfg. Standard' : proSpec.cooling.radiatorType || 'N/A'],
-          ['Fans', proSpec.fans.status === 'required' ? 'Required' : proSpec.fans.status === 'provisions_for_future' ? 'Provisions' : 'Not Required'],
-        ]],
-        ['Tap Changer (4.2.12)', [
-          ['NLTC', proSpec.tapChanger.noLoad.required === 'required' ? `Required — ${proSpec.tapChanger.noLoad.description || ''}` : 'Not Required'],
-          ['OLTC', proSpec.tapChanger.onLoad.required === 'required' ? `Required — ${proSpec.tapChanger.onLoad.regulationRange || ''}` : 'Not Required'],
-        ]],
-        ['Insulating Liquid (4.3)', [
-          ['Type', proSpec.insulatingLiquid.type === 'mineral_type_i' ? 'Mineral Oil (Type I)' : proSpec.insulatingLiquid.type || 'N/A'],
-          ['Preservation', proSpec.liquidPreservation.type === 'sealed_tank' ? 'Sealed Tank' : proSpec.liquidPreservation.type || 'N/A'],
-        ]],
-        ['Coatings (4.2.11)', [
-          ['Color', proSpec.coatings.color === 'ansi_70' ? 'ANSI 70 (Medium Gray)' : proSpec.coatings.color === 'ansi_61' ? 'ANSI 61 (Light Gray)' : 'Other'],
-        ]],
-        ['Tests (4.4)', [
-          ['No-Load & Load Loss', proSpec.tests.noLoadAndLoadLoss ? 'Yes' : 'No'],
-          ['Witnessed', proSpec.tests.witnessed === 'witnessed' ? 'Witnessed' : 'Not Witnessed'],
-        ]],
-      ];
-
-      for (const [sectionTitle, fields] of specSections) {
-        const sectionHeight = 7 + fields.length * 6.5 + 6;
-        if (y + sectionHeight > pageHeight - 16) {
+      // Closure helper: check page space and add a new page if needed
+      const ensureSpace = (neededH: number) => {
+        if (y + neededH > pageHeight - 16) {
           pdf.addPage();
           addPageHeader(pageNum, 'PIP ELSTR01 Specification');
           pageNum++;
           y = 22;
         }
-        y = drawSectionHeader(sectionTitle, y);
-        y = drawTable(fields as [string, string][], y);
+      };
+
+      // § Site Conditions
+      const siteRows: [string, string][] = [];
+      if (proSpec.siteConditions.altitude != null)           siteRows.push(['Altitude', `${proSpec.siteConditions.altitude} ${proSpec.siteConditions.altitudeUnit || 'ft'}`]);
+      if (proSpec.siteConditions.ambientTempMax != null)     siteRows.push(['Max Ambient Temp', `${proSpec.siteConditions.ambientTempMax}°C`]);
+      if (proSpec.siteConditions.ambientTempMin != null)     siteRows.push(['Min Ambient Temp', `${proSpec.siteConditions.ambientTempMin}°C`]);
+      if (proSpec.siteConditions.ambientTempAvg24hr != null) siteRows.push(['Avg 24-hr Ambient', `${proSpec.siteConditions.ambientTempAvg24hr}°C`]);
+      siteRows.push(['Seismic Qualification', proSpec.siteConditions.seismicQualification === 'required' ? 'Required' : 'Not Required']);
+      if (proSpec.siteConditions.seismicStandards)           siteRows.push(['Seismic Standards', proSpec.siteConditions.seismicStandards]);
+      if (proSpec.siteConditions.areaClassification)         siteRows.push(['Area Classification', proSpec.siteConditions.areaClassification === 'classified' ? 'Classified' : 'Non-Classified']);
+      if (proSpec.siteConditions.moistCorrosiveEnvironment != null) siteRows.push(['Moist / Corrosive Environment', proSpec.siteConditions.moistCorrosiveEnvironment ? 'Yes' : 'No']);
+      ensureSpace(7 + siteRows.length * 6.5 + 6);
+      y = drawSectionHeader('Site Conditions  (§4.1.1)', y);
+      y = drawTable(siteRows, y);
+
+      // § Certifications
+      const certRows: [string, string][] = [
+        ['NRTL Listing', proSpec.nrtlListing === 'required' ? 'Required' : 'Not Required'],
+        ['FM Approved',  proSpec.fmApproved  === 'required' ? 'Required' : 'Not Required'],
+      ];
+      ensureSpace(7 + certRows.length * 6.5 + 6);
+      y = drawSectionHeader('Certifications  (§4.1.3–4.1.4)', y);
+      y = drawTable(certRows, y);
+
+      // § Windings & Temp Rise
+      const windRows: [string, string][] = [
+        ['Avg Temperature Rise', `${proSpec.windingsAndTempRise.averageTempRise || 65}°C`],
+        ['Primary Connection',   proSpec.windingsAndTempRise.primaryConnection === 'delta' ? 'Delta' : 'Wye'],
+        ['Primary Material',     proSpec.windingsAndTempRise.primaryMaterial === 'copper' ? 'Copper' : 'Aluminum'],
+        ['Secondary Connection', proSpec.windingsAndTempRise.secondaryConnection === 'delta' ? 'Delta' : 'Wye'],
+        ['Secondary Material',   proSpec.windingsAndTempRise.secondaryMaterial === 'copper' ? 'Copper' : 'Aluminum'],
+      ];
+      if (proSpec.windingsAndTempRise.frequentEnergizingUnderLoad != null)
+        windRows.push(['Frequent Energizing Under Load', proSpec.windingsAndTempRise.frequentEnergizingUnderLoad ? 'Yes' : 'No']);
+      if (proSpec.windingsAndTempRise.rapidCyclingOrSurge != null)
+        windRows.push(['Rapid Cycling / Surge', proSpec.windingsAndTempRise.rapidCyclingOrSurge ? 'Yes' : 'No']);
+      ensureSpace(7 + windRows.length * 6.5 + 6);
+      y = drawSectionHeader('Windings & Temperature Rise  (§4.2.1)', y);
+      y = drawTable(windRows, y);
+
+      // § BIL
+      if (proSpec.bil.primaryBilKv || proSpec.bil.secondaryBilKv) {
+        const bilRows: [string, string][] = [];
+        if (proSpec.bil.primaryBilKv)   bilRows.push(['Primary BIL',   `${proSpec.bil.primaryBilKv} kV`]);
+        if (proSpec.bil.secondaryBilKv) bilRows.push(['Secondary BIL', `${proSpec.bil.secondaryBilKv} kV`]);
+        ensureSpace(7 + bilRows.length * 6.5 + 6);
+        y = drawSectionHeader('Basic Impulse Levels  (§4.2.14)', y);
+        y = drawTable(bilRows, y);
       }
 
+      // § Impedance (Pro override)
+      if (proSpec.impedance.type === 'custom' && proSpec.impedance.customValue) {
+        const impRows: [string, string][] = [
+          ['Impedance Type',  'Custom'],
+          ['Custom Value',    `${proSpec.impedance.customValue}%`],
+        ];
+        ensureSpace(7 + impRows.length * 6.5 + 6);
+        y = drawSectionHeader('Impedance Override  (§4.2.1.4)', y);
+        y = drawTable(impRows, y);
+      }
+
+      // § Loss Evaluation
+      if (proSpec.losses.lossEvaluationRequired) {
+        const lossRows: [string, string][] = [['Loss Evaluation', 'Required']];
+        if (proSpec.losses.dollarPerKwOffset)    lossRows.push(['$/kW Offset', `$${proSpec.losses.dollarPerKwOffset}`]);
+        if (proSpec.losses.loadLossesKw)         lossRows.push(['Max Load Losses', `${proSpec.losses.loadLossesKw} kW`]);
+        if (proSpec.losses.noLoadLossesKw)       lossRows.push(['Max No-Load Losses', `${proSpec.losses.noLoadLossesKw} kW`]);
+        ensureSpace(7 + lossRows.length * 6.5 + 6);
+        y = drawSectionHeader('Loss Evaluation  (§4.2.2)', y);
+        y = drawTable(lossRows, y);
+      }
+
+      // § Primary Bushings
+      const bushPRows: [string, string][] = [['Mounting', proSpec.bushingsPrimary.sideMounted ? 'Side' : 'Top']];
+      if (proSpec.bushingsPrimary.material)    bushPRows.push(['Material',     proSpec.bushingsPrimary.material.charAt(0).toUpperCase() + proSpec.bushingsPrimary.material.slice(1)]);
+      if (proSpec.bushingsPrimary.connections) bushPRows.push(['Connections',  proSpec.bushingsPrimary.connections.toUpperCase().replace(/_/g, ' ')]);
+      if (proSpec.bushingsPrimary.flangedThroat != null) bushPRows.push(['Flanged Throat', proSpec.bushingsPrimary.flangedThroat ? 'Yes' : 'No']);
+      ensureSpace(7 + bushPRows.length * 6.5 + 6);
+      y = drawSectionHeader('Primary Bushings  (§4.2.3)', y);
+      y = drawTable(bushPRows, y);
+
+      // § Secondary Bushings
+      const bushSRows: [string, string][] = [['Mounting', proSpec.bushingsSecondary.sideMounted ? 'Side' : 'Top']];
+      if (proSpec.bushingsSecondary.material)    bushSRows.push(['Material',    proSpec.bushingsSecondary.material.charAt(0).toUpperCase() + proSpec.bushingsSecondary.material.slice(1)]);
+      if (proSpec.bushingsSecondary.connections) bushSRows.push(['Connections', proSpec.bushingsSecondary.connections.toUpperCase().replace(/_/g, ' ')]);
+      ensureSpace(7 + bushSRows.length * 6.5 + 6);
+      y = drawSectionHeader('Secondary Bushings  (§4.2.3)', y);
+      y = drawTable(bushSRows, y);
+
+      // § Tank
+      const tankRows: [string, string][] = [
+        ['Cover Type',    proSpec.tank.coverType === 'welded' ? 'Welded' : 'Bolted'],
+        ['Vacuum Rated',  proSpec.tank.tankVacuumRated === 'required' ? 'Required' : 'Not Required'],
+      ];
+      if (proSpec.tank.jackingPads)          tankRows.push(['Jacking Pads',          proSpec.tank.jackingPads === 'required' ? 'Required' : 'Not Required']);
+      if (proSpec.tank.ltcPressureReliefVent) tankRows.push(['LTC Pressure Relief Vent', proSpec.tank.ltcPressureReliefVent === 'required' ? 'Required' : 'Not Required']);
+      ensureSpace(7 + tankRows.length * 6.5 + 6);
+      y = drawSectionHeader('Tank  (§4.2.4)', y);
+      y = drawTable(tankRows, y);
+
+      // § Cooling
+      const coolRows: [string, string][] = [];
+      if (proSpec.cooling.radiatorType)     coolRows.push(['Radiator Type',     proSpec.cooling.radiatorType === 'mfg_std' ? 'Manufacturer Standard' : proSpec.cooling.radiatorType.replace(/_/g, ' ')]);
+      if (proSpec.cooling.radiatorMaterial) coolRows.push(['Radiator Material', proSpec.cooling.radiatorMaterial === 'mfg_std' ? 'Manufacturer Standard' : proSpec.cooling.radiatorMaterial.replace(/_/g, ' ')]);
+      if (proSpec.cooling.removableRadiators != null) coolRows.push(['Removable Radiators', proSpec.cooling.removableRadiators ? 'Yes' : 'No']);
+      coolRows.push(['Cooling Fans', proSpec.fans.status === 'required' ? 'Required' : proSpec.fans.status === 'provisions_for_future' ? 'Provisions for Future' : 'Not Required']);
+      if (proSpec.fans.voltage) coolRows.push(['Fan Voltage', proSpec.fans.voltage]);
+      ensureSpace(7 + coolRows.length * 6.5 + 6);
+      y = drawSectionHeader('Cooling Equipment  (§4.2.5)', y);
+      y = drawTable(coolRows, y);
+
+      // § Tap Changer
+      const tapRows: [string, string][] = [
+        ['No-Load Tap Changer', proSpec.tapChanger.noLoad.required === 'required'
+          ? `Required${proSpec.tapChanger.noLoad.description ? '  — ' + proSpec.tapChanger.noLoad.description : ''}`
+          : 'Not Required'],
+        ['On-Load Tap Changer', proSpec.tapChanger.onLoad.required === 'required'
+          ? `Required${proSpec.tapChanger.onLoad.regulationRange ? '  — ' + proSpec.tapChanger.onLoad.regulationRange : ''}`
+          : 'Not Required'],
+      ];
+      if (proSpec.tapChanger.onLoad.required === 'required' && proSpec.tapChanger.onLoad.autoControlled)
+        tapRows.push(['Auto Controlled', proSpec.tapChanger.onLoad.autoControlled === 'required' ? 'Yes' : 'No']);
+      ensureSpace(7 + tapRows.length * 6.5 + 6);
+      y = drawSectionHeader('Tap Changer  (§4.2.12)', y);
+      y = drawTable(tapRows, y);
+
+      // § Insulating Liquid
+      const liqLabels: Record<string, string> = {
+        mineral_type_i: 'Mineral Oil — Type I', mineral_type_ii: 'Mineral Oil — Type II',
+        silicon: 'Silicon', fire_resistant_ester: 'Fire-Resistant Ester',
+        less_flammable_hc: 'Less-Flammable Hydrocarbon', mfg_discretion: 'Manufacturer Discretion',
+      };
+      const presLabels: Record<string, string> = {
+        sealed_tank: 'Sealed Tank', inert_gas: 'Inert Gas Blanket',
+        conservator_without_diaphragm: 'Conservator (without diaphragm)',
+        conservator_with_diaphragm: 'Conservator (with diaphragm)',
+      };
+      const liqRows: [string, string][] = [];
+      if (proSpec.insulatingLiquid.type)     liqRows.push(['Insulating Liquid Type', liqLabels[proSpec.insulatingLiquid.type] || proSpec.insulatingLiquid.type]);
+      if (proSpec.liquidPreservation.type)   liqRows.push(['Liquid Preservation',    presLabels[proSpec.liquidPreservation.type] || proSpec.liquidPreservation.type]);
+      if (liqRows.length > 0) {
+        ensureSpace(7 + liqRows.length * 6.5 + 6);
+        y = drawSectionHeader('Insulating Liquid  (§4.3)', y);
+        y = drawTable(liqRows, y);
+      }
+
+      // § Surge Arresters
+      if (proSpec.surgeArresters.required === 'required') {
+        const saRows: [string, string][] = [['Surge Arresters', 'Required']];
+        if (proSpec.surgeArresters.voltageRating) saRows.push(['Voltage Rating', `${proSpec.surgeArresters.voltageRating} kV`]);
+        if (proSpec.surgeArresters.mcovRating)    saRows.push(['MCOV Rating',    `${proSpec.surgeArresters.mcovRating} kV`]);
+        ensureSpace(7 + saRows.length * 6.5 + 6);
+        y = drawSectionHeader('Surge Arresters  (§4.2.6)', y);
+        y = drawTable(saRows, y);
+      }
+
+      // § Pressure Relief Vent
+      if (proSpec.pressureReliefVent.required === 'required') {
+        const prRows: [string, string][] = [
+          ['Pressure Relief Vent', 'Required'],
+          ['Vent to Safe Location', proSpec.pressureReliefVent.toSafeLocation === 'required' ? 'Required' : 'Not Required'],
+        ];
+        ensureSpace(7 + prRows.length * 6.5 + 6);
+        y = drawSectionHeader('Pressure Relief Vent  (§4.2.7)', y);
+        y = drawTable(prRows, y);
+      }
+
+      // § Harmonics
+      if (proSpec.harmonics.nonLinearLoads) {
+        const harmRows: [string, string][] = [['Non-Linear Loads', 'Yes']];
+        if (proSpec.harmonics.description) harmRows.push(['Description', proSpec.harmonics.description]);
+        ensureSpace(7 + harmRows.length * 6.5 + 6);
+        y = drawSectionHeader('Harmonics  (§4.2.15)', y);
+        y = drawTable(harmRows, y);
+      }
+
+      // § Coatings
+      const coatRows: [string, string][] = [];
+      if (proSpec.coatings.color) {
+        const colorLabel = proSpec.coatings.color === 'ansi_70' ? 'ANSI 70 — Medium Gray' : proSpec.coatings.color === 'ansi_61' ? 'ANSI 61 — Light Gray' : proSpec.coatings.colorOther || 'Other';
+        coatRows.push(['Paint Color', colorLabel]);
+      }
+      if (proSpec.coatings.paintType)          coatRows.push(['Paint Type',      proSpec.coatings.paintType]);
+      if (proSpec.coatings.paintThicknessMils) coatRows.push(['Paint Thickness', `${proSpec.coatings.paintThicknessMils} mils`]);
+      if (coatRows.length > 0) {
+        ensureSpace(7 + coatRows.length * 6.5 + 6);
+        y = drawSectionHeader('Coatings  (§4.2.11)', y);
+        y = drawTable(coatRows, y);
+      }
+
+      // § Tests
+      const testRows: [string, string][] = [];
+      if (proSpec.tests.noLoadAndLoadLoss != null)      testRows.push(['No-Load & Load Loss Test', proSpec.tests.noLoadAndLoadLoss ? 'Required' : 'Not Required']);
+      if (proSpec.tests.tempRise != null)               testRows.push(['Temperature Rise Test',    proSpec.tests.tempRise ? 'Required' : 'Not Required']);
+      if (proSpec.tests.lightningImpulse != null)       testRows.push(['Lightning Impulse Test',   proSpec.tests.lightningImpulse ? 'Required' : 'Not Required']);
+      if (proSpec.tests.audibleSoundLevel != null)      testRows.push(['Audible Sound Level Test', proSpec.tests.audibleSoundLevel ? 'Required' : 'Not Required']);
+      if (proSpec.tests.frequencyResponseAnalysis)      testRows.push(['Frequency Response Analysis', proSpec.tests.frequencyResponseAnalysis === 'required' ? 'Required' : 'Not Required']);
+      testRows.push(['Test Witnessing', proSpec.tests.witnessed === 'witnessed' ? 'Witnessed' : 'Not Witnessed']);
+      ensureSpace(7 + testRows.length * 6.5 + 6);
+      y = drawSectionHeader('Tests  (§4.4)', y);
+      y = drawTable(testRows, y);
+
+      // § Documentation
+      const docRows: [string, string][] = [];
+      if (proSpec.documentation.electronicFormatPdf != null) docRows.push(['Electronic Format (PDF)', proSpec.documentation.electronicFormatPdf ? 'Required' : 'Not Required']);
+      if (proSpec.documentation.electronicFormatDwg != null) docRows.push(['Electronic Format (DWG)', proSpec.documentation.electronicFormatDwg ? 'Required' : 'Not Required']);
+      if (proSpec.documentation.documentCopies)              docRows.push(['Document Copies',         `${proSpec.documentation.documentCopies}`]);
+      if (proSpec.documentation.manualCopies)                docRows.push(['Manual Copies',            `${proSpec.documentation.manualCopies}`]);
+      if (docRows.length > 0) {
+        ensureSpace(7 + docRows.length * 6.5 + 6);
+        y = drawSectionHeader('Documentation  (§4.6)', y);
+        y = drawTable(docRows, y);
+      }
+
+      // § Other Requirements
       if (proSpec.otherRequirements) {
-        const lines = pdf.splitTextToSize(proSpec.otherRequirements, contentWidth - 6);
-        const blockHeight = 7 + lines.length * lineHeight + 4;
-        if (y + blockHeight > pageHeight - 16) {
-          pdf.addPage();
-          addPageHeader(pageNum, 'PIP ELSTR01 Specification');
-          pageNum++;
-          y = 22;
-        }
+        const lines = pdf.splitTextToSize(proSpec.otherRequirements, contentWidth - 8);
+        ensureSpace(7 + lines.length * lineHeight + 6);
         y = drawSectionHeader('Other Requirements', y);
         pdf.setFontSize(9);
         pdf.setFont('helvetica', 'normal');
-        pdf.setTextColor(60, 60, 60);
-        pdf.text(lines, margin + 3, y);
+        pdf.setTextColor(65, 58, 50);
+        pdf.text(lines, margin + 5, y);
         y += lines.length * lineHeight + 4;
         pdf.setTextColor(30, 30, 30);
       }
     }
 
-    // ── Final page: Technical Drawings ────────────────────────────────────────
+    // ── Final page: Technical Drawings ─────────────────────────────────────────
 
     const drawingsContainer = document.getElementById('drawings-container');
     if (drawingsContainer) {
@@ -545,7 +679,8 @@ export function TransformerDesigner() {
       pdf.addImage(imgData, 'PNG', margin, drawingY, imgWidth, Math.min(imgHeight, maxDrawingHeight));
     }
 
-    pdf.save(`fluxco-spec-${requirements.ratedPower}kva-${requirements.primaryVoltage}v-${requirements.secondaryVoltage}v.pdf`);
+    const modeLabel = specMode === 'pro' ? 'pro' : 'lite';
+    pdf.save(`fluxco-spec-${modeLabel}-${requirements.ratedPower}kva-${requirements.primaryVoltage}v-${requirements.secondaryVoltage}v.pdf`);
   };
 
   const handleMarketplaceSubmit = async () => {
