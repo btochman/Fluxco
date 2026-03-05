@@ -685,7 +685,7 @@ export default function Deck2Page() {
                   photo: "/team/benji.jpg",
                   name: "Benji Miller",
                   title: "CTO",
-                  bio: "Technical operations leader in transformer manufacturing. Johns Hopkins engineering.",
+                  bio: "CIA technology manager. Modular construction COO. Johns Hopkins engineering.",
                   linkedin: "https://www.linkedin.com/in/benjimiller-1/",
                 },
               ].map((member, i) => (
