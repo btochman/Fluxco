@@ -33,8 +33,9 @@ export function PasswordGate({ slug }: { slug: string }) {
         });
 
         if (res.ok) {
-          // Cookie has been set — reload to access the proposal
-          window.location.reload();
+          // Cookie has been set — replace current history entry to avoid
+          // back-button loop (reload would add a duplicate entry)
+          window.location.replace(window.location.href);
           return;
         }
       } catch {
