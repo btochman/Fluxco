@@ -2,6 +2,15 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { Resend } from "resend";
 
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 export async function POST(request: NextRequest) {
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -34,6 +43,7 @@ export async function POST(request: NextRequest) {
       load_loss_w: safeDecimal(listing.load_loss_w, 10, 2),
       total_weight_kg: safeDecimal(listing.total_weight_kg, 10, 2),
       estimated_cost: safeDecimal(listing.estimated_cost, 12, 2),
+      status: 'listed',
     };
 
     // Insert the listing
@@ -44,19 +54,19 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (error) {
-      console.error("Error inserting listing:", error);
+      console.error("Error inserting listing:", error, {
+        rated_power_kva: sanitizedListing.rated_power_kva,
+        primary_voltage: sanitizedListing.primary_voltage,
+        secondary_voltage: sanitizedListing.secondary_voltage,
+        impedance_percent: sanitizedListing.impedance_percent,
+        efficiency_percent: sanitizedListing.efficiency_percent,
+        no_load_loss_w: sanitizedListing.no_load_loss_w,
+        load_loss_w: sanitizedListing.load_loss_w,
+        total_weight_kg: sanitizedListing.total_weight_kg,
+        estimated_cost: sanitizedListing.estimated_cost,
+      });
       return NextResponse.json(
-        { error: `${error.message} - Values: ${JSON.stringify({
-          rated_power_kva: sanitizedListing.rated_power_kva,
-          primary_voltage: sanitizedListing.primary_voltage,
-          secondary_voltage: sanitizedListing.secondary_voltage,
-          impedance_percent: sanitizedListing.impedance_percent,
-          efficiency_percent: sanitizedListing.efficiency_percent,
-          no_load_loss_w: sanitizedListing.no_load_loss_w,
-          load_loss_w: sanitizedListing.load_loss_w,
-          total_weight_kg: sanitizedListing.total_weight_kg,
-          estimated_cost: sanitizedListing.estimated_cost,
-        })}` },
+        { error: "Failed to create listing. Please try again." },
         { status: 500 }
       );
     }
@@ -74,7 +84,7 @@ export async function POST(request: NextRequest) {
           subject: `Your ${sanitizedListing.rated_power_kva.toLocaleString()} kVA Transformer is Listed`,
           html: `
             <h2>Your Spec Has Been Listed</h2>
-            <p>Hi ${sanitizedListing.contact_name},</p>
+            <p>Hi ${escapeHtml(String(sanitizedListing.contact_name))},</p>
             <p>Your transformer specification has been successfully posted to the FluxCo marketplace. Suppliers will be notified and can submit bids.</p>
 
             <h3>Listing Summary</h3>
@@ -83,8 +93,8 @@ export async function POST(request: NextRequest) {
               <li><strong>Primary Voltage:</strong> ${formatVoltage(sanitizedListing.primary_voltage)}</li>
               <li><strong>Secondary Voltage:</strong> ${formatVoltage(sanitizedListing.secondary_voltage)}</li>
               <li><strong>Phase:</strong> ${sanitizedListing.phases}-Phase</li>
-              ${sanitizedListing.vector_group ? `<li><strong>Vector Group:</strong> ${sanitizedListing.vector_group}</li>` : ""}
-              ${sanitizedListing.cooling_class ? `<li><strong>Cooling:</strong> ${sanitizedListing.cooling_class}</li>` : ""}
+              ${sanitizedListing.vector_group ? `<li><strong>Vector Group:</strong> ${escapeHtml(String(sanitizedListing.vector_group))}</li>` : ""}
+              ${sanitizedListing.cooling_class ? `<li><strong>Cooling:</strong> ${escapeHtml(String(sanitizedListing.cooling_class))}</li>` : ""}
               ${sanitizedListing.estimated_cost ? `<li><strong>Estimated Cost:</strong> $${sanitizedListing.estimated_cost.toLocaleString()}</li>` : ""}
               ${sanitizedListing.efficiency_percent ? `<li><strong>Efficiency:</strong> ${sanitizedListing.efficiency_percent}%</li>` : ""}
             </ul>

@@ -6,8 +6,10 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { password } = body;
 
-    // Hardcoded password
-    if (password !== "fluxco2026") {
+    if (!process.env.ADMIN_PASSWORD) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (password !== process.env.ADMIN_PASSWORD) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 

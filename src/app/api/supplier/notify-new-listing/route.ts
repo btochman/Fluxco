@@ -2,6 +2,15 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { Resend } from "resend";
 
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 export async function POST(request: NextRequest) {
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -63,7 +72,7 @@ export async function POST(request: NextRequest) {
         subject: `New Opportunity: ${listing.rated_power_kva} kVA Transformer`,
         html: `
           <h2>New Transformer Opportunity</h2>
-          <p>Hi ${supplier.contact_name || supplier.company_name},</p>
+          <p>Hi ${escapeHtml(String(supplier.contact_name || supplier.company_name))},</p>
           <p>A new transformer request has been posted to the FluxCo marketplace.</p>
 
           <h3>Specifications</h3>
@@ -72,9 +81,9 @@ export async function POST(request: NextRequest) {
             <li><strong>Primary Voltage:</strong> ${formatVoltage(listing.primary_voltage)}</li>
             <li><strong>Secondary Voltage:</strong> ${formatVoltage(listing.secondary_voltage)}</li>
             <li><strong>Phase:</strong> ${listing.phases}-Phase</li>
-            ${listing.vector_group ? `<li><strong>Vector Group:</strong> ${listing.vector_group}</li>` : ""}
-            ${listing.cooling_class ? `<li><strong>Cooling:</strong> ${listing.cooling_class}</li>` : ""}
-            ${listing.zipcode ? `<li><strong>Location:</strong> ${listing.zipcode}</li>` : ""}
+            ${listing.vector_group ? `<li><strong>Vector Group:</strong> ${escapeHtml(String(listing.vector_group))}</li>` : ""}
+            ${listing.cooling_class ? `<li><strong>Cooling:</strong> ${escapeHtml(String(listing.cooling_class))}</li>` : ""}
+            ${listing.zipcode ? `<li><strong>Location:</strong> ${escapeHtml(String(listing.zipcode))}</li>` : ""}
           </ul>
 
           <p><a href="https://fluxco.com/portal" style="display: inline-block; padding: 12px 24px; background-color: #f59e0b; color: white; text-decoration: none; border-radius: 6px; font-weight: bold;">View & Submit Bid</a></p>
