@@ -337,6 +337,7 @@ export function MarketplaceList() {
         listing={specSheetListing}
         open={specSheetOpen}
         onOpenChange={setSpecSheetOpen}
+        onPlaceBid={supplier ? handleBidClick : undefined}
       />
     </>
   );

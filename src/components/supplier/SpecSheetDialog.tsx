@@ -7,13 +7,15 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { Zap, Thermometer, Weight, DollarSign, FileText } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Zap, Thermometer, Weight, DollarSign, FileText, Send } from "lucide-react";
 import { MarketplaceListing } from "@/lib/supabase";
 
 interface SpecSheetDialogProps {
   listing: MarketplaceListing | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onPlaceBid?: (listing: MarketplaceListing) => void;
 }
 
 const formatVoltage = (voltage: number): string => {
@@ -28,7 +30,7 @@ const formatNumber = (n: number | null | undefined): string => {
   return n.toLocaleString();
 };
 
-export function SpecSheetDialog({ listing, open, onOpenChange }: SpecSheetDialogProps) {
+export function SpecSheetDialog({ listing, open, onOpenChange, onPlaceBid }: SpecSheetDialogProps) {
   if (!listing) return null;
 
   const specs = listing.design_specs as any;
@@ -247,6 +249,19 @@ export function SpecSheetDialog({ listing, open, onOpenChange }: SpecSheetDialog
             <h3 className="font-semibold mb-2">Notes</h3>
             <p className="text-sm text-muted-foreground">{listing.notes}</p>
           </div>
+        )}
+
+        {onPlaceBid && (
+          <Button
+            className="w-full mt-2"
+            onClick={() => {
+              onOpenChange(false);
+              onPlaceBid(listing);
+            }}
+          >
+            <Send className="w-4 h-4 mr-2" />
+            Place Bid
+          </Button>
         )}
       </DialogContent>
     </Dialog>
