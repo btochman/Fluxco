@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { Client } from "@notionhq/client";
 
 export async function POST(request: NextRequest) {
   try {
@@ -27,10 +28,30 @@ export async function POST(request: NextRequest) {
       process.env.SUPABASE_SERVICE_ROLE_KEY
     );
 
-    // Update the customer's notion_customer_id (can be set or cleared)
+    // Build the update payload
+    const updateData: Record<string, string | null> = {
+      notion_customer_id: notionCustomerId || null,
+    };
+
+    // If linking to a Notion customer, fetch their name and sync company_name
+    if (notionCustomerId && process.env.NOTION_API_KEY) {
+      try {
+        const notion = new Client({ auth: process.env.NOTION_API_KEY });
+        const page = await notion.pages.retrieve({ page_id: notionCustomerId });
+        const titleProp = (page as any).properties?.Customer?.title;
+        const notionName = titleProp?.map((t: any) => t.plain_text).join("") || "";
+        if (notionName) {
+          updateData.company_name = notionName;
+        }
+      } catch (err) {
+        console.error("Failed to fetch Notion customer name:", err);
+        // Continue without updating company_name — linking still works
+      }
+    }
+
     const { error } = await supabase
       .from("customers")
-      .update({ notion_customer_id: notionCustomerId || null })
+      .update(updateData)
       .eq("id", customerId);
 
     if (error) {
@@ -43,6 +64,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
+      companyName: updateData.company_name || null,
       message: notionCustomerId
         ? `Customer linked to Notion ID: ${notionCustomerId}`
         : "Customer unlinked from Notion",

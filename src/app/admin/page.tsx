@@ -287,11 +287,16 @@ export default function AdminPage() {
       });
 
       if (res.ok) {
-        // Update local state
+        const data = await res.json();
+        // Update local state with synced company name from Notion
         setCustomers((prev) =>
           prev.map((c) =>
             c.id === customerId
-              ? { ...c, notion_customer_id: linkNotionId.trim() || null }
+              ? {
+                  ...c,
+                  notion_customer_id: linkNotionId.trim() || null,
+                  company_name: data.companyName || c.company_name,
+                }
               : c
           )
         );
