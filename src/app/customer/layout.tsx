@@ -25,15 +25,20 @@ export default function CustomerLayout({
   const isAuthPage =
     pathname === "/customer/login" || pathname === "/customer/register";
 
+  // Use `customer` (not `user`) to determine auth status.
+  // A Supabase session alone isn't enough — the user must have a customer profile.
+  // This prevents OEM users with a stale session from being incorrectly redirected.
+  const isAuthenticated = !!customer;
+
   useEffect(() => {
     if (loading) return;
 
-    if (user && isAuthPage) {
+    if (isAuthenticated && isAuthPage) {
       router.replace("/customer");
-    } else if (!user && !isAuthPage) {
+    } else if (!isAuthenticated && !isAuthPage) {
       router.replace("/customer/login");
     }
-  }, [user, loading, isAuthPage, router]);
+  }, [isAuthenticated, loading, isAuthPage, router]);
 
   // Show loading spinner
   if (loading) {
@@ -45,7 +50,7 @@ export default function CustomerLayout({
   }
 
   // Waiting for redirect
-  if ((user && isAuthPage) || (!user && !isAuthPage)) {
+  if ((isAuthenticated && isAuthPage) || (!isAuthenticated && !isAuthPage)) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />

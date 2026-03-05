@@ -25,15 +25,20 @@ export default function PortalLayout({
   const isAuthPage =
     pathname === "/portal/login" || pathname === "/portal/register";
 
+  // Use `supplier` (not `user`) to determine auth status.
+  // A Supabase session alone isn't enough — the user must have a supplier profile.
+  // This prevents customer users with a session from being incorrectly redirected.
+  const isAuthenticated = !!supplier;
+
   useEffect(() => {
     if (loading) return;
 
-    if (user && isAuthPage) {
+    if (isAuthenticated && isAuthPage) {
       router.replace("/portal");
-    } else if (!user && !isAuthPage) {
+    } else if (!isAuthenticated && !isAuthPage) {
       router.replace("/portal/login");
     }
-  }, [user, loading, isAuthPage, router]);
+  }, [isAuthenticated, loading, isAuthPage, router]);
 
   // Show loading spinner
   if (loading) {
@@ -45,7 +50,7 @@ export default function PortalLayout({
   }
 
   // Waiting for redirect
-  if ((user && isAuthPage) || (!user && !isAuthPage)) {
+  if ((isAuthenticated && isAuthPage) || (!isAuthenticated && !isAuthPage)) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
