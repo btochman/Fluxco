@@ -86,11 +86,11 @@ export async function POST(request: NextRequest) {
             ${listing.zipcode ? `<li><strong>Location:</strong> ${escapeHtml(String(listing.zipcode))}</li>` : ""}
           </ul>
 
-          <p><a href="https://fluxco.com/portal" style="display: inline-block; padding: 12px 24px; background-color: #f59e0b; color: white; text-decoration: none; border-radius: 6px; font-weight: bold;">View & Submit Bid</a></p>
+          <p><a href="https://fluxco.com/portal/marketplace" style="display: inline-block; padding: 12px 24px; background-color: #f59e0b; color: white; text-decoration: none; border-radius: 6px; font-weight: bold;">View & Submit Bid</a></p>
 
           <p style="color: #666; font-size: 12px; margin-top: 24px;">
             You're receiving this because you opted in to new listing notifications.
-            <a href="https://fluxco.com/portal">Manage your preferences</a> in the supplier portal.
+            <a href="https://fluxco.com/portal/profile">Manage your preferences</a> in the supplier portal.
           </p>
         `,
       }).catch((err) => {
