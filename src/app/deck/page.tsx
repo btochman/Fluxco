@@ -670,21 +670,21 @@ export default function Deck2Page() {
                 {
                   photo: "/team/eric.jpg",
                   name: "Eric Hobby",
-                  title: "Head of Manufacturing",
+                  title: "",
                   bio: "Deep tech specialist with transformer industry expertise. UT McCombs MBA.",
                   linkedin: "https://www.linkedin.com/in/eric-hobby-8261a4101/",
                 },
                 {
                   photo: "/team/casey.jpg",
                   name: "Casey Wu",
-                  title: "CFO",
+                  title: "",
                   bio: "Venture capital and finance background. Texas A&M engineering. Oversees capital strategy and operations.",
                   linkedin: "https://www.linkedin.com/in/casey-wu-486a751/",
                 },
                 {
                   photo: "/team/benji.jpg",
                   name: "Benji Miller",
-                  title: "CTO",
+                  title: "",
                   bio: "CIA technology manager. Modular construction COO. Johns Hopkins engineering.",
                   linkedin: "https://www.linkedin.com/in/benjimiller-1/",
                 },
@@ -701,7 +701,7 @@ export default function Deck2Page() {
                     <img src={member.photo} alt={member.name} />
                   </div>
                   <div className="d2-team-name">{member.name}</div>
-                  <div className="d2-team-title">{member.title}</div>
+                  {member.title && <div className="d2-team-title">{member.title}</div>}
                   <div className="d2-team-bio">{member.bio}</div>
                 </a>
               ))}
