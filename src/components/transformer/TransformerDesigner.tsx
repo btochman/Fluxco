@@ -47,7 +47,7 @@ const defaultRequirements: DesignRequirements = {
   requireFEOC: true,
 };
 
-export function TransformerDesigner() {
+export function SpecBuilder() {
   const [requirements, setRequirements] = useState<DesignRequirements>(defaultRequirements);
   const [design, setDesign] = useState<TransformerDesign | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
@@ -924,4 +924,4 @@ export function TransformerDesigner() {
   );
 }
 
-export default TransformerDesigner;
+export default SpecBuilder;

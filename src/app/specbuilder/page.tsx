@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { TransformerDesigner } from '@/components/transformer/TransformerDesigner';
+import { SpecBuilder } from '@/components/transformer/TransformerDesigner';
 
 export const metadata: Metadata = {
   title: "Spec Builder | Build & Bid Your Transformer Specs | FluxCo",
@@ -25,7 +25,7 @@ export default function DesignPage() {
   return (
     <>
       <div className="fixed bottom-4 right-4 z-50 text-2xl" title="Made in USA">🇺🇸</div>
-      <TransformerDesigner />
+      <SpecBuilder />
     </>
   );
 }
