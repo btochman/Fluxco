@@ -539,7 +539,6 @@ export default function Deck2Page() {
                 { icon: <DollarSign className="w-6 h-6" />, title: "Marketplace Take Rate", points: ["15–25% take rate on every transaction.", "Volume grows as OEM network expands.", "Higher margins on complex/custom specs."] },
                 { icon: <Repeat className="w-6 h-6" />, title: "Transformer as a Service (TaaS)", points: ["Leasing model for companies that don't want to own.", "Recurring monthly revenue per unit.", "Lower barrier to entry for customers."] },
                 { icon: <TrendingUp className="w-6 h-6" />, title: "OEM Volume Pricing", points: ["We will become a top 10 transformer buyer by 2027.", "Customer sees market price, FluxCo captures the spread.", "Looks custom to buyer — commodity to us."] },
-                { icon: <Wrench className="w-6 h-6" />, title: "Warranty & Fleet Service", points: ["Service contracts across full deployed fleet.", "Scale advantage: hundreds of units = predictable revenue.", "Cross-sell upgrades, monitoring, replacements."] },
               ].map((card, i) => (
                 <div key={card.title} className="d2-rev-card" style={{ animationDelay: `${0.2 + i * 0.15}s` }}>
                   <div className="d2-rev-card-icon">{card.icon}</div>
@@ -772,6 +771,25 @@ export default function Deck2Page() {
               <span>brian@fluxco.com</span>
               <span className="d2-dot" />
               <span>fluxco.com</span>
+            </div>
+          </div>
+        </section>
+
+        {/* ========== APPENDIX — WARRANTY & SERVICE ========== */}
+        <section className="d2-slide">
+          <div className="d2-glow d2-glow-3" />
+          <div className="d2-content in">
+            <div className="d2-slide-label">APPENDIX</div>
+            <h2 className="d2-h2">Warranty & Service</h2>
+            <div className="d2-rev-grid" style={{ maxWidth: 600, margin: '0 auto' }}>
+              <div className="d2-rev-card">
+                <div className="d2-rev-card-icon"><Wrench className="w-6 h-6" /></div>
+                <h3 className="d2-rev-card-title">Warranty & Service</h3>
+                <ul className="d2-rev-card-list">
+                  <li>Most international OEMs lack a warranty and service capability.</li>
+                  <li>FluxCo can build a fleet of recurring revenue service contracts.</li>
+                </ul>
+              </div>
             </div>
           </div>
         </section>
