@@ -641,7 +641,7 @@ export default function Deck2Page() {
                   photo: "/team/benji.jpg",
                   name: "Benji Miller",
                   title: "Technology",
-                  bio: "CIA technology manager. Modular construction COO. Johns Hopkins engineering.",
+                  bio: "Aerospace manufacturing engineer who decided to fight the bad guys with technology at the CIA.",
                   linkedin: "https://www.linkedin.com/in/benjimiller-1/",
                 },
               ].map((member, i) => (
