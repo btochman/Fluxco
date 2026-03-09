@@ -514,7 +514,50 @@ export default function Deck2Page() {
           </div>
         </section>
 
-        {/* ========== SLIDE 5 — MANUFACTURING VISION ========== */}
+        {/* ========== SLIDE 5 — MONETIZATION ========== */}
+        <section className="d2-slide" ref={s8b.ref}>
+          <div className="d2-glow d2-glow-5" />
+          <div className={`d2-content ${s8b.inView ? "in" : ""}`}>
+            <div className="d2-slide-label">MONETIZATION</div>
+            <h2 className="d2-h2">How We Make Money</h2>
+
+            <div className="d2-rev-stats">
+              {[
+                { value: "15–25%", label: "Marketplace Take Rate" },
+                { value: "$20B+", label: "Addressable Market" },
+                { value: "Recurring", label: "TaaS Revenue" },
+              ].map((stat) => (
+                <div key={stat.label} className="d2-rev-stat">
+                  <div className="d2-rev-stat-value">{stat.value}</div>
+                  <div className="d2-rev-stat-label">{stat.label}</div>
+                </div>
+              ))}
+            </div>
+
+            <div className="d2-rev-grid">
+              {[
+                { icon: <DollarSign className="w-6 h-6" />, title: "Marketplace Commission", points: ["15–25% take rate on every transaction.", "Volume grows as OEM network expands.", "Higher margins on complex/custom specs."] },
+                { icon: <TrendingUp className="w-6 h-6" />, title: "OEM Volume Pricing", points: ["Negotiate volume discounts across OEM network.", "Customer sees market price, FluxCo captures the spread.", "Looks custom to buyer — commodity to us."] },
+                { icon: <Repeat className="w-6 h-6" />, title: "Transformer as a Service", points: ["Leasing model for companies that don't want to own.", "Recurring monthly revenue per unit.", "Lower barrier to entry for customers."] },
+                { icon: <Wrench className="w-6 h-6" />, title: "Warranty & Fleet Service", points: ["Service contracts across full deployed fleet.", "Scale advantage: hundreds of units = predictable revenue.", "Cross-sell upgrades, monitoring, replacements."] },
+              ].map((card, i) => (
+                <div key={card.title} className="d2-rev-card" style={{ animationDelay: `${0.2 + i * 0.15}s` }}>
+                  <div className="d2-rev-card-icon">{card.icon}</div>
+                  <h3 className="d2-rev-card-title">{card.title}</h3>
+                  <ul className="d2-rev-card-list">
+                    {card.points.map((p, j) => <li key={j}>{p}</li>)}
+                  </ul>
+                </div>
+              ))}
+            </div>
+
+            <div className="d2-rev-insight">
+              &ldquo;Every unit looks like a custom order to the customer. To us, it&apos;s a commodity we&apos;ve seen a thousand times.&rdquo;
+            </div>
+          </div>
+        </section>
+
+        {/* ========== SLIDE 6 — MANUFACTURING VISION ========== */}
         <section className="d2-slide d2-slide-dark" ref={s6.ref}>
           <div className="d2-bg-img" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1619885067109-e1dbec4e7cd0?w=1920&q=80)' }} />
           <div className={`d2-content ${s6.inView ? "in" : ""}`}>
@@ -605,49 +648,6 @@ export default function Deck2Page() {
               ))}
             </div>
             <p className="d2-source">Sources: U.S. Treasury (IRA 45X), DOE Efficiency Standards (2024), NIST MEP</p>
-          </div>
-        </section>
-
-        {/* ========== SLIDE 8 — MONETIZATION ========== */}
-        <section className="d2-slide" ref={s8b.ref}>
-          <div className="d2-glow d2-glow-5" />
-          <div className={`d2-content ${s8b.inView ? "in" : ""}`}>
-            <div className="d2-slide-label">MONETIZATION</div>
-            <h2 className="d2-h2">How We Make Money</h2>
-
-            <div className="d2-rev-stats">
-              {[
-                { value: "15–25%", label: "Marketplace Take Rate" },
-                { value: "$20B+", label: "Addressable Market" },
-                { value: "Recurring", label: "TaaS Revenue" },
-              ].map((stat) => (
-                <div key={stat.label} className="d2-rev-stat">
-                  <div className="d2-rev-stat-value">{stat.value}</div>
-                  <div className="d2-rev-stat-label">{stat.label}</div>
-                </div>
-              ))}
-            </div>
-
-            <div className="d2-rev-grid">
-              {[
-                { icon: <DollarSign className="w-6 h-6" />, title: "Marketplace Commission", points: ["15–25% take rate on every transaction.", "Volume grows as OEM network expands.", "Higher margins on complex/custom specs."] },
-                { icon: <TrendingUp className="w-6 h-6" />, title: "OEM Volume Pricing", points: ["Negotiate volume discounts across OEM network.", "Customer sees market price, FluxCo captures the spread.", "Looks custom to buyer — commodity to us."] },
-                { icon: <Repeat className="w-6 h-6" />, title: "Transformer as a Service", points: ["Leasing model for companies that don't want to own.", "Recurring monthly revenue per unit.", "Lower barrier to entry for customers."] },
-                { icon: <Wrench className="w-6 h-6" />, title: "Warranty & Fleet Service", points: ["Service contracts across full deployed fleet.", "Scale advantage: hundreds of units = predictable revenue.", "Cross-sell upgrades, monitoring, replacements."] },
-              ].map((card, i) => (
-                <div key={card.title} className="d2-rev-card" style={{ animationDelay: `${0.2 + i * 0.15}s` }}>
-                  <div className="d2-rev-card-icon">{card.icon}</div>
-                  <h3 className="d2-rev-card-title">{card.title}</h3>
-                  <ul className="d2-rev-card-list">
-                    {card.points.map((p, j) => <li key={j}>{p}</li>)}
-                  </ul>
-                </div>
-              ))}
-            </div>
-
-            <div className="d2-rev-insight">
-              &ldquo;Every unit looks like a custom order to the customer. To us, it&apos;s a commodity we&apos;ve seen a thousand times.&rdquo;
-            </div>
           </div>
         </section>
 
