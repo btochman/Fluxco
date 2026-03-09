@@ -634,7 +634,7 @@ export default function Deck2Page() {
                   photo: "/team/casey.jpg",
                   name: "Casey Wu",
                   title: "Finance",
-                  bio: "Venture capital and finance background. Texas A&M engineering. Oversees capital strategy and operations.",
+                  bio: "Multi-time startup CFO, venture fund CFO, and recovering investment banker.",
                   linkedin: "https://www.linkedin.com/in/casey-wu-486a751/",
                 },
                 {
