@@ -181,7 +181,7 @@ function DeckScatterChart({ inView }: { inView: boolean }) {
             <circle
               cx={cx} cy={cy}
               r={dotR}
-              fill={isClient ? "#e63946" : isRec ? "#2d8cff" : "rgba(45,140,255,0.6)"}
+              fill={isRec ? "#2d8cff" : "rgba(45,140,255,0.6)"}
               stroke={isRec ? "#2d8cff" : "none"}
               strokeWidth={isRec ? "1.5" : "0"}
             />
@@ -190,7 +190,7 @@ function DeckScatterChart({ inView }: { inView: boolean }) {
                 x={cx}
                 y={cy - dotR - 4}
                 textAnchor="middle"
-                fill={isClient ? "#e63946" : isRec ? "#2d8cff" : "rgba(255,255,255,0.45)"}
+                fill={isRec ? "#2d8cff" : "rgba(255,255,255,0.45)"}
                 fontSize="7"
                 fontFamily="Inter"
                 fontWeight={isRec ? "600" : "400"}
@@ -449,7 +449,6 @@ export default function Deck2Page() {
                 <DeckScatterChart inView={s4.inView} />
                 <div className="d2-chart-legend" style={{ marginTop: 8, justifyContent: "center", gap: 16, fontSize: 10 }}>
                   <div className="d2-legend"><div className="d2-legend-swatch" style={{ background: "var(--d2-blue)", width: 8, height: 8 }} />FluxCo Sourced</div>
-                  <div className="d2-legend"><div className="d2-legend-swatch" style={{ background: "#e63946", width: 8, height: 8 }} />Client Sourced</div>
                 </div>
               </div>
             </div>
