@@ -514,49 +514,7 @@ export default function Deck2Page() {
           </div>
         </section>
 
-        {/* ========== SLIDE 5 — MONETIZATION ========== */}
-        <section className="d2-slide" ref={s8b.ref}>
-          <div className="d2-glow d2-glow-5" />
-          <div className={`d2-content ${s8b.inView ? "in" : ""}`}>
-            <div className="d2-slide-label">MONETIZATION</div>
-            <h2 className="d2-h2">How We Make Money</h2>
-
-            <div className="d2-rev-stats">
-              {[
-                { value: "15–25%", label: "Marketplace Take Rate" },
-                { value: "$20B+", label: "Addressable Market" },
-                { value: "9 Month", label: "ROI" },
-              ].map((stat) => (
-                <div key={stat.label} className="d2-rev-stat">
-                  <div className="d2-rev-stat-value">{stat.value}</div>
-                  <div className="d2-rev-stat-label">{stat.label}</div>
-                </div>
-              ))}
-            </div>
-
-            <div className="d2-rev-grid">
-              {[
-                { icon: <DollarSign className="w-6 h-6" />, title: "Marketplace Take Rate", points: ["15–25% take rate on every transaction.", "Volume grows as OEM network expands.", "Higher margins on complex/custom specs."] },
-                { icon: <Repeat className="w-6 h-6" />, title: "Transformer as a Service (TaaS)", points: ["Leasing model for companies that don't want to own.", "Recurring monthly revenue per unit.", "Lower barrier to entry for customers."] },
-                { icon: <TrendingUp className="w-6 h-6" />, title: "OEM Volume Pricing", points: ["We will become a top 10 transformer buyer by 2027.", "Customer sees market price, FluxCo captures the spread.", "Looks custom to buyer — commodity to us."] },
-              ].map((card, i) => (
-                <div key={card.title} className="d2-rev-card" style={{ animationDelay: `${0.2 + i * 0.15}s` }}>
-                  <div className="d2-rev-card-icon">{card.icon}</div>
-                  <h3 className="d2-rev-card-title">{card.title}</h3>
-                  <ul className="d2-rev-card-list">
-                    {card.points.map((p, j) => <li key={j}>{p}</li>)}
-                  </ul>
-                </div>
-              ))}
-            </div>
-
-            <div className="d2-rev-insight">
-              Every unit looks like a custom order to the customer. To us, it&apos;s a commodity we&apos;ve seen a thousand times.
-            </div>
-          </div>
-        </section>
-
-        {/* ========== SLIDE 6 — MANUFACTURING VISION ========== */}
+        {/* ========== SLIDE 5 — MANUFACTURING VISION ========== */}
         <section className="d2-slide d2-slide-dark" ref={s6.ref}>
           <div className="d2-bg-img" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1619885067109-e1dbec4e7cd0?w=1920&q=80)' }} />
           <div className={`d2-content ${s6.inView ? "in" : ""}`}>
@@ -775,21 +733,45 @@ export default function Deck2Page() {
           </div>
         </section>
 
-        {/* ========== APPENDIX — WARRANTY & SERVICE ========== */}
-        <section className="d2-slide">
-          <div className="d2-glow d2-glow-3" />
-          <div className="d2-content in">
+        {/* ========== APPENDIX — MONETIZATION ========== */}
+        <section className="d2-slide" ref={s8b.ref}>
+          <div className="d2-glow d2-glow-5" />
+          <div className={`d2-content ${s8b.inView ? "in" : ""}`}>
             <div className="d2-slide-label">APPENDIX</div>
-            <h2 className="d2-h2">Warranty & Service</h2>
-            <div className="d2-rev-grid" style={{ maxWidth: 600, margin: '0 auto' }}>
-              <div className="d2-rev-card">
-                <div className="d2-rev-card-icon"><Wrench className="w-6 h-6" /></div>
-                <h3 className="d2-rev-card-title">Warranty & Service</h3>
-                <ul className="d2-rev-card-list">
-                  <li>Most international OEMs lack a warranty and service capability.</li>
-                  <li>FluxCo can build a fleet of recurring revenue service contracts.</li>
-                </ul>
-              </div>
+            <h2 className="d2-h2">How We Make Money</h2>
+
+            <div className="d2-rev-stats">
+              {[
+                { value: "15–25%", label: "Marketplace Take Rate" },
+                { value: "$20B+", label: "Addressable Market" },
+                { value: "9 Month", label: "ROI" },
+              ].map((stat) => (
+                <div key={stat.label} className="d2-rev-stat">
+                  <div className="d2-rev-stat-value">{stat.value}</div>
+                  <div className="d2-rev-stat-label">{stat.label}</div>
+                </div>
+              ))}
+            </div>
+
+            <div className="d2-rev-grid">
+              {[
+                { icon: <DollarSign className="w-6 h-6" />, title: "Marketplace Take Rate", points: ["15–25% take rate on every transaction.", "Volume grows as OEM network expands.", "Higher margins on complex/custom specs."] },
+                { icon: <Repeat className="w-6 h-6" />, title: "Transformer as a Service (TaaS)", points: ["Leasing model for companies that don't want to own.", "Recurring monthly revenue per unit.", "Lower barrier to entry for customers."] },
+                { icon: <TrendingUp className="w-6 h-6" />, title: "OEM Volume Pricing", points: ["We will become a top 10 transformer buyer by 2027.", "Customer sees market price, FluxCo captures the spread.", "Looks custom to buyer — commodity to us."] },
+                { icon: <Wrench className="w-6 h-6" />, title: "Warranty & Service", points: ["Most international OEMs lack a warranty and service capability.", "FluxCo can build a fleet of recurring revenue service contracts."] },
+              ].map((card, i) => (
+                <div key={card.title} className="d2-rev-card" style={{ animationDelay: `${0.2 + i * 0.15}s` }}>
+                  <div className="d2-rev-card-icon">{card.icon}</div>
+                  <h3 className="d2-rev-card-title">{card.title}</h3>
+                  <ul className="d2-rev-card-list">
+                    {card.points.map((p, j) => <li key={j}>{p}</li>)}
+                  </ul>
+                </div>
+              ))}
+            </div>
+
+            <div className="d2-rev-insight">
+              Every unit looks like a custom order to the customer. To us, it&apos;s a commodity we&apos;ve seen a thousand times.
             </div>
           </div>
         </section>
