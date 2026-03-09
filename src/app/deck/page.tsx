@@ -796,7 +796,7 @@ export default function Deck2Page() {
                   <li><strong>IRA 45X Credits:</strong> Only for domestically manufactured, FEOC-compliant equipment.</li>
                   <li><strong>National Security:</strong> Executive orders classify transformers as critical infrastructure.</li>
                 </ul>
-                <p className="d2-p d2-highlight">Everyone wants American-made. It barely exists.</p>
+                <p className="d2-p d2-highlight">We need American-made. It barely exists.</p>
               </div>
               <div className="d2-stats-col">
                 {[
