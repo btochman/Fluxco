@@ -846,7 +846,7 @@ const deck2Styles = `
   }
 
   *, *::before, *::after { box-sizing: border-box; }
-  html, body { background: var(--d2-bg) !important; overflow: hidden !important; max-width: 100vw; }
+  html, body { background: var(--d2-bg) !important; max-width: 100vw; }
 
   /* ---- SCROLL CONTAINER ---- */
   .d2-container {
@@ -1583,7 +1583,7 @@ const deck2Styles = `
 
   /* ---- MOBILE ---- */
   @media (max-width: 768px) {
-    html, body { overflow: auto !important; height: auto !important; }
+    html, body { height: auto !important; }
     .d2-container {
       position: static !important; inset: auto !important;
       overflow: visible !important; scroll-snap-type: none !important;
