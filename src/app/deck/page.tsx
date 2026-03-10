@@ -886,6 +886,18 @@ export default function Deck2Page() {
                     <span>50% property tax reduction for 10 years for qualifying manufacturing facilities.</span>
                     <span className="d2-capital-amount">50% tax reduction</span>
                   </a>
+                  <a href="https://www.usda.gov/about-usda/news/press-releases/2024/12/19/usda-announces-another-round-historic-investments-increase-access-clean-affordable-energy-across" target="_blank" rel="noopener noreferrer" className="d2-capital-card">
+                    <div className="d2-capital-tag">Loan / Grant</div>
+                    <strong>USDA New ERA</strong>
+                    <span>Empowering Rural America. Loans and grants to rural electric cooperatives for grid modernization.</span>
+                    <span className="d2-capital-amount">$4.37B</span>
+                  </a>
+                  <a href="https://www.exim.gov/about/special-initiatives/make-more-in-america-initiative" target="_blank" rel="noopener noreferrer" className="d2-capital-card">
+                    <div className="d2-capital-tag">Federal Loan</div>
+                    <strong>EXIM Make More in America</strong>
+                    <span>Working capital and capex financing for domestic manufacturing that leads to exports.</span>
+                    <span className="d2-capital-amount">Open</span>
+                  </a>
                 </div>
               </div>
 
@@ -905,18 +917,6 @@ export default function Deck2Page() {
                     <strong>Brookfield Transition Fund II</strong>
                     <span>World&apos;s largest private fund for clean energy transition. Grid upgrades and electrification.</span>
                     <span className="d2-capital-amount">$20B</span>
-                  </a>
-                  <a href="https://www.usda.gov/about-usda/news/press-releases/2024/12/19/usda-announces-another-round-historic-investments-increase-access-clean-affordable-energy-across" target="_blank" rel="noopener noreferrer" className="d2-capital-card">
-                    <div className="d2-capital-tag">Loan / Grant</div>
-                    <strong>USDA New ERA</strong>
-                    <span>Empowering Rural America. Loans and grants to rural electric cooperatives for grid modernization.</span>
-                    <span className="d2-capital-amount">$4.37B</span>
-                  </a>
-                  <a href="https://www.exim.gov/about/special-initiatives/make-more-in-america-initiative" target="_blank" rel="noopener noreferrer" className="d2-capital-card">
-                    <div className="d2-capital-tag">Federal Loan</div>
-                    <strong>EXIM Make More in America</strong>
-                    <span>Working capital and capex financing for domestic manufacturing that leads to exports.</span>
-                    <span className="d2-capital-amount">Open</span>
                   </a>
                 </div>
               </div>
