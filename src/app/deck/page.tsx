@@ -32,10 +32,11 @@ function useCountUp(end: number, duration = 2000, trigger = false) {
 /* ------------------------------------------------------------------ */
 /*  Hook: intersection observer for scroll-triggered animations        */
 /* ------------------------------------------------------------------ */
-function useInView(threshold = 0.3) {
+function useInView(threshold = 0.3, ready = true) {
   const ref = useRef<HTMLDivElement>(null);
   const [inView, setInView] = useState(false);
   useEffect(() => {
+    if (!ready) return;
     const el = ref.current;
     if (!el) return;
     const obs = new IntersectionObserver(
@@ -44,7 +45,7 @@ function useInView(threshold = 0.3) {
     );
     obs.observe(el);
     return () => obs.disconnect();
-  }, [threshold]);
+  }, [threshold, ready]);
   return { ref, inView };
 }
 
@@ -253,18 +254,19 @@ export default function Deck2Page() {
   }, []);
 
   /* Slide in-view trackers */
-  const s1 = useInView(0.3);
-  const s2 = useInView(0.2);
-  const s3 = useInView(0.2);
-  const s4 = useInView(0.2);
-  const s5 = useInView(0.2);
-  const s6 = useInView(0.2);
-  const s7 = useInView(0.2);
-  const s8 = useInView(0.2);
-  const s8b = useInView(0.2);
-  const s9 = useInView(0.2);
-  const s10 = useInView(0.2);
-  const s11 = useInView(0.2);
+  const ready = hasAccess === true;
+  const s1 = useInView(0.3, ready);
+  const s2 = useInView(0.2, ready);
+  const s3 = useInView(0.2, ready);
+  const s4 = useInView(0.2, ready);
+  const s5 = useInView(0.2, ready);
+  const s6 = useInView(0.2, ready);
+  const s7 = useInView(0.2, ready);
+  const s8 = useInView(0.2, ready);
+  const s8b = useInView(0.2, ready);
+  const s9 = useInView(0.2, ready);
+  const s10 = useInView(0.2, ready);
+  const s11 = useInView(0.2, ready);
 
   /* Animated counters */
   const c85 = useCountUp(85, 1800, s3.inView);
