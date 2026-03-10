@@ -446,7 +446,7 @@ export default function Deck2Page() {
                 </div>
               </div>
               <div style={{ background: "rgba(255,255,255,0.02)", borderRadius: 12, border: "1px solid rgba(255,255,255,0.06)", padding: "16px 12px 8px" }}>
-                <div style={{ textAlign: "center", fontSize: 11, fontWeight: 600, color: "var(--d2-blue)", letterSpacing: 1, marginBottom: 8 }}>FluxCo RFP #1202</div>
+                <div style={{ textAlign: "center", fontSize: 11, fontWeight: 600, color: "var(--d2-blue)", letterSpacing: 1, marginBottom: 8 }}>FluxCo RFP #1202 Bid Results</div>
                 <DeckScatterChart inView={s4.inView} />
               </div>
             </div>
