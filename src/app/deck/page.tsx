@@ -219,9 +219,6 @@ export default function Deck2Page() {
     setHasAccess(document.cookie.includes("deck_access="));
   }, []);
 
-  if (hasAccess === null) return null; // avoid flash
-  if (!hasAccess) return <EmailGate onAccess={() => setHasAccess(true)} />;
-
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
@@ -275,6 +272,9 @@ export default function Deck2Page() {
   const c6 = useCountUp(6, 1200, s3.inView);
   const c60 = useCountUp(60, 1600, s6.inView);
   const c40 = useCountUp(40, 1600, s6.inView);
+
+  if (hasAccess === null) return null;
+  if (!hasAccess) return <EmailGate onAccess={() => setHasAccess(true)} />;
 
   return (
     <>
