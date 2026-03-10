@@ -5,11 +5,11 @@ import {
   Zap, ArrowRight, ArrowLeft, ChevronDown, Shield, Factory, Cpu, Building2,
   Globe, Clock, DollarSign, CheckCircle, TrendingUp, Search, BarChart3,
   Users, Wrench, Bot, Sparkles, AlertTriangle, Eye, Target, Repeat,
-  RefreshCw, Package, ShieldCheck, CircleDollarSign,
+  RefreshCw, Package, ShieldCheck, CircleDollarSign, Landmark, Briefcase, BadgeDollarSign,
 } from "lucide-react";
 import { EmailGate } from "./EmailGate";
 
-const TOTAL_SECTIONS = 12;
+const TOTAL_SECTIONS = 13;
 
 /* ------------------------------------------------------------------ */
 /*  Hook: animate numbers counting up                                  */
@@ -275,6 +275,7 @@ export default function Deck2Page() {
   const s9 = useInView(0.2, ready);
   const s10 = useInView(0.2, ready);
   const s11 = useInView(0.2, ready);
+  const s12 = useInView(0.2, ready);
 
   /* Animated counters */
   const c85 = useCountUp(85, 1800, s3.inView);
@@ -823,6 +824,111 @@ export default function Deck2Page() {
             <div className="d2-rev-insight">
               Every unit looks custom to the customer. To us, it&apos;s a commodity we&apos;ve seen a thousand times — and every unit that comes back makes the next warranty cheaper to offer.
             </div>
+          </div>
+        </section>
+
+        {/* ========== APPENDIX — THE CAPITAL IS WAITING ========== */}
+        <section className="d2-slide" ref={s12.ref}>
+          <div className="d2-glow d2-glow-5" />
+          <div className={`d2-content ${isMobile || s12.inView ? "in" : ""}`}>
+            <div className="d2-slide-label">APPENDIX</div>
+            <h2 className="d2-h2">The Capital Is Waiting</h2>
+            <p className="d2-p" style={{ maxWidth: 800, marginBottom: 24 }}>
+              Billions in federal programs, tax credits, and private capital are earmarked for exactly what we&apos;re building &mdash; domestic critical infrastructure manufacturing. The funding exists. The gap is companies ready to deploy it.
+            </p>
+
+            <div className="d2-rev-stats">
+              {[
+                { value: "$250B+", label: "DOE Loan Authority" },
+                { value: "30%", label: "48C Tax Credit" },
+                { value: "$10.5B", label: "GRIP Grants" },
+              ].map((stat) => (
+                <div key={stat.label} className="d2-rev-stat">
+                  <div className="d2-rev-stat-value">{stat.value}</div>
+                  <div className="d2-rev-stat-label">{stat.label}</div>
+                </div>
+              ))}
+            </div>
+
+            <div className="d2-grid-2">
+              <div>
+                <h3 className="d2-h3" style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <Landmark className="w-5 h-5" style={{ color: "var(--d2-blue)" }} /> Federal Programs
+                </h3>
+                <div className="d2-capital-list">
+                  <a href="https://www.energy.gov/infrastructure/qualifying-advanced-energy-project-credit-48c-program" target="_blank" rel="noopener noreferrer" className="d2-capital-card">
+                    <div className="d2-capital-tag">Tax Credit</div>
+                    <strong>Section 48C</strong>
+                    <span>30% investment tax credit. Transformers &amp; amorphous steel <em>explicitly listed</em> as priority.</span>
+                    <span className="d2-capital-amount">$10B program</span>
+                  </a>
+                  <a href="https://www.energy.gov/EDF" target="_blank" rel="noopener noreferrer" className="d2-capital-card">
+                    <div className="d2-capital-tag">Loan Guarantee</div>
+                    <strong>DOE Energy Dominance Financing</strong>
+                    <span>Grid reliability and supply chain security. Up to $250B in loan authority through 2028.</span>
+                    <span className="d2-capital-amount">$250B authority</span>
+                  </a>
+                  <a href="https://www.energy.gov/gdo/grid-resilience-and-innovation-partnerships-grip-program" target="_blank" rel="noopener noreferrer" className="d2-capital-card">
+                    <div className="d2-capital-tag">Grant</div>
+                    <strong>GRIP Program</strong>
+                    <span>Grid Resilience &amp; Innovation Partnerships. 105 projects funded across all 50 states.</span>
+                    <span className="d2-capital-amount">$10.5B</span>
+                  </a>
+                  <a href="https://www.energy.gov/articles/president-biden-invokes-defense-production-act-accelerate-domestic-manufacturing-clean" target="_blank" rel="noopener noreferrer" className="d2-capital-card">
+                    <div className="d2-capital-tag">Grant</div>
+                    <strong>Defense Production Act</strong>
+                    <span>DPA invoked specifically for transformers. $1B appropriated for critical manufacturing.</span>
+                    <span className="d2-capital-amount">$1B</span>
+                  </a>
+                  <a href="https://comptroller.texas.gov/economy/development/prop-tax/jeti/" target="_blank" rel="noopener noreferrer" className="d2-capital-card">
+                    <div className="d2-capital-tag">State</div>
+                    <strong>Texas JETI</strong>
+                    <span>50% property tax reduction for 10 years for qualifying manufacturing facilities.</span>
+                    <span className="d2-capital-amount">50% tax reduction</span>
+                  </a>
+                </div>
+              </div>
+
+              <div>
+                <h3 className="d2-h3" style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <Briefcase className="w-5 h-5" style={{ color: "var(--d2-blue)" }} /> Private Capital
+                </h3>
+                <div className="d2-capital-list">
+                  <a href="https://www.apollo.com/insights-news/pressreleases/2025/10/apollo-and-8vc-partner-to-accelerate-the-next-wave-of-american-industrial-innovation-3176388" target="_blank" rel="noopener noreferrer" className="d2-capital-card">
+                    <div className="d2-capital-tag d2-capital-tag-private">Equity / Hybrid</div>
+                    <strong>Apollo + 8VC</strong>
+                    <span>Joint fund for advanced manufacturing, energy, and infrastructure. Announced Oct 2025.</span>
+                    <span className="d2-capital-amount">Multi-billion $</span>
+                  </a>
+                  <a href="https://bam.brookfield.com/press-releases/brookfield-raises-20-billion-record-transition-fund" target="_blank" rel="noopener noreferrer" className="d2-capital-card">
+                    <div className="d2-capital-tag d2-capital-tag-private">PE / Infrastructure</div>
+                    <strong>Brookfield Transition Fund II</strong>
+                    <span>World&apos;s largest private fund for clean energy transition. Grid upgrades and electrification.</span>
+                    <span className="d2-capital-amount">$20B</span>
+                  </a>
+                  <a href="https://www.breakthroughenergy.org/our-work/breakthrough-energy-ventures/bev-portfolio/" target="_blank" rel="noopener noreferrer" className="d2-capital-card">
+                    <div className="d2-capital-tag d2-capital-tag-private">Venture</div>
+                    <strong>Breakthrough Energy Ventures</strong>
+                    <span>Bill Gates&apos; climate fund. Fund III raised $839M. Grid modernization is a core thesis.</span>
+                    <span className="d2-capital-amount">$839M fund</span>
+                  </a>
+                  <a href="https://www.usda.gov/about-usda/news/press-releases/2024/12/19/usda-announces-another-round-historic-investments-increase-access-clean-affordable-energy-across" target="_blank" rel="noopener noreferrer" className="d2-capital-card">
+                    <div className="d2-capital-tag">Loan / Grant</div>
+                    <strong>USDA New ERA</strong>
+                    <span>Empowering Rural America. Loans and grants to rural electric cooperatives for grid modernization.</span>
+                    <span className="d2-capital-amount">$4.37B</span>
+                  </a>
+                  <a href="https://www.exim.gov/about/special-initiatives/make-more-in-america-initiative" target="_blank" rel="noopener noreferrer" className="d2-capital-card">
+                    <div className="d2-capital-tag">Federal Loan</div>
+                    <strong>EXIM Make More in America</strong>
+                    <span>Working capital and capex financing for domestic manufacturing that leads to exports.</span>
+                    <span className="d2-capital-amount">Open</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <p className="d2-source">All sources linked. Click any card to view the program directly.</p>
           </div>
         </section>
 
@@ -1394,6 +1500,40 @@ const mobileDeckStyles = `
     border-radius: var(--d2-radius);
     color: var(--d2-blue); font-family: 'Inter', sans-serif;
     font-size: 12px; font-weight: 600; letter-spacing: 0.3px;
+  }
+
+  /* ---- CAPITAL CARDS ---- */
+  .d2-capital-list {
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .d2-capital-card {
+    display: flex; flex-direction: column; gap: 4px;
+    padding: 14px 16px; border-radius: var(--d2-radius);
+    background: var(--d2-surface); border: 1px solid var(--d2-border);
+    text-decoration: none; color: inherit;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .d2-capital-card:hover {
+    border-color: rgba(45,140,255,0.4);
+    background: rgba(45,140,255,0.06);
+  }
+  .d2-capital-card strong {
+    color: #fff; font-family: 'Inter', sans-serif; font-size: 14px;
+  }
+  .d2-capital-card span {
+    color: var(--d2-text-dim); font-family: 'Inter', sans-serif; font-size: 12px; line-height: 1.5;
+  }
+  .d2-capital-amount {
+    color: var(--d2-blue) !important; font-weight: 700 !important; font-size: 13px !important;
+  }
+  .d2-capital-tag {
+    font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 1px;
+    color: var(--d2-blue); background: rgba(45,140,255,0.1);
+    padding: 2px 8px; border-radius: 4px; width: fit-content;
+  }
+  .d2-capital-tag-private {
+    color: #a78bfa; background: rgba(167,139,250,0.1);
   }
 
   /* ---- TEAM ---- */
@@ -2161,6 +2301,41 @@ const deck2Styles = `
     border-radius: var(--d2-radius);
     color: var(--d2-blue); font-family: 'Inter', sans-serif;
     font-size: 12px; font-weight: 600; letter-spacing: 0.3px;
+  }
+
+  /* ---- CAPITAL CARDS ---- */
+  .d2-capital-list {
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .d2-capital-card {
+    display: flex; flex-direction: column; gap: 4px;
+    padding: 14px 16px; border-radius: var(--d2-radius);
+    background: var(--d2-surface); border: 1px solid var(--d2-border);
+    text-decoration: none; color: inherit;
+    transition: border-color 0.3s, background 0.3s, transform 0.3s;
+  }
+  .d2-capital-card:hover {
+    border-color: rgba(45,140,255,0.4);
+    background: rgba(45,140,255,0.06);
+    transform: translateY(-2px);
+  }
+  .d2-capital-card strong {
+    color: #fff; font-family: 'Inter', sans-serif; font-size: 14px;
+  }
+  .d2-capital-card span {
+    color: var(--d2-text-dim); font-family: 'Inter', sans-serif; font-size: 12px; line-height: 1.5;
+  }
+  .d2-capital-amount {
+    color: var(--d2-blue) !important; font-weight: 700 !important; font-size: 13px !important;
+  }
+  .d2-capital-tag {
+    font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 1px;
+    color: var(--d2-blue); background: rgba(45,140,255,0.1);
+    padding: 2px 8px; border-radius: 4px; width: fit-content;
+  }
+  .d2-capital-tag-private {
+    color: #a78bfa; background: rgba(167,139,250,0.1);
   }
 
   /* ---- TEAM (slide 9) ---- */
