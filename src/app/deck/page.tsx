@@ -524,7 +524,7 @@ export default function Deck2Page() {
                   <div>
                     <strong>The Manufacturing Secret Weapon</strong>
                     <p className="d2-p" style={{ fontSize: 13, marginBottom: 0, marginTop: 4 }}>
-                      Every bid teaches us who supplies what, at what price, at what lead time. We&apos;re building the most comprehensive market intelligence engine in the industry.
+                      Every bid teaches us where the highest demand is and where the highest margins are. We&apos;re building the most comprehensive market intelligence engine in the industry.
                     </p>
                   </div>
                 </div>
