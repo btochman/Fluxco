@@ -540,9 +540,9 @@ export default function Deck2Page() {
           <div className="d2-glow d2-glow-3" />
           <div className={`d2-content ${isMobile || s13.inView ? "in" : ""}`}>
             <div className="d2-slide-label">THE PLAYBOOK</div>
-            <h2 className="d2-h2">Why Marketplace First</h2>
+            <h2 className="d2-h2">The Marketplace Builds the Factory</h2>
             <p className="d2-p" style={{ maxWidth: 800, marginBottom: 32 }}>
-              Most companies raise $200M and guess what to build. We let the market tell us. Every transaction through the marketplace generates real demand data &mdash; what specs, what volumes, what regions, what price the market will bear. <strong>By the time we break ground, we already know exactly what to manufacture.</strong>
+              Most manufacturers build large power transformers and slowly find their niche. We&apos;re starting with exactly the right product line on day one &mdash; because every transaction through the marketplace generates real demand data: what specs, what volumes, what regions, what price the market will bear. <strong>By the time we break ground, we already know exactly what to manufacture.</strong>
             </p>
 
             <div className="d2-playbook-flow">
