@@ -611,8 +611,6 @@ export default function Deck2Page() {
             <h2 className="d2-h2">Structural Moats</h2>
             <div className="d2-moats">
               {[
-                { icon: <Shield className="w-6 h-6" />, title: "Industrial Security", points: ["100% domestic, FEOC-free — the only safe choice for tax-credit projects.", "IRA 45X credits strip 30–50% from FEOC-tainted projects. We're immune.", "Zero tariff exposure. Zero trade war risk."] },
-                { icon: <Sparkles className="w-6 h-6" />, title: "Efficiency Mandate", points: ["DOE 2029 standards require leaps legacy GOES steel can't meet.", "Industry must shift to amorphous steel. Incumbents can't retool.", "Smart bolt-on tech (monitoring, SCADA) adds differentiation."] },
                 { icon: <Bot className="w-6 h-6" />, title: "Automation Advantage", points: ["Robotics neutralize Asian labor arbitrage.", "Building locally saves ~20% on shipping massive steel units.", "Vertical integration from raw amorphous steel to finished product."] },
                 { icon: <BarChart3 className="w-6 h-6" />, title: "Market Intelligence", points: ["Real-time pricing, lead time, and capacity data across 100+ OEMs.", "We know exactly what to build and where the margin is.", "No other manufacturer has this data advantage."] },
               ].map((moat, i) => (
@@ -622,6 +620,22 @@ export default function Deck2Page() {
                   <ul className="d2-moat-list">
                     {moat.points.map((p, j) => <li key={j}>{p}</li>)}
                   </ul>
+                </div>
+              ))}
+            </div>
+            <div className="d2-moats-regulatory">
+              {[
+                { icon: <Shield className="w-5 h-5" />, title: "Industrial Security", points: ["100% domestic, FEOC-free — the only safe choice for tax-credit projects.", "IRA 45X credits strip 30–50% from FEOC-tainted projects. We're immune.", "Zero tariff exposure. Zero trade war risk."] },
+                { icon: <Sparkles className="w-5 h-5" />, title: "Efficiency Mandate", points: ["DOE 2029 standards require leaps legacy GOES steel can't meet.", "Industry must shift to amorphous steel. Incumbents can't retool.", "Smart bolt-on tech (monitoring, SCADA) adds differentiation."] },
+              ].map((moat, i) => (
+                <div key={moat.title} className="d2-moat-reg" style={{ animationDelay: `${0.5 + i * 0.15}s` }}>
+                  <div className="d2-moat-reg-icon">{moat.icon}</div>
+                  <div className="d2-moat-reg-body">
+                    <h3 className="d2-moat-reg-title">{moat.title}</h3>
+                    <ul className="d2-moat-reg-list">
+                      {moat.points.map((p, j) => <li key={j}>{p}</li>)}
+                    </ul>
+                  </div>
                 </div>
               ))}
             </div>
@@ -1386,6 +1400,37 @@ const mobileDeckStyles = `
     content: ''; position: absolute; left: 0; top: 12px;
     width: 6px; height: 6px; border-radius: 50%;
     background: rgba(45,140,255,0.4);
+  }
+
+  /* ---- REGULATORY (de-emphasized) ---- */
+  .d2-moats-regulatory {
+    display: flex; flex-direction: column; gap: 12px;
+    margin-top: 20px; padding-top: 20px;
+    border-top: 1px solid var(--d2-border);
+  }
+  .d2-moat-reg {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 12px 16px; border-radius: var(--d2-radius);
+    background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);
+  }
+  .d2-moat-reg-icon {
+    color: var(--d2-text-dim); flex-shrink: 0; margin-top: 2px;
+  }
+  .d2-moat-reg-body { flex: 1; }
+  .d2-moat-reg-title {
+    font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 700;
+    color: var(--d2-text-dim); margin: 0 0 4px 0;
+  }
+  .d2-moat-reg-list { list-style: none; padding: 0; margin: 0; }
+  .d2-moat-reg-list li {
+    font-family: 'Inter', sans-serif; font-size: 12px;
+    color: var(--d2-text-dim); line-height: 1.5;
+    padding: 2px 0 2px 16px; position: relative;
+  }
+  .d2-moat-reg-list li::before {
+    content: ''; position: absolute; left: 0; top: 8px;
+    width: 4px; height: 4px; border-radius: 50%;
+    background: rgba(255,255,255,0.15);
   }
 
   /* ---- MONETIZATION ---- */
@@ -2202,6 +2247,39 @@ const deck2Styles = `
     content: ''; position: absolute; left: 0; top: 12px;
     width: 6px; height: 6px; border-radius: 50%;
     background: rgba(45,140,255,0.4);
+  }
+
+  /* ---- REGULATORY (de-emphasized) ---- */
+  .d2-moats-regulatory {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+    margin-top: 24px; padding-top: 24px;
+    border-top: 1px solid var(--d2-border);
+  }
+  .d2-moat-reg {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 16px 20px; border-radius: var(--d2-radius);
+    background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);
+    transition: border-color 0.3s;
+  }
+  .d2-moat-reg:hover { border-color: rgba(255,255,255,0.1); }
+  .d2-moat-reg-icon {
+    color: var(--d2-text-dim); flex-shrink: 0; margin-top: 2px;
+  }
+  .d2-moat-reg-body { flex: 1; }
+  .d2-moat-reg-title {
+    font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 700;
+    color: var(--d2-text-dim); margin: 0 0 6px 0;
+  }
+  .d2-moat-reg-list { list-style: none; padding: 0; margin: 0; }
+  .d2-moat-reg-list li {
+    font-family: 'Inter', sans-serif; font-size: 12px;
+    color: var(--d2-text-dim); line-height: 1.5;
+    padding: 2px 0 2px 16px; position: relative;
+  }
+  .d2-moat-reg-list li::before {
+    content: ''; position: absolute; left: 0; top: 8px;
+    width: 4px; height: 4px; border-radius: 50%;
+    background: rgba(255,255,255,0.15);
   }
 
   /* ---- MONETIZATION (slide 8) ---- */
