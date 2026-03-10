@@ -5,6 +5,7 @@ import {
   Zap, ArrowRight, ArrowLeft, ChevronDown, Shield, Factory, Cpu, Building2,
   Globe, Clock, DollarSign, CheckCircle, TrendingUp, Search, BarChart3,
   Users, Wrench, Bot, Sparkles, AlertTriangle, Eye, Target, Repeat,
+  RefreshCw, Package, ShieldCheck, CircleDollarSign,
 } from "lucide-react";
 import { EmailGate } from "./EmailGate";
 
@@ -751,18 +752,18 @@ export default function Deck2Page() {
           </div>
         </section>
 
-        {/* ========== APPENDIX — MONETIZATION ========== */}
+        {/* ========== APPENDIX — THE FLEET FLYWHEEL ========== */}
         <section className="d2-slide" ref={s8b.ref}>
           <div className="d2-glow d2-glow-5" />
           <div className={`d2-content ${isMobile || s8b.inView ? "in" : ""}`}>
             <div className="d2-slide-label">APPENDIX</div>
-            <h2 className="d2-h2">How We Make Money</h2>
+            <h2 className="d2-h2">The Fleet Flywheel</h2>
 
             <div className="d2-rev-stats">
               {[
-                { value: "15–25%", label: "Marketplace Take Rate" },
-                { value: "$20B+", label: "Addressable Market" },
-                { value: "9 Month", label: "ROI" },
+                { value: "70%", label: "Buyers Want Leasing" },
+                { value: "0", label: "OEM-Agnostic Warranty Providers" },
+                { value: "10x", label: "Faster Replacement" },
               ].map((stat) => (
                 <div key={stat.label} className="d2-rev-stat">
                   <div className="d2-rev-stat-value">{stat.value}</div>
@@ -771,25 +772,54 @@ export default function Deck2Page() {
               ))}
             </div>
 
-            <div className="d2-rev-grid">
-              {[
-                { icon: <DollarSign className="w-6 h-6" />, title: "Marketplace Take Rate", points: ["15–25% take rate on every transaction.", "Volume grows as OEM network expands.", "Higher margins on complex/custom specs."] },
-                { icon: <Repeat className="w-6 h-6" />, title: "Transformer as a Service (TaaS)", points: ["Leasing model for companies that don't want to own.", "Recurring monthly revenue per unit.", "Lower barrier to entry for customers."] },
-                { icon: <TrendingUp className="w-6 h-6" />, title: "OEM Volume Pricing", points: ["We will become a top 10 transformer buyer by 2027.", "Customer sees market price, FluxCo captures the spread.", "Looks custom to buyer — commodity to us."] },
-                { icon: <Wrench className="w-6 h-6" />, title: "Warranty & Service", points: ["Most international OEMs lack a warranty and service capability.", "FluxCo can build a fleet of recurring revenue service contracts."] },
-              ].map((card, i) => (
-                <div key={card.title} className="d2-rev-card" style={{ animationDelay: `${0.2 + i * 0.15}s` }}>
-                  <div className="d2-rev-card-icon">{card.icon}</div>
-                  <h3 className="d2-rev-card-title">{card.title}</h3>
-                  <ul className="d2-rev-card-list">
-                    {card.points.map((p, j) => <li key={j}>{p}</li>)}
-                  </ul>
+            <div className="d2-grid-2">
+              <div>
+                <h3 className="d2-h3">The Gap</h3>
+                <div className="d2-problem-cards">
+                  <div className="d2-problem-card">
+                    <div className="d2-problem-icon"><Building2 className="w-5 h-5" /></div>
+                    <span>New industrial buyers — data centers, manufacturers — don&apos;t want to own transformers. They want power, not equipment.</span>
+                  </div>
+                  <div className="d2-problem-card">
+                    <div className="d2-problem-icon"><Wrench className="w-5 h-5" /></div>
+                    <span>Even buyers who purchase can&apos;t find warranty or service. OEMs only support their own units — if they support them at all.</span>
+                  </div>
+                  <div className="d2-problem-card">
+                    <div className="d2-problem-icon"><Clock className="w-5 h-5" /></div>
+                    <span>When a unit fails, replacement takes months. One broken transformer can idle a $500M facility.</span>
+                  </div>
                 </div>
-              ))}
+              </div>
+
+              <div>
+                <h3 className="d2-h3">The Flywheel</h3>
+                <div className="d2-flywheel">
+                  {[
+                    { icon: <CircleDollarSign className="w-5 h-5" />, label: "Sell & Lease", desc: "Marketplace transactions and TaaS leasing build our installed base." },
+                    { icon: <ShieldCheck className="w-5 h-5" />, label: "Warranty & Service", desc: "OEM-agnostic coverage no one else can offer — we're not tied to one factory." },
+                    { icon: <RefreshCw className="w-5 h-5" />, label: "Refurb & Recycle", desc: "Serviced units re-enter our pool. Every repair grows the fleet." },
+                    { icon: <Package className="w-5 h-5" />, label: "Faster Replacement", desc: "Largest pool of available units = replacement in days, not months." },
+                    { icon: <TrendingUp className="w-5 h-5" />, label: "Better Terms", desc: "Bigger fleet = lower risk per unit = warranty terms no one can match." },
+                  ].map((step, i) => (
+                    <div key={step.label} className="d2-fw-step">
+                      <div className="d2-fw-num">{i + 1}</div>
+                      <div className="d2-fw-icon">{step.icon}</div>
+                      <div className="d2-fw-info">
+                        <div className="d2-fw-label">{step.label}</div>
+                        <div className="d2-fw-desc">{step.desc}</div>
+                      </div>
+                    </div>
+                  ))}
+                  <div className="d2-fw-loop">
+                    <RefreshCw className="w-4 h-4" />
+                    <span>Every unit that touches FluxCo makes the system stronger</span>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <div className="d2-rev-insight">
-              Every unit looks like a custom order to the customer. To us, it&apos;s a commodity we&apos;ve seen a thousand times.
+              Every unit looks custom to the customer. To us, it&apos;s a commodity we&apos;ve seen a thousand times — and every unit that comes back makes the next warranty cheaper to offer.
             </div>
           </div>
         </section>
@@ -1320,6 +1350,48 @@ const mobileDeckStyles = `
     background: rgba(45,140,255,0.05); border-radius: 0 var(--d2-radius) var(--d2-radius) 0;
     font-family: 'Inter', sans-serif; font-size: 15px; font-style: italic;
     color: rgba(255,255,255,0.85); line-height: 1.6;
+  }
+
+  /* ---- FLYWHEEL ---- */
+  .d2-flywheel { display: flex; flex-direction: column; gap: 0; }
+  .d2-fw-step {
+    display: flex; align-items: flex-start; gap: 14px;
+    padding: 14px 16px; position: relative;
+    border-left: 2px solid rgba(45,140,255,0.2);
+    margin-left: 14px;
+  }
+  .d2-fw-step:last-of-type { border-left-color: transparent; }
+  .d2-fw-num {
+    position: absolute; left: -14px; top: 12px;
+    width: 26px; height: 26px; border-radius: 50%;
+    background: var(--d2-bg); border: 2px solid var(--d2-blue);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    color: var(--d2-blue); font-weight: 700;
+    box-shadow: 0 0 12px rgba(45,140,255,0.2);
+  }
+  .d2-fw-icon {
+    width: 36px; height: 36px; border-radius: 8px;
+    background: rgba(45,140,255,0.1);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--d2-blue); flex-shrink: 0;
+  }
+  .d2-fw-info { display: flex; flex-direction: column; gap: 2px; }
+  .d2-fw-label {
+    font-family: 'Inter', sans-serif; font-size: 14px;
+    color: #fff; font-weight: 600;
+  }
+  .d2-fw-desc {
+    font-family: 'Inter', sans-serif; font-size: 13px;
+    color: var(--d2-text); line-height: 1.5;
+  }
+  .d2-fw-loop {
+    display: flex; align-items: center; gap: 8px;
+    margin-top: 12px; margin-left: 14px; padding: 10px 16px;
+    background: rgba(45,140,255,0.06); border: 1px solid rgba(45,140,255,0.2);
+    border-radius: var(--d2-radius);
+    color: var(--d2-blue); font-family: 'Inter', sans-serif;
+    font-size: 12px; font-weight: 600; letter-spacing: 0.3px;
   }
 
   /* ---- TEAM ---- */
@@ -2044,6 +2116,47 @@ const deck2Styles = `
     background: rgba(45,140,255,0.05); border-radius: 0 var(--d2-radius) var(--d2-radius) 0;
     font-family: 'Inter', sans-serif; font-size: 15px; font-style: italic;
     color: rgba(255,255,255,0.85); line-height: 1.6;
+  }
+
+  /* ---- FLYWHEEL ---- */
+  .d2-flywheel { display: flex; flex-direction: column; gap: 0; }
+  .d2-fw-step {
+    display: flex; align-items: flex-start; gap: 14px;
+    padding: 14px 16px; position: relative;
+    border-left: 2px solid rgba(45,140,255,0.2);
+    margin-left: 14px;
+  }
+  .d2-fw-step:last-of-type { border-left-color: transparent; }
+  .d2-fw-num {
+    position: absolute; left: -14px; top: 12px;
+    width: 26px; height: 26px; border-radius: 50%;
+    background: var(--d2-bg); border: 2px solid var(--d2-blue);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    color: var(--d2-blue); font-weight: 700;
+  }
+  .d2-fw-icon {
+    width: 36px; height: 36px; border-radius: 8px;
+    background: rgba(45,140,255,0.1);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--d2-blue); flex-shrink: 0;
+  }
+  .d2-fw-info { display: flex; flex-direction: column; gap: 2px; }
+  .d2-fw-label {
+    font-family: 'Inter', sans-serif; font-size: 14px;
+    color: #fff; font-weight: 600;
+  }
+  .d2-fw-desc {
+    font-family: 'Inter', sans-serif; font-size: 13px;
+    color: var(--d2-text); line-height: 1.5;
+  }
+  .d2-fw-loop {
+    display: flex; align-items: center; gap: 8px;
+    margin-top: 12px; margin-left: 14px; padding: 10px 16px;
+    background: rgba(45,140,255,0.06); border: 1px solid rgba(45,140,255,0.2);
+    border-radius: var(--d2-radius);
+    color: var(--d2-blue); font-family: 'Inter', sans-serif;
+    font-size: 12px; font-weight: 600; letter-spacing: 0.3px;
   }
 
   /* ---- TEAM (slide 9) ---- */
