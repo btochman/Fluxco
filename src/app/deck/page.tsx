@@ -522,7 +522,7 @@ export default function Deck2Page() {
                 <div className="d2-intel-card">
                   <Eye className="w-5 h-5 flex-shrink-0" />
                   <div>
-                    <strong>The Secret Weapon</strong>
+                    <strong>The Manufacturing Secret Weapon</strong>
                     <p className="d2-p" style={{ fontSize: 13, marginBottom: 0, marginTop: 4 }}>
                       Every bid teaches us who supplies what, at what price, at what lead time. We&apos;re building the most comprehensive market intelligence engine in the industry.
                     </p>
@@ -544,11 +544,11 @@ export default function Deck2Page() {
             </p>
             <div className="d2-tech-grid">
               {[
+                { icon: <Globe className="w-5 h-5" />, title: "Digital Twin Factory", desc: "Design, test, and validate the full line in simulation. Deploy once it already works." },
                 { icon: <Cpu className="w-5 h-5" />, title: "CNC Laser Cutting", desc: "Precision electrical steel. Sub-mm tolerances, no die changes." },
                 { icon: <Bot className="w-5 h-5" />, title: "Vision-Guided Stacking", desc: "Robotic arms adapt to any core geometry. Thousands of laminations." },
                 { icon: <Wrench className="w-5 h-5" />, title: "Adaptive CNC Winding", desc: "Any coil spec without retooling. Recipe-driven, not jig-driven." },
                 { icon: <Eye className="w-5 h-5" />, title: "AI Quality Control", desc: "Machine vision on every part. Automated PD and impedance testing." },
-                { icon: <Globe className="w-5 h-5" />, title: "Digital Twin Factory", desc: "Design, test, and validate the full line in simulation. Deploy once it already works." },
               ].map((t, i) => (
                 <div key={t.title} className="d2-tech-card" style={{ animationDelay: `${0.3 + i * 0.12}s` }}>
                   <div className="d2-tech-icon">{t.icon}</div>
