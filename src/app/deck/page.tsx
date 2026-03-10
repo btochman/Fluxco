@@ -495,22 +495,23 @@ export default function Deck2Page() {
                 </ul>
               </div>
               <div className="d2-flow-col">
-                <div className="d2-flow">
+                <div className="d2-flow d2-flow-4">
                   {[
-                    { icon: <Target className="w-7 h-7" />, label: "Customer Spec", active: false, href: null },
-                    { icon: <Zap className="w-7 h-7" />, label: "FluxCo Spec Builder", active: true, href: "https://fluxco.com/specbuilder" },
-                    { icon: <BarChart3 className="w-7 h-7" />, label: "100+ OEM Bids", active: false, href: null },
+                    { icon: <Target className="w-6 h-6" />, label: "Customer Spec", active: false, href: null, sub: null },
+                    { icon: <Zap className="w-6 h-6" />, label: "FluxCo Spec Builder", active: true, href: "https://fluxco.com/specbuilder", sub: "Try it live →" },
+                    { icon: <BarChart3 className="w-6 h-6" />, label: "100+ OEM Bids", active: false, href: null, sub: null },
+                    { icon: <Sparkles className="w-6 h-6" />, label: "Automated Proposal", active: true, href: "https://fluxco.com/proposal/redacted", sub: "See example →" },
                   ].map((step, i) => (
-                    <div key={step.label} className="d2-flow-group" style={{ animationDelay: `${0.3 + i * 0.25}s` }}>
-                      {i > 0 && <div className="d2-flow-arrow"><ArrowRight className="w-5 h-5" /></div>}
+                    <div key={step.label} className="d2-flow-group" style={{ animationDelay: `${0.3 + i * 0.2}s` }}>
+                      {i > 0 && <div className="d2-flow-arrow"><ArrowRight className="w-4 h-4" /></div>}
                       {step.href ? (
-                        <a href={step.href} target="_blank" rel="noopener noreferrer" className={`d2-flow-step active d2-pulse-glow`} style={{ textDecoration: "none", cursor: "pointer" }}>
+                        <a href={step.href} target="_blank" rel="noopener noreferrer" className="d2-flow-step active d2-pulse-glow" style={{ textDecoration: "none", cursor: "pointer" }}>
                           <div className="d2-flow-icon">{step.icon}</div>
                           <div className="d2-flow-label">{step.label}</div>
-                          <div className="d2-try-it">Try it live &rarr;</div>
+                          {step.sub && <div className="d2-try-it">{step.sub}</div>}
                         </a>
                       ) : (
-                        <div className={`d2-flow-step ${step.active ? "active" : ""}`}>
+                        <div className="d2-flow-step">
                           <div className="d2-flow-icon">{step.icon}</div>
                           <div className="d2-flow-label">{step.label}</div>
                         </div>
@@ -1939,6 +1940,8 @@ const deck2Styles = `
     background: var(--d2-surface); border: 1px solid var(--d2-border);
     min-width: 130px; transition: all 0.3s;
   }
+  .d2-flow-4 .d2-flow-step { min-width: 110px; padding: 18px 14px; gap: 8px; }
+  .d2-flow-4 .d2-flow-arrow { padding: 0 6px; }
   .d2-flow-step.active {
     border-color: var(--d2-blue);
     background: rgba(45,140,255,0.06);
