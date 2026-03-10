@@ -463,7 +463,7 @@ export default function Deck2Page() {
               <div className="d2-text-col">
                 <h3 className="d2-h3">The Chief Transformer Officer</h3>
                 <p className="d2-p">
-                  It will never make sense for a procurement person to become a transformer expert. It&apos;s one of many things they buy &mdash; but one of the most expensive.
+                  It will never make sense for a procurement office to become a transformer expert. It&apos;s one of many things they buy &mdash; but one of the most expensive.
                 </p>
                 <p className="d2-p">
                   <strong>FluxCo becomes their CTO</strong> (Chief Transformer Officer). Our <strong>free Spec Builder</strong> automates the design, then we bid it across <strong>100+ OEMs</strong> worldwide.
