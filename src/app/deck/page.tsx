@@ -6,6 +6,7 @@ import {
   Globe, Clock, DollarSign, CheckCircle, TrendingUp, Search, BarChart3,
   Users, Wrench, Bot, Sparkles, AlertTriangle, Eye, Target, Repeat,
 } from "lucide-react";
+import { EmailGate } from "./EmailGate";
 
 const TOTAL_SECTIONS = 12;
 
@@ -209,8 +210,17 @@ function DeckScatterChart({ inView }: { inView: boolean }) {
 /*  Main deck component                                                */
 /* ------------------------------------------------------------------ */
 export default function Deck2Page() {
+  const [hasAccess, setHasAccess] = useState<boolean | null>(null);
   const [currentSection, setCurrentSection] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Check for deck_access cookie on mount
+  useEffect(() => {
+    setHasAccess(document.cookie.includes("deck_access="));
+  }, []);
+
+  if (hasAccess === null) return null; // avoid flash
+  if (!hasAccess) return <EmailGate onAccess={() => setHasAccess(true)} />;
 
   useEffect(() => {
     const container = containerRef.current;
