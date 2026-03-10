@@ -850,79 +850,61 @@ export default function Deck2Page() {
               ))}
             </div>
 
-            <div className="d2-grid-2">
-              <div>
-                <h3 className="d2-h3" style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                  <Landmark className="w-5 h-5" style={{ color: "var(--d2-blue)" }} /> Federal Programs
-                </h3>
-                <div className="d2-capital-list">
-                  <a href="https://www.energy.gov/infrastructure/qualifying-advanced-energy-project-credit-48c-program" target="_blank" rel="noopener noreferrer" className="d2-capital-card">
-                    <div className="d2-capital-tag">Tax Credit</div>
-                    <strong>Section 48C</strong>
-                    <span>30% investment tax credit. Transformers &amp; amorphous steel <em>explicitly listed</em> as priority.</span>
-                    <span className="d2-capital-amount">$10B program</span>
-                  </a>
-                  <a href="https://www.energy.gov/EDF" target="_blank" rel="noopener noreferrer" className="d2-capital-card">
-                    <div className="d2-capital-tag">Loan Guarantee</div>
-                    <strong>DOE Energy Dominance Financing</strong>
-                    <span>Grid reliability and supply chain security. Up to $250B in loan authority through 2028.</span>
-                    <span className="d2-capital-amount">$250B authority</span>
-                  </a>
-                  <a href="https://www.energy.gov/gdo/grid-resilience-and-innovation-partnerships-grip-program" target="_blank" rel="noopener noreferrer" className="d2-capital-card">
-                    <div className="d2-capital-tag">Grant</div>
-                    <strong>GRIP Program</strong>
-                    <span>Grid Resilience &amp; Innovation Partnerships. 105 projects funded across all 50 states.</span>
-                    <span className="d2-capital-amount">$10.5B</span>
-                  </a>
-                  <a href="https://www.energy.gov/articles/president-biden-invokes-defense-production-act-accelerate-domestic-manufacturing-clean" target="_blank" rel="noopener noreferrer" className="d2-capital-card">
-                    <div className="d2-capital-tag">Grant</div>
-                    <strong>Defense Production Act</strong>
-                    <span>DPA invoked specifically for transformers. $1B appropriated for critical manufacturing.</span>
-                    <span className="d2-capital-amount">$1B</span>
-                  </a>
-                  <a href="https://comptroller.texas.gov/economy/development/prop-tax/jeti/" target="_blank" rel="noopener noreferrer" className="d2-capital-card">
-                    <div className="d2-capital-tag">State</div>
-                    <strong>Texas JETI</strong>
-                    <span>50% property tax reduction for 10 years for qualifying manufacturing facilities.</span>
-                    <span className="d2-capital-amount">50% tax reduction</span>
-                  </a>
-                  <a href="https://www.usda.gov/about-usda/news/press-releases/2024/12/19/usda-announces-another-round-historic-investments-increase-access-clean-affordable-energy-across" target="_blank" rel="noopener noreferrer" className="d2-capital-card">
-                    <div className="d2-capital-tag">Loan / Grant</div>
-                    <strong>USDA New ERA</strong>
-                    <span>Empowering Rural America. Loans and grants to rural electric cooperatives for grid modernization.</span>
-                    <span className="d2-capital-amount">$4.37B</span>
-                  </a>
-                  <a href="https://www.exim.gov/about/special-initiatives/make-more-in-america-initiative" target="_blank" rel="noopener noreferrer" className="d2-capital-card">
-                    <div className="d2-capital-tag">Federal Loan</div>
-                    <strong>EXIM Make More in America</strong>
-                    <span>Working capital and capex financing for domestic manufacturing that leads to exports.</span>
-                    <span className="d2-capital-amount">Open</span>
-                  </a>
-                </div>
-              </div>
-
-              <div>
-                <h3 className="d2-h3" style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                  <Briefcase className="w-5 h-5" style={{ color: "var(--d2-blue)" }} /> Private Capital
-                </h3>
-                <div className="d2-capital-list">
-                  <a href="https://www.apollo.com/insights-news/pressreleases/2025/10/apollo-and-8vc-partner-to-accelerate-the-next-wave-of-american-industrial-innovation-3176388" target="_blank" rel="noopener noreferrer" className="d2-capital-card">
-                    <div className="d2-capital-tag d2-capital-tag-private">Equity / Hybrid</div>
-                    <strong>Apollo + 8VC</strong>
-                    <span>Joint fund for advanced manufacturing, energy, and infrastructure. Announced Oct 2025.</span>
-                    <span className="d2-capital-amount">Multi-billion $</span>
-                  </a>
-                  <a href="https://bam.brookfield.com/press-releases/brookfield-raises-20-billion-record-transition-fund" target="_blank" rel="noopener noreferrer" className="d2-capital-card">
-                    <div className="d2-capital-tag d2-capital-tag-private">PE / Infrastructure</div>
-                    <strong>Brookfield Transition Fund II</strong>
-                    <span>World&apos;s largest private fund for clean energy transition. Grid upgrades and electrification.</span>
-                    <span className="d2-capital-amount">$20B</span>
-                  </a>
-                </div>
-              </div>
+            <div className="d2-capital-grid-full">
+              <a href="https://www.energy.gov/infrastructure/qualifying-advanced-energy-project-credit-48c-program" target="_blank" rel="noopener noreferrer" className="d2-capital-card">
+                <div className="d2-capital-tag">Tax Credit</div>
+                <strong>Section 48C</strong>
+                <span>30% investment tax credit. Transformers &amp; amorphous steel <em>explicitly listed</em> as priority.</span>
+                <span className="d2-capital-amount">$10B program</span>
+              </a>
+              <a href="https://www.energy.gov/EDF" target="_blank" rel="noopener noreferrer" className="d2-capital-card">
+                <div className="d2-capital-tag">Loan Guarantee</div>
+                <strong>DOE Energy Dominance Financing</strong>
+                <span>Grid reliability and supply chain security. Up to $250B in loan authority through 2028.</span>
+                <span className="d2-capital-amount">$250B authority</span>
+              </a>
+              <a href="https://www.energy.gov/gdo/grid-resilience-and-innovation-partnerships-grip-program" target="_blank" rel="noopener noreferrer" className="d2-capital-card">
+                <div className="d2-capital-tag">Grant</div>
+                <strong>GRIP Program</strong>
+                <span>Grid Resilience &amp; Innovation Partnerships. 105 projects funded across all 50 states.</span>
+                <span className="d2-capital-amount">$10.5B</span>
+              </a>
+              <a href="https://www.energy.gov/articles/president-biden-invokes-defense-production-act-accelerate-domestic-manufacturing-clean" target="_blank" rel="noopener noreferrer" className="d2-capital-card">
+                <div className="d2-capital-tag">Grant</div>
+                <strong>Defense Production Act</strong>
+                <span>DPA invoked specifically for transformers. $1B appropriated for critical manufacturing.</span>
+                <span className="d2-capital-amount">$1B</span>
+              </a>
+              <a href="https://comptroller.texas.gov/economy/development/prop-tax/jeti/" target="_blank" rel="noopener noreferrer" className="d2-capital-card">
+                <div className="d2-capital-tag">State</div>
+                <strong>Texas JETI</strong>
+                <span>50% property tax reduction for 10 years for qualifying manufacturing facilities.</span>
+                <span className="d2-capital-amount">50% tax reduction</span>
+              </a>
+              <a href="https://www.usda.gov/about-usda/news/press-releases/2024/12/19/usda-announces-another-round-historic-investments-increase-access-clean-affordable-energy-across" target="_blank" rel="noopener noreferrer" className="d2-capital-card">
+                <div className="d2-capital-tag">Loan / Grant</div>
+                <strong>USDA New ERA</strong>
+                <span>Empowering Rural America. Loans and grants for rural electric cooperatives.</span>
+                <span className="d2-capital-amount">$4.37B</span>
+              </a>
+              <a href="https://www.exim.gov/about/special-initiatives/make-more-in-america-initiative" target="_blank" rel="noopener noreferrer" className="d2-capital-card">
+                <div className="d2-capital-tag">Federal Loan</div>
+                <strong>EXIM Make More in America</strong>
+                <span>Working capital and capex financing for domestic manufacturing that leads to exports.</span>
+                <span className="d2-capital-amount">Open</span>
+              </a>
             </div>
 
-            <p className="d2-source">All sources linked. Click any card to view the program directly.</p>
+            <div className="d2-capital-footnote">
+              <Briefcase className="w-4 h-4" style={{ color: "var(--d2-text-dim)", flexShrink: 0 }} />
+              <span>
+                Private capital is also deploying into this space:&nbsp;
+                <a href="https://www.apollo.com/insights-news/pressreleases/2025/10/apollo-and-8vc-partner-to-accelerate-the-next-wave-of-american-industrial-innovation-3176388" target="_blank" rel="noopener noreferrer">Apollo + 8VC</a> (multi-billion $ for advanced manufacturing)&nbsp;&bull;&nbsp;
+                <a href="https://bam.brookfield.com/press-releases/brookfield-raises-20-billion-record-transition-fund" target="_blank" rel="noopener noreferrer">Brookfield Transition Fund II</a> ($20B for clean energy transition)
+              </span>
+            </div>
+
+            <p className="d2-source">All sources linked. Click any card or link to view the program directly.</p>
           </div>
         </section>
 
@@ -1529,6 +1511,21 @@ const mobileDeckStyles = `
   .d2-capital-tag-private {
     color: #a78bfa; background: rgba(167,139,250,0.1);
   }
+  .d2-capital-grid-full {
+    display: grid; grid-template-columns: 1fr;
+    gap: 10px; margin-bottom: 16px;
+  }
+  .d2-capital-footnote {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 14px 16px; border-radius: var(--d2-radius);
+    background: rgba(255,255,255,0.02); border: 1px solid var(--d2-border);
+    font-family: 'Inter', sans-serif; font-size: 13px; color: var(--d2-text-dim);
+    line-height: 1.6;
+  }
+  .d2-capital-footnote a {
+    color: var(--d2-blue); text-decoration: none; font-weight: 600;
+  }
+  .d2-capital-footnote a:hover { text-decoration: underline; }
 
   /* ---- TEAM ---- */
   .d2-team-grid {
@@ -2331,6 +2328,21 @@ const deck2Styles = `
   .d2-capital-tag-private {
     color: #a78bfa; background: rgba(167,139,250,0.1);
   }
+  .d2-capital-grid-full {
+    display: grid; grid-template-columns: repeat(2, 1fr);
+    gap: 12px; margin-bottom: 20px;
+  }
+  .d2-capital-footnote {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 14px 20px; border-radius: var(--d2-radius);
+    background: rgba(255,255,255,0.02); border: 1px solid var(--d2-border);
+    font-family: 'Inter', sans-serif; font-size: 13px; color: var(--d2-text-dim);
+    line-height: 1.6;
+  }
+  .d2-capital-footnote a {
+    color: var(--d2-blue); text-decoration: none; font-weight: 600;
+  }
+  .d2-capital-footnote a:hover { text-decoration: underline; }
 
   /* ---- TEAM (slide 9) ---- */
   .d2-team-grid {
