@@ -540,7 +540,7 @@ export default function Deck2Page() {
             <div className="d2-slide-label">MANUFACTURING</div>
             <h2 className="d2-h2">The Process Is the Product</h2>
             <p className="d2-p" style={{ maxWidth: 800, marginBottom: 24 }}>
-              The transformer is proven technology. What&apos;s broken is <strong>how they&apos;re built</strong> &mdash; hand-cut steel, hand-stacked cores, hand-wound coils. We use <strong>non-deterministic automation</strong> so a custom product flows through the line like a repetitive one.
+              The transformer is proven technology. What&apos;s broken is <strong>how they&apos;re built</strong> &mdash; hand-cut steel, hand-stacked cores, hand-wound coils. We use <strong>non-deterministic automation</strong> so a custom product flows through the line like a repetitive one. And for the first time, <strong>simulation-driven design</strong> lets us build and validate entire production lines digitally before a single robot is installed.
             </p>
             <div className="d2-tech-grid">
               {[
@@ -548,6 +548,7 @@ export default function Deck2Page() {
                 { icon: <Bot className="w-5 h-5" />, title: "Vision-Guided Stacking", desc: "Robotic arms adapt to any core geometry. Thousands of laminations." },
                 { icon: <Wrench className="w-5 h-5" />, title: "Adaptive CNC Winding", desc: "Any coil spec without retooling. Recipe-driven, not jig-driven." },
                 { icon: <Eye className="w-5 h-5" />, title: "AI Quality Control", desc: "Machine vision on every part. Automated PD and impedance testing." },
+                { icon: <Globe className="w-5 h-5" />, title: "Digital Twin Factory", desc: "Design, test, and validate the full line in simulation. Deploy once it already works." },
               ].map((t, i) => (
                 <div key={t.title} className="d2-tech-card" style={{ animationDelay: `${0.3 + i * 0.12}s` }}>
                   <div className="d2-tech-icon">{t.icon}</div>
@@ -579,12 +580,12 @@ export default function Deck2Page() {
             <div className="d2-slide-label">THE ADVANTAGE</div>
             <h2 className="d2-h2">The Industrial Leapfrog</h2>
             <p className="d2-p" style={{ maxWidth: 800, marginBottom: 32 }}>
-              Incumbents invested billions in <strong>manual-labor factories</strong> they can&apos;t walk away from. Their process hasn&apos;t changed in decades. <strong>FluxCo starts unencumbered.</strong>
+              Incumbents invested billions in <strong>manual-labor factories</strong> they can&apos;t walk away from. Their process hasn&apos;t changed in decades. FluxCo starts unencumbered &mdash; and for the first time, <strong>simulation closes the gap between design and reality</strong>. We validate entire production lines digitally, then deploy once everything already works.
             </p>
             <div className="d2-compare">
               <div className="d2-compare-box d2-compare-legacy">
                 <div className="d2-compare-header">Legacy Process</div>
-                {["Manual die cutting & hand stacking", "Fixed tooling per design", "One-off engineering per order", "Human visual inspection", "Weeks-long test cycles", "Billions in sunk CapEx"].map((item, i) => (
+                {["Manual die cutting & hand stacking", "Fixed tooling per design", "One-off engineering per order", "Human visual inspection", "Months of physical prototyping", "Trial-and-error commissioning", "Billions in sunk CapEx"].map((item, i) => (
                   <div key={i} className="d2-compare-item" style={{ animationDelay: `${0.4 + i * 0.08}s` }}>{item}</div>
                 ))}
               </div>
@@ -593,7 +594,7 @@ export default function Deck2Page() {
               </div>
               <div className="d2-compare-box d2-compare-flux">
                 <div className="d2-compare-header">FluxCo Process</div>
-                {["CNC laser cut + robotic stacking", "Vision-guided adaptive automation", "Recipe-driven, infinite variations", "AI inspection at line speed", "Automated test in hours", "Zero legacy baggage"].map((item, i) => (
+                {["CNC laser cut + robotic stacking", "Vision-guided adaptive automation", "Recipe-driven, infinite variations", "AI inspection at line speed", "Digital twin validation before build", "Software-driven factory design", "Zero legacy baggage"].map((item, i) => (
                   <div key={i} className="d2-compare-item" style={{ animationDelay: `${0.5 + i * 0.08}s` }}>{item}</div>
                 ))}
               </div>
@@ -1983,7 +1984,7 @@ const deck2Styles = `
 
   /* ---- TECH GRID (slide 6) ---- */
   .d2-tech-grid {
-    display: grid; grid-template-columns: repeat(4, 1fr);
+    display: grid; grid-template-columns: repeat(5, 1fr);
     gap: 14px; margin-bottom: 20px;
   }
   .d2-tech-card {
