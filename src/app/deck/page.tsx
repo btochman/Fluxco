@@ -491,7 +491,7 @@ export default function Deck2Page() {
                 <ul className="d2-checklist">
                   <li><strong>Full visibility:</strong> price, lead time, quality, certifications &mdash; side-by-side.</li>
                   <li><strong>Speed:</strong> What takes buyers weeks of calls, we do in hours.</li>
-                  <li><strong>Comprehensive analysis:</strong> We provide all of the data needed with our recommendation engine.</li>
+                  <li><strong>Comprehensive analysis:</strong> Our recommendation engine delivers price, lead time, quality, and risk data &mdash; everything needed to make a decision, not just a quote.</li>
                 </ul>
               </div>
               <div className="d2-flow-col">
