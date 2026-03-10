@@ -763,9 +763,9 @@ export default function Deck2Page() {
 
             <div className="d2-rev-stats">
               {[
-                { value: "70%", label: "Buyers Want Leasing" },
+                { value: "TaaS", label: "Transformer as a Service" },
                 { value: "0", label: "OEM-Agnostic Warranty Providers" },
-                { value: "10x", label: "Faster Replacement" },
+                { value: "Days vs Months", label: "Replacement Time" },
               ].map((stat) => (
                 <div key={stat.label} className="d2-rev-stat">
                   <div className="d2-rev-stat-value">{stat.value}</div>
