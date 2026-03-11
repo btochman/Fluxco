@@ -378,6 +378,7 @@ export default function Deck2Page() {
               </div>
 
               <div className="d2-chart-wrap">
+                <div className="d2-chart-title">Transformer Demand</div>
                 <div className="d2-chart">
                   <svg viewBox="0 0 600 380" preserveAspectRatio="xMidYMid meet" className="w-full h-full">
                     {/* Grid lines */}
@@ -1253,6 +1254,11 @@ const mobileDeckStyles = `
 
   /* ---- CHART ---- */
   .d2-chart-wrap { display: flex; flex-direction: column; }
+  .d2-chart-title {
+    font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600;
+    color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 1.5px;
+    text-align: center; margin-bottom: 8px;
+  }
   .d2-chart {
     background: rgba(255,255,255,0.02); border: 1px solid var(--d2-border);
     border-radius: var(--d2-radius) var(--d2-radius) 0 0;
@@ -2138,6 +2144,11 @@ const deck2Styles = `
 
   /* ---- CHART ---- */
   .d2-chart-wrap { display: flex; flex-direction: column; }
+  .d2-chart-title {
+    font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600;
+    color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 1.5px;
+    text-align: center; margin-bottom: 8px;
+  }
   .d2-chart {
     background: rgba(255,255,255,0.02); border: 1px solid var(--d2-border);
     border-radius: var(--d2-radius) var(--d2-radius) 0 0;
