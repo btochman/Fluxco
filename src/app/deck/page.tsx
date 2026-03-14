@@ -506,23 +506,27 @@ export default function Deck2Page() {
             </p>
             <div className="d2-stats-row" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 20, maxWidth: 900, margin: "0 auto" }}>
               {[
-                { value: `$${cCapex === 66 ? "66.5" : cCapex}B`, label: "Distribution capex in 2025", sub: "Highest in 10+ years" },
-                { value: `${c18x}x`, label: "Infra spend vs demand growth", sub: "Spending outpacing load" },
-                { value: `${c160}%`, label: "Distribution spend increase", sub: "2003–2023 growth" },
-                { value: `${cCagr === 9 ? "8.9" : cCagr}%`, label: "T&D spending CAGR", sub: "vs 0.5% demand growth" },
+                { value: `$${cCapex === 66 ? "66.5" : cCapex}B`, label: "Distribution capex in 2025", sub: "Highest in 10+ years", source: "Edison Electric Institute", href: "https://www.eei.org/en/news/news/all/electric-companies-to-invest-nearly-$208b-in-2025-to-strengthen-grid-and-drive-economic-growth" },
+                { value: `${c18x}x`, label: "Infra spend vs demand growth", sub: "Spending outpacing load", source: "Bank of America Research", href: "https://institute.bankofamerica.com/content/dam/transformation/us-electrical-grid.pdf" },
+                { value: `${c160}%`, label: "Distribution spend increase", sub: "2003–2023 growth", source: "U.S. Energy Information Administration", href: "https://www.eia.gov/todayinenergy/detail.php?id=63724" },
+                { value: `${cCagr === 9 ? "8.9" : cCagr}%`, label: "T&D spending CAGR", sub: "vs 0.5% demand growth", source: "Bank of America Research", href: "https://institute.bankofamerica.com/content/dam/transformation/us-electrical-grid.pdf" },
               ].map((stat, i) => (
-                <div key={stat.label} className="ap-fade-up" style={{
+                <a key={stat.label} href={stat.href} target="_blank" rel="noopener noreferrer" className="ap-fade-up" style={{
                   animationDelay: `${0.3 + i * 0.15}s`,
                   background: "rgba(255,255,255,0.03)",
                   border: "1px solid rgba(255,255,255,0.08)",
                   borderRadius: 12,
                   padding: "24px 20px",
                   textAlign: "center",
+                  textDecoration: "none",
+                  display: "block",
+                  transition: "border-color 0.2s, background 0.2s",
                 }}>
                   <div style={{ fontSize: 36, fontWeight: 700, color: "var(--d2-blue)", lineHeight: 1 }}>{stat.value}</div>
                   <div style={{ fontSize: 13, fontWeight: 600, color: "rgba(255,255,255,0.9)", marginTop: 8 }}>{stat.label}</div>
                   <div style={{ fontSize: 11, color: "rgba(255,255,255,0.5)", marginTop: 4 }}>{stat.sub}</div>
-                </div>
+                  <div style={{ fontSize: 10, color: "rgba(59,130,246,0.6)", marginTop: 8, letterSpacing: 0.3 }}>Source: {stat.source} ↗</div>
+                </a>
               ))}
             </div>
             <div className="d2-callout" style={{ maxWidth: 700, margin: "32px auto 0" }}>
@@ -2283,6 +2287,9 @@ const deck2Styles = `
   }
   .d2-callout svg { color: var(--d2-blue); flex-shrink: 0; margin-top: 2px; }
   .d2-callout strong { color: #fff; }
+
+  /* ---- WHY NOW stat cards hover ---- */
+  .d2-stats-row a:hover { border-color: rgba(45,140,255,0.3); background: rgba(45,140,255,0.05); }
 
   /* ---- PROBLEM CARDS (slide 4) ---- */
   .d2-problem-cards { display: flex; flex-direction: column; gap: 12px; }
