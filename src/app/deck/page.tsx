@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { EmailGate } from "./EmailGate";
 
-const TOTAL_SECTIONS = 14;
+const TOTAL_SECTIONS = 15;
 
 /* ------------------------------------------------------------------ */
 /*  Hook: animate numbers counting up                                  */
@@ -267,6 +267,7 @@ export default function Deck2Page() {
   const s2 = useInView(0.2, ready);
   const s3 = useInView(0.2, ready);
   const s4 = useInView(0.2, ready);
+  const s4b = useInView(0.2, ready);
   const s5 = useInView(0.2, ready);
   const s6 = useInView(0.2, ready);
   const s7 = useInView(0.2, ready);
@@ -284,6 +285,10 @@ export default function Deck2Page() {
   const c6 = useCountUp(6, 1200, s3.inView);
   const c60 = useCountUp(60, 1600, s6.inView);
   const c40 = useCountUp(40, 1600, s6.inView);
+  const cCapex = useCountUp(66, 1800, s4b.inView);
+  const c18x = useCountUp(18, 1400, s4b.inView);
+  const c160 = useCountUp(160, 1600, s4b.inView);
+  const cCagr = useCountUp(9, 1400, s4b.inView);
 
   if (hasAccess === null) return null;
   if (!hasAccess) return <EmailGate onAccess={() => setHasAccess(true)} />;
@@ -485,6 +490,45 @@ export default function Deck2Page() {
               <div style={{ background: "rgba(255,255,255,0.02)", borderRadius: 12, border: "1px solid rgba(255,255,255,0.06)", padding: "16px 12px 8px" }}>
                 <div style={{ textAlign: "center", fontSize: 11, fontWeight: 600, color: "var(--d2-blue)", letterSpacing: 1, marginBottom: 8 }}>FluxCo RFP #1202 Bid Results</div>
                 <DeckScatterChart inView={s4.inView} />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ========== SLIDE 3b — WHY NOW ========== */}
+        <section className="d2-slide" ref={s4b.ref}>
+          <div className="d2-glow d2-glow-3" />
+          <div className={`d2-content ${isMobile || s4b.inView ? "in" : ""}`}>
+            <div className="d2-slide-label">WHY NOW</div>
+            <h2 className="d2-h2">Market Tailwinds</h2>
+            <p className="d2-p" style={{ maxWidth: 700, margin: "0 auto 32px", textAlign: "center", opacity: 0.8 }}>
+              U.S. grid infrastructure spending is at historic highs &mdash; and growing faster than demand. The transformer market is entering a supercycle.
+            </p>
+            <div className="d2-stats-row" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 20, maxWidth: 900, margin: "0 auto" }}>
+              {[
+                { value: `$${cCapex === 66 ? "66.5" : cCapex}B`, label: "Distribution capex in 2025", sub: "Highest in 10+ years" },
+                { value: `${c18x}x`, label: "Infra spend vs demand growth", sub: "Spending outpacing load" },
+                { value: `${c160}%`, label: "Distribution spend increase", sub: "2003–2023 growth" },
+                { value: `${cCagr === 9 ? "8.9" : cCagr}%`, label: "T&D spending CAGR", sub: "vs 0.5% demand growth" },
+              ].map((stat, i) => (
+                <div key={stat.label} className="ap-fade-up" style={{
+                  animationDelay: `${0.3 + i * 0.15}s`,
+                  background: "rgba(255,255,255,0.03)",
+                  border: "1px solid rgba(255,255,255,0.08)",
+                  borderRadius: 12,
+                  padding: "24px 20px",
+                  textAlign: "center",
+                }}>
+                  <div style={{ fontSize: 36, fontWeight: 700, color: "var(--d2-blue)", lineHeight: 1 }}>{stat.value}</div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: "rgba(255,255,255,0.9)", marginTop: 8 }}>{stat.label}</div>
+                  <div style={{ fontSize: 11, color: "rgba(255,255,255,0.5)", marginTop: 4 }}>{stat.sub}</div>
+                </div>
+              ))}
+            </div>
+            <div className="d2-callout" style={{ maxWidth: 700, margin: "32px auto 0" }}>
+              <TrendingUp className="w-5 h-5" />
+              <div>
+                <strong>The catalyst:</strong> Data centers, EV infrastructure, and reshoring are forcing grid upgrades at a pace utilities haven&apos;t seen in decades. Buyers need transformers <em>now</em> &mdash; and the supply chain can&apos;t keep up.
               </div>
             </div>
           </div>
