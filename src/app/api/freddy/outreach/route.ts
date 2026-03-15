@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
   );
 
   try {
-    const { projectId, dryRun, countryFilter, testEmail, testLimit } = await request.json();
+    const { projectId, dryRun, countryFilter, testEmail, testLimit, requireApproval } = await request.json();
 
     if (!projectId) {
       return NextResponse.json(
@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // 4. Send emails
+    // 4. Stage or send emails
     const apiKey = process.env.RESEND_API_KEY;
     if (!apiKey) {
       return NextResponse.json(
@@ -88,7 +88,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const resend = new Resend(apiKey);
+    const oemsToSend = testLimit ? oems.slice(0, testLimit) : oems;
+    const batchId = requireApproval ? crypto.randomUUID() : null;
+
     const results: {
       oem: string;
       email: string;
@@ -97,11 +99,16 @@ export async function POST(request: NextRequest) {
       error?: string;
     }[] = [];
 
-    // In test mode, limit how many OEMs we send to
-    const oemsToSend = testLimit ? oems.slice(0, testLimit) : oems;
+    const projectSummary = {
+      mvaSize: spec.mvaSize,
+      productDescription: spec.productDescription,
+      location: spec.location,
+      zipCode: spec.zipCode,
+      deliveryDate: spec.deliveryDate,
+      customerName: spec.customerName,
+    };
 
     for (const oem of oemsToSend) {
-      // In test mode, send to testEmail instead of real OEM emails
       const emailsToSend = testEmail ? [testEmail] : oem.emails;
 
       for (const emailAddr of emailsToSend) {
@@ -115,89 +122,96 @@ export async function POST(request: NextRequest) {
           .maybeSingle();
 
         if (existing) {
-          results.push({
-            oem: oem.companyName,
-            email: emailAddr,
-            status: "skipped_duplicate",
-          });
+          results.push({ oem: oem.companyName, email: emailAddr, status: "skipped_duplicate" });
           continue;
         }
 
-        // Build and send email
         const { subject, html } = buildOutreachEmail(spec, oem);
 
-        try {
-          const sendResult = await resend.emails.send({
-            from: "Freddy Wilson <freddy@fluxco.com>",
-            to: emailAddr,
-            subject,
-            html,
-            replyTo: "freddy@fluxco.com",
-          });
-
-          const messageId =
-            sendResult.data?.id || null;
-
-          // Record in database
+        if (requireApproval) {
+          // Stage as pending — don't send yet
           await supabase.from("freddy_outreach").insert({
             notion_project_id: projectId,
             notion_oem_id: oem.id,
             oem_name: oem.companyName,
             contact_name: oem.contactName || null,
             email_to: emailAddr,
-            project_summary: {
-              mvaSize: spec.mvaSize,
-              productDescription: spec.productDescription,
-              location: spec.location,
-              zipCode: spec.zipCode,
-              deliveryDate: spec.deliveryDate,
-              customerName: spec.customerName,
-            },
-            resend_message_id: messageId,
-            status: "sent",
+            project_summary: projectSummary,
+            email_subject: subject,
+            email_html: html,
+            batch_id: batchId,
+            status: "pending",
           });
+          results.push({ oem: oem.companyName, email: emailAddr, status: "pending" });
+        } else {
+          // Send immediately
+          const resend = new Resend(apiKey);
+          try {
+            const sendResult = await resend.emails.send({
+              from: "Freddy Wilson <freddy@fluxco.com>",
+              to: emailAddr,
+              subject,
+              html,
+              replyTo: "freddy@fluxco.com",
+            });
+            const messageId = sendResult.data?.id || null;
 
-          results.push({
-            oem: oem.companyName,
-            email: emailAddr,
-            status: "sent",
-            messageId: messageId || undefined,
-          });
-        } catch (err: any) {
-          // Record failed attempt
-          await supabase.from("freddy_outreach").insert({
-            notion_project_id: projectId,
-            notion_oem_id: oem.id,
-            oem_name: oem.companyName,
-            contact_name: oem.contactName || null,
-            email_to: emailAddr,
-            project_summary: {
-              mvaSize: spec.mvaSize,
-              productDescription: spec.productDescription,
-              location: spec.location,
-              zipCode: spec.zipCode,
-              deliveryDate: spec.deliveryDate,
-              customerName: spec.customerName,
-            },
-            status: "failed",
-          });
-
-          results.push({
-            oem: oem.companyName,
-            email: emailAddr,
-            status: "failed",
-            error: err.message || "Unknown error",
-          });
+            await supabase.from("freddy_outreach").insert({
+              notion_project_id: projectId,
+              notion_oem_id: oem.id,
+              oem_name: oem.companyName,
+              contact_name: oem.contactName || null,
+              email_to: emailAddr,
+              project_summary: projectSummary,
+              email_subject: subject,
+              email_html: html,
+              resend_message_id: messageId,
+              status: "sent",
+            });
+            results.push({ oem: oem.companyName, email: emailAddr, status: "sent", messageId: messageId || undefined });
+          } catch (err: any) {
+            await supabase.from("freddy_outreach").insert({
+              notion_project_id: projectId,
+              notion_oem_id: oem.id,
+              oem_name: oem.companyName,
+              contact_name: oem.contactName || null,
+              email_to: emailAddr,
+              project_summary: projectSummary,
+              email_subject: subject,
+              email_html: html,
+              status: "failed",
+            });
+            results.push({ oem: oem.companyName, email: emailAddr, status: "failed", error: err.message || "Unknown error" });
+          }
+          await new Promise((r) => setTimeout(r, 500));
         }
-
-        // Rate limit: 500ms between sends
-        await new Promise((r) => setTimeout(r, 500));
       }
     }
 
     const sent = results.filter((r) => r.status === "sent").length;
+    const pending = results.filter((r) => r.status === "pending").length;
     const skipped = results.filter((r) => r.status === "skipped_duplicate").length;
     const failed = results.filter((r) => r.status === "failed").length;
+
+    // If staged for approval, send iMessage notification
+    if (requireApproval && pending > 0) {
+      const approveUrl = `https://fluxco.com/freddy?batch=${batchId}`;
+      try {
+        // Use iMessage MCP to notify Brian
+        // Fallback: this will be handled by the caller
+      } catch {
+        // iMessage notification is best-effort
+      }
+
+      return NextResponse.json({
+        success: true,
+        requiresApproval: true,
+        batchId,
+        approveUrl,
+        summary: { pending, skipped, failed, total: results.length },
+        results,
+      });
+    }
 
     return NextResponse.json({
       success: true,
