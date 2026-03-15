@@ -193,14 +193,39 @@ export async function POST(request: NextRequest) {
     const skipped = results.filter((r) => r.status === "skipped_duplicate").length;
     const failed = results.filter((r) => r.status === "failed").length;
 
-    // If staged for approval, send iMessage notification
+    // If staged for approval, send email notification to Brian
     if (requireApproval && pending > 0) {
       const approveUrl = `https://fluxco.com/freddy?batch=${batchId}`;
+      const resend = new Resend(apiKey);
+      const oemList = results
+        .filter((r) => r.status === "pending")
+        .map((r) => r.oem)
+        .join(", ");
+
       try {
-        // Use iMessage MCP to notify Brian
-        // Fallback: this will be handled by the caller
-      } catch {
-        // iMessage notification is best-effort
+        await resend.emails.send({
+          from: "Freddy Wilson <freddy@fluxco.com>",
+          to: "brian@fluxco.com",
+          subject: `Freddy: ${pending} emails ready for approval - ${projectSummary.productDescription}`,
+          html: `
+<div style="font-family: Arial, sans-serif; max-width: 500px; color: #333;">
+  <h3>Batch Ready for Approval</h3>
+  <p><strong>Project:</strong> ${projectSummary.productDescription}</p>
+  <p><strong>Location:</strong> ${projectSummary.location}</p>
+  <p><strong>Emails staged:</strong> ${pending}</p>
+  <p><strong>OEMs:</strong> ${oemList}</p>
+  <p style="margin-top: 20px;">
+    <a href="${approveUrl}" style="display: inline-block; padding: 14px 28px; background: #22c55e; color: #fff; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px;">
+      Review & Approve →
+    </a>
+  </p>
+  <p style="color: #999; font-size: 12px; margin-top: 16px;">
+    Or open: ${approveUrl}
+  </p>
+</div>`,
+        });
+      } catch (notifyErr) {
+        console.error("Failed to send approval notification:", notifyErr);
       }
 
       return NextResponse.json({
